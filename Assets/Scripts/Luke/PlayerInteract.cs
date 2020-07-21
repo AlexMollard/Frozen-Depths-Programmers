@@ -27,20 +27,33 @@ public class PlayerInteract : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(camPos, playerCamera.TransformDirection(Vector3.forward), out hit, interactReach, interactableMask))
             {
-                // Copy mesh from interactable, display it in front of player, disable player movement and enable mouse movement
-                // until interaction cancelled.
-
                 Mesh newMesh = hit.collider.gameObject.GetComponent<MeshFilter>().mesh;
                 EnableArtifactViewer(newMesh);
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            DisableArtifactViewer();
+        }
     }
 
-    private void EnableArtifactViewer(Mesh mesh)
+    public void EnableArtifactViewer(Mesh mesh)
     {
         artifactViewer.gameObject.SetActive(true);
         artifactViewer.mesh = mesh;
         pmScript.enabled = false;
         mlScript.enabled = false;
+
+        Cursor.lockState = CursorLockMode.None;
+    }
+
+    public void DisableArtifactViewer()
+    {
+        artifactViewer.gameObject.SetActive(false);
+        pmScript.enabled = true;
+        mlScript.enabled = true;
+
+        Cursor.lockState = CursorLockMode.Locked;
     }
 }
