@@ -10,6 +10,9 @@ public class BlueIce : MonoBehaviour
 	int[,] map;
 	float scale = 1;
 	float iceThreshold = 1;
+
+	public int width = 20;
+	public int height = 20;
 	float depth = 5.0f;
 
 	SquareGrid squareGrid;
@@ -21,8 +24,19 @@ public class BlueIce : MonoBehaviour
 
 	private void Start()
 	{
-		iceMesh = this.GetComponent<MeshFilter>().sharedMesh;
+		map = new int[width, height];
+
+		for (int y = 0; y < height; ++y)
+		{
+			for (int x = 0; x < width; ++x)
+			{
+				map[x, y] = 100;
+			}
+		}
+
+		squareGrid = new SquareGrid(map, scale, iceThreshold, transform);
 		GenerateMesh();
+		
 	}
 
 	public void GenerateMesh()
@@ -32,13 +46,13 @@ public class BlueIce : MonoBehaviour
 		vertexTriangles.Clear();
 		vertices.Clear();
 		triangles.Clear();
-		squareGrid = new SquareGrid(map, scale, iceThreshold, transform);
+		iceMesh = new Mesh();
 
 		for (int y = 0; y < squareGrid.squares.GetLength(1); ++y)
 		{
 			for (int x = 0; x < squareGrid.squares.GetLength(0); ++x)
 			{
-				//TriangulateSquare(squareGrid.squares[x, y]);
+				TriangulateSquare(squareGrid.squares[x, y]);
 			}
 		}
 
@@ -49,6 +63,120 @@ public class BlueIce : MonoBehaviour
 
 		//AddSideFaces();
 		//AddBackFaces();
+		GetComponent<MeshFilter>().mesh = iceMesh;
+	}
+
+	void TriangulateSquare(Square a_square)
+	{
+		switch (a_square.configuration)
+		{
+		// 0 walls
+			case 0:
+				break;
+		// 1 wall
+			case 1:
+				MeshFromPoints(a_square.bottomLeft, a_square.left, a_square.bottom);
+				break;
+			case 2:
+				MeshFromPoints(a_square.bottomRight, a_square.bottom, a_square.right);
+				break;
+			case 4:
+				MeshFromPoints(a_square.topRight, a_square.right, a_square.top);
+				break;
+			case 8:
+				MeshFromPoints(a_square.topLeft, a_square.top, a_square.left);
+				break;
+		// 2 walls
+			case 3:
+				MeshFromPoints(a_square.bottomLeft, a_square.left, a_square.right, a_square.bottomRight);
+				break;
+			case 5:
+				MeshFromPoints(a_square.bottomLeft, a_square.left, a_square.top, a_square.topRight, a_square.right, a_square.bottom);
+				break;
+			case 6:
+				MeshFromPoints(a_square.bottomRight, a_square.bottom, a_square.top, a_square.topRight);
+				break;
+			case 9:
+				MeshFromPoints(a_square.bottomLeft, a_square.topLeft, a_square.top, a_square.bottom);
+				break;
+			case 10:
+				MeshFromPoints(a_square.bottomRight, a_square.bottom, a_square.left, a_square.topLeft, a_square.top, a_square.right);
+				break;
+			case 12:
+				MeshFromPoints(a_square.topRight, a_square.right, a_square.left, a_square.topLeft);
+				break;
+		// 3 walls
+			case 7:
+				MeshFromPoints(a_square.bottomLeft, a_square.left, a_square.top, a_square.topRight, a_square.bottomRight);
+				break;
+			case 11:
+				MeshFromPoints(a_square.bottomLeft, a_square.topLeft, a_square.top, a_square.right, a_square.bottomRight);
+				break;
+			case 13:
+				MeshFromPoints(a_square.bottomLeft, a_square.topLeft, a_square.topRight, a_square.right, a_square.bottom);
+				break;
+			case 14:
+				MeshFromPoints(a_square.bottomRight, a_square.bottom, a_square.left, a_square.topLeft, a_square.topRight);
+				break;
+		// 4 walls
+			case 15:
+				MeshFromPoints(a_square.bottomLeft, a_square.topLeft, a_square.topRight, a_square.bottomRight);
+				vertexClosedList.Add(a_square.bottomLeft.vertexIndex);
+				vertexClosedList.Add(a_square.topLeft.vertexIndex);
+				vertexClosedList.Add(a_square.topRight.vertexIndex);
+				vertexClosedList.Add(a_square.bottomRight.vertexIndex);
+				break;
+		}
+	}
+
+	void MeshFromPoints(params Node[] a_points)
+	{
+		AssignVertices(a_points);
+
+		if (a_points.Length >= 3)
+		{
+			CreateTriangle(a_points[0], a_points[1], a_points[2]);
+		}
+
+		if (a_points.Length >= 4)
+		{
+			CreateTriangle(a_points[0], a_points[2], a_points[3]);
+		}
+
+		if (a_points.Length >= 5)
+		{
+			CreateTriangle(a_points[0], a_points[3], a_points[4]);
+		}
+
+		if (a_points.Length >= 6)
+		{
+			CreateTriangle(a_points[0], a_points[4], a_points[5]);
+		}
+	}
+
+	void AssignVertices(Node[] a_points)
+	{
+		for (int i = 0; i < a_points.Length; ++i)
+		{
+			if (a_points[i].vertexIndex == -1)
+			{
+				a_points[i].vertexIndex = vertices.Count;
+				vertices.Add(a_points[i].position);
+			}
+		}
+	}
+
+	void CreateTriangle(Node a_pointA, Node a_pointB, Node a_pointC)
+	{
+		triangles.Add(a_pointA.vertexIndex);
+		triangles.Add(a_pointB.vertexIndex);
+		triangles.Add(a_pointC.vertexIndex);
+
+		Triangle triangle = new Triangle(a_pointA.vertexIndex, a_pointB.vertexIndex, a_pointC.vertexIndex);
+
+		AddTriangleToDictionary(triangle.vertexA, triangle);
+		AddTriangleToDictionary(triangle.vertexB, triangle);
+		AddTriangleToDictionary(triangle.vertexC, triangle);
 	}
 
 	public class SquareGrid
@@ -67,7 +195,7 @@ public class BlueIce : MonoBehaviour
 			{
 				for (int x = 0; x < nodeCountX; ++x)
 				{
-					Vector3 position = a_origin.position; /*+ new Vector3(a_origin.right * (-mapWidth * 0.5f + x * a_scale + a_scale * 0.5f), a_origi);*/
+					Vector3 position = new Vector3(-mapWidth * 0.5f + x * a_scale + a_scale * 0.5f, -mapHeight * 0.5f + y * a_scale + a_scale * 0.5f, 0.0f);
 					controlNodes[x, y] = new ControlNode(position, a_map[x, y], a_scale);
 				}
 			}
@@ -204,6 +332,20 @@ public class BlueIce : MonoBehaviour
 		public bool Contains(int a_vertexIndex)
 		{
 			return (a_vertexIndex == vertexA || a_vertexIndex == vertexB || a_vertexIndex == vertexC);
+		}
+	}
+
+	void AddTriangleToDictionary(int a_vertexIndex, Triangle a_triangle)
+	{
+		if (vertexTriangles.ContainsKey(a_vertexIndex))
+		{
+			vertexTriangles[a_vertexIndex].Add(a_triangle);
+		}
+		else
+		{
+			List<Triangle> triangles = new List<Triangle>();
+			triangles.Add(a_triangle);
+			vertexTriangles.Add(a_vertexIndex, triangles);
 		}
 	}
 }
