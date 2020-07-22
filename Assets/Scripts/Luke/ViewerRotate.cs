@@ -1,4 +1,12 @@
-﻿using System.Collections;
+﻿/*
+    File name: ViewerRotate.cs
+    Author:    Luke Lazzaro
+    Summary: Allows rotation of the artifact viewer with the mouse
+    Creation Date: 22/07/2020
+    Last Modified: 22/07/2020
+*/
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 

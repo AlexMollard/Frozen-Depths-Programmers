@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+    File name: PlayerMovement.cs
+    Author:    Luke Lazzaro
+    Summary: Adds first person movement to the player
+    Creation Date: 20/07/2020
+    Last Modified: 20/07/2020
+*/
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
