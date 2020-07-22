@@ -1,4 +1,12 @@
-﻿using System.Collections;
+﻿/*
+    File name: PlayerInteract.cs
+    Author:    Luke Lazzaro
+    Summary: Enables interaction and opens artifact viewer
+    Creation Date: 21/07/2020
+    Last Modified: 22/07/2020
+*/
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
