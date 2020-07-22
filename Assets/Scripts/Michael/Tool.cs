@@ -16,25 +16,30 @@ public class Tool : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && toolFuel > 0.0f ||
-            Input.GetMouseButtonDown(1) && toolFuel < 100.0f)
+        if (Input.GetMouseButton(0) && toolFuel > 0.0f ||
+            Input.GetMouseButton(1) && toolFuel < 100.0f)
         {
+            Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f,0.5f,1.0f));
             RaycastHit hit;
-            if (Physics.Raycast(transform.position, transform.forward, out hit) && hit.collider.gameObject.CompareTag("Terrain"))
+            if (Physics.Raycast(ray, out hit))
             {
-                TerrainManipulation terrain = hit.collider.gameObject.GetComponent<TerrainManipulation>();
-
                 // blowtorch
-                if (Input.GetMouseButtonDown(0))
+                if (Input.GetMouseButton(0))
                 {
-                    //terrain.Burn(hit.point, burnRadius);
-                    toolFuel -= Time.deltaTime * blowtorchFuelLossRate;
+                    if (hit.transform.tag == "Ice")
+                    {
+                        hit.transform.GetComponent<TerrainManipulation>().Burn(hit.point, freezeRadius);
+                        toolFuel -= Time.deltaTime * blowtorchFuelLossRate;
+                    }
                 }
                 // freezer
                 else
                 {
-                    //terrain.Freeze(hit.point, freezeRadius);
-                    toolFuel += Time.deltaTime * freezeFuelLossRate;
+                    if (hit.transform.tag == "Ice")
+                    {
+                        hit.transform.GetComponent<TerrainManipulation>().Freeze(hit.point, freezeRadius);
+                        toolFuel += Time.deltaTime * freezeFuelLossRate;
+                    }
                 }
             }
         }

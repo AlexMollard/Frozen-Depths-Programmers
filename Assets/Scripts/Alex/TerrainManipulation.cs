@@ -10,13 +10,14 @@ public class TerrainManipulation : MonoBehaviour
 
     List<Vector3> vertices = new List<Vector3>();
     List<int> triangles = new List<int>();
+    List<Vector2> uvs = new List<Vector2>();
 
     MeshFilter meshFilter;
     MeshCollider meshCollider;
 
     float terrainSurface = 0.5f;
-    int width = 64;
-    int height = 16;
+    int width = 32;
+    int height = 8;
     float[,,] terrainMap;
 
     int _configIndex;
@@ -26,13 +27,12 @@ public class TerrainManipulation : MonoBehaviour
     {
         meshFilter = GetComponent<MeshFilter>();
         meshCollider = GetComponent<MeshCollider>();
-        transform.tag = "Terrain";
+        transform.tag = "Ice";
 
         terrainMap = new float[width + 1, height + 1, width + 1];
 
         PopulateTerrainMap();
         CreateMeshData();
-        BuildMesh();
     }
 
     void PopulateTerrainMap()
@@ -47,10 +47,10 @@ public class TerrainManipulation : MonoBehaviour
             {
                 for (int z = 0; z < width + 1; z++)
                 {
-                    //float thisHeight =  (PerlinNoise3D((float)x / noiseZoom + randomOffset, (float)y / noiseZoom + randomOffset, (float)z / noiseZoom + randomOffset) + PerlinNoise3D((float)x / (noiseZoom * 0.75f) + randomOffset2, (float)y / (noiseZoom * 0.75f) + randomOffset2, (float)z / (noiseZoom * 0.75f) + randomOffset2));
-                    //thisHeight *= (Mathf.PerlinNoise((float)x / noiseZoom + randomOffset, (float)z / noiseZoom + randomOffset) / 2) + (Mathf.PerlinNoise((float)x / (noiseZoom * 0.5f) + randomOffset2, (float)z / (noiseZoom * 0.5f) + randomOffset2) / 2);
+                   // float thisHeight =  (PerlinNoise3D((float)x / noiseZoom + randomOffset, (float)y / noiseZoom + randomOffset, (float)z / noiseZoom + randomOffset) + PerlinNoise3D((float)x / (noiseZoom * 0.75f) + randomOffset2, (float)y / (noiseZoom * 0.75f) + randomOffset2, (float)z / (noiseZoom * 0.75f) + randomOffset2));
+                   // thisHeight *= (Mathf.PerlinNoise((float)x / noiseZoom + randomOffset, (float)z / noiseZoom + randomOffset) / 2) + (Mathf.PerlinNoise((float)x / (noiseZoom * 0.5f) + randomOffset2, (float)z / (noiseZoom * 0.5f) + randomOffset2) / 2);
                     
-                    float thisHeight = (Mathf.PerlinNoise((float) x / noiseZoom + randomOffset, (float)z / noiseZoom + randomOffset) / 8);
+                    float thisHeight = 0;
                     
                     thisHeight *= (float)height;
 
@@ -62,6 +62,7 @@ public class TerrainManipulation : MonoBehaviour
 
     void CreateMeshData()
     {
+        ClearMeshData();
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -72,7 +73,23 @@ public class TerrainManipulation : MonoBehaviour
                 }
             }
         }
+        BuildMesh();
     }
+
+    public void Freeze (Vector3 pos, float radius)
+    {
+        Vector3Int v3Int = new Vector3Int(Mathf.CeilToInt(pos.x), Mathf.CeilToInt(pos.y), Mathf.CeilToInt(pos.z));
+        terrainMap[v3Int.x, v3Int.y, v3Int.z] = 0.0f;
+        CreateMeshData();
+    }
+
+    public void Burn(Vector3 pos, float radius)
+    {
+        Vector3Int v3Int = new Vector3Int(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
+        terrainMap[v3Int.x, v3Int.y, v3Int.z] = 1.0f;
+        CreateMeshData();
+    }
+
 
     int GetCubeConfiguration(float[] cube)
     {
@@ -134,15 +151,14 @@ public class TerrainManipulation : MonoBehaviour
 
                 if (flatShaded)
                 {
-
                     vertices.Add(vertPosition);
                     triangles.Add(vertices.Count - 1);
+                    uvs.Add(new Vector2(UnityEngine.Random.value, UnityEngine.Random.value));
                 }
                 else
                 {
                     triangles.Add(VertForIndice(vertPosition));
                 }
-
                 edgeIndex++;
             }
         }
@@ -155,7 +171,7 @@ public class TerrainManipulation : MonoBehaviour
             if (vertices[i] == vert)
                 return i;
         }
-
+        uvs.Add(new Vector2(UnityEngine.Random.value, UnityEngine.Random.value));
         vertices.Add(vert);
         return vertices.Count - 1;
     }
@@ -164,6 +180,7 @@ public class TerrainManipulation : MonoBehaviour
     {
         vertices.Clear();
         triangles.Clear();
+        uvs.Clear();
     }
 
     float SampleTerrain(Vector3Int point)
@@ -176,6 +193,7 @@ public class TerrainManipulation : MonoBehaviour
         Mesh mesh = new Mesh();
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
+        mesh.SetUVs(0, uvs);
         mesh.RecalculateNormals();
         meshFilter.mesh = mesh;
         meshCollider.sharedMesh = mesh;
