@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 6641315126594596371}
   - component: {fileID: 6641315126594596380}
   m_Layer: 0
-  m_Name: Main Camera
+  m_Name: Player Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -139,6 +139,7 @@ GameObject:
   - component: {fileID: 6641315128160775799}
   - component: {fileID: 6641315128160775796}
   - component: {fileID: 6641315128160775798}
+  - component: {fileID: 1367854099}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -202,6 +203,22 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 256
+--- !u!114 &1367854099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6641315128160775797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a80c8ae0705a08847be977961b039573, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rt: {fileID: 0}
+  interactableMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &6641315128167519331
 GameObject:
   m_ObjectHideFlags: 0
