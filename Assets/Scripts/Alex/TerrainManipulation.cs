@@ -47,8 +47,11 @@ public class TerrainManipulation : MonoBehaviour
             {
                 for (int z = 0; z < width + 1; z++)
                 {
-                    float thisHeight =  (PerlinNoise3D((float)x / noiseZoom + randomOffset, (float)y / noiseZoom + randomOffset, (float)z / noiseZoom + randomOffset) + PerlinNoise3D((float)x / (noiseZoom * 0.75f) + randomOffset2, (float)y / (noiseZoom * 0.75f) + randomOffset2, (float)z / (noiseZoom * 0.75f) + randomOffset2));
-                    thisHeight *= (Mathf.PerlinNoise((float)x / noiseZoom + randomOffset, (float)z / noiseZoom + randomOffset) / 2) + (Mathf.PerlinNoise((float)x / (noiseZoom * 0.5f) + randomOffset2, (float)z / (noiseZoom * 0.5f) + randomOffset2) / 2);
+                    //float thisHeight =  (PerlinNoise3D((float)x / noiseZoom + randomOffset, (float)y / noiseZoom + randomOffset, (float)z / noiseZoom + randomOffset) + PerlinNoise3D((float)x / (noiseZoom * 0.75f) + randomOffset2, (float)y / (noiseZoom * 0.75f) + randomOffset2, (float)z / (noiseZoom * 0.75f) + randomOffset2));
+                    //thisHeight *= (Mathf.PerlinNoise((float)x / noiseZoom + randomOffset, (float)z / noiseZoom + randomOffset) / 2) + (Mathf.PerlinNoise((float)x / (noiseZoom * 0.5f) + randomOffset2, (float)z / (noiseZoom * 0.5f) + randomOffset2) / 2);
+                    
+                    float thisHeight = (Mathf.PerlinNoise((float) x / noiseZoom + randomOffset, (float)z / noiseZoom + randomOffset) / 8);
+                    
                     thisHeight *= (float)height;
 
                     terrainMap[x, y, z] = (float)y - thisHeight;
