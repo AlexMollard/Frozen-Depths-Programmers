@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+// TODO: Add subtitle sequences, so one subtitle will lead into another subtitle if needed.
+
 public class Subtitles : MonoBehaviour
 {
     [SerializeField] private float secondsUntilDisappear = 3;

@@ -6,9 +6,11 @@
     Last Modified: 22/07/2020
 */
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerInteract : MonoBehaviour
 {
@@ -16,6 +18,7 @@ public class PlayerInteract : MonoBehaviour
     [SerializeField] private float interactReach = 10;
     [SerializeField] private Transform playerCamera;
     [SerializeField] private MeshFilter artifactViewer;
+    [SerializeField] private Text viewerDescription;
 
     private PlayerMovement pmScript;
     private MouseLook mlScript;
@@ -35,8 +38,7 @@ public class PlayerInteract : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(camPos, playerCamera.TransformDirection(Vector3.forward), out hit, interactReach, interactableMask))
             {
-                Mesh newMesh = hit.collider.gameObject.GetComponent<MeshFilter>().mesh;
-                EnableArtifactViewer(newMesh);
+                EnableArtifactViewer(hit.collider.gameObject);
             }
         }
 
@@ -46,10 +48,22 @@ public class PlayerInteract : MonoBehaviour
         }
     }
 
-    public void EnableArtifactViewer(Mesh mesh)
+    public void EnableArtifactViewer(GameObject obj)
     {
         artifactViewer.gameObject.SetActive(true);
-        artifactViewer.mesh = mesh;
+        viewerDescription.gameObject.SetActive(true);
+
+        artifactViewer.mesh = obj.GetComponent<MeshFilter>().mesh;
+
+        try
+        {
+            viewerDescription.text = obj.GetComponent<Interactable>().description;
+        }
+        catch
+        {
+            Debug.LogError("Interactable objects must have the Interactable.cs script attached to work properly.");
+        }
+
         pmScript.enabled = false;
         mlScript.enabled = false;
 
@@ -59,6 +73,8 @@ public class PlayerInteract : MonoBehaviour
     public void DisableArtifactViewer()
     {
         artifactViewer.gameObject.SetActive(false);
+        viewerDescription.gameObject.SetActive(false);
+
         pmScript.enabled = true;
         mlScript.enabled = true;
 

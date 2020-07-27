@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1667617729611279657}
   - component: {fileID: 1667617729611279656}
   - component: {fileID: 1667617729611279663}
+  - component: {fileID: 2044898414933797289}
   m_Layer: 9
   m_Name: Interactable
   m_TagString: Untagged
@@ -93,6 +94,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2044898414933797289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1667617729611279662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 613bde3d9849a9f44b15ba09b29ac0bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  description: This is a cube. It's also pink for some reason.
 --- !u!1 &1667617730144933241
 GameObject:
   m_ObjectHideFlags: 0
