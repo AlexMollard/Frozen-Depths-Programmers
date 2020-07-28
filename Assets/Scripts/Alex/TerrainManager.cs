@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TerrainManipulation : MonoBehaviour
+public class TerrainManager : MonoBehaviour
 {
     public bool smoothTerrain;
     public bool flatShaded;
@@ -16,13 +16,11 @@ public class TerrainManipulation : MonoBehaviour
     MeshCollider meshCollider;
 
     float terrainSurface = 0.5f;
-    int width = 32;
-    int height = 8;
+    const int height = 5;
+    const int width = 5;
+
     float[,,] terrainMap;
 
-    int _configIndex;
-
-    // Start is called before the first frame update
     private void Start()
     {
         meshFilter = GetComponent<MeshFilter>();
@@ -37,24 +35,13 @@ public class TerrainManipulation : MonoBehaviour
 
     void PopulateTerrainMap()
     {
-        float randomOffset = (float)UnityEngine.Random.Range(0, 1000000);
-        float randomOffset2 = (float)UnityEngine.Random.Range(0, 1000000);
-        float noiseZoom = 18.0f;
-
         for (int x = 0; x < width + 1; x++)
         {
             for (int y = 0; y < height + 1; y++)
             {
                 for (int z = 0; z < width + 1; z++)
                 {
-                   // float thisHeight =  (PerlinNoise3D((float)x / noiseZoom + randomOffset, (float)y / noiseZoom + randomOffset, (float)z / noiseZoom + randomOffset) + PerlinNoise3D((float)x / (noiseZoom * 0.75f) + randomOffset2, (float)y / (noiseZoom * 0.75f) + randomOffset2, (float)z / (noiseZoom * 0.75f) + randomOffset2));
-                   // thisHeight *= (Mathf.PerlinNoise((float)x / noiseZoom + randomOffset, (float)z / noiseZoom + randomOffset) / 2) + (Mathf.PerlinNoise((float)x / (noiseZoom * 0.5f) + randomOffset2, (float)z / (noiseZoom * 0.5f) + randomOffset2) / 2);
-                    
-                    float thisHeight = 0;
-                    
-                    thisHeight *= (float)height;
-
-                    terrainMap[x, y, z] = (float)y - thisHeight;
+                    terrainMap[x, y, z] = (float)y;
                 }
             }
         }
@@ -79,6 +66,8 @@ public class TerrainManipulation : MonoBehaviour
     public void Freeze (Vector3 pos, float radius)
     {
         Vector3Int v3Int = new Vector3Int(Mathf.CeilToInt(pos.x), Mathf.CeilToInt(pos.y), Mathf.CeilToInt(pos.z));
+        v3Int -= Vector3Int.RoundToInt(transform.position);
+
         terrainMap[v3Int.x, v3Int.y, v3Int.z] = 0.0f;
         CreateMeshData();
     }
@@ -86,10 +75,10 @@ public class TerrainManipulation : MonoBehaviour
     public void Burn(Vector3 pos, float radius)
     {
         Vector3Int v3Int = new Vector3Int(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
+        v3Int -= Vector3Int.RoundToInt(transform.position);
         terrainMap[v3Int.x, v3Int.y, v3Int.z] = 1.0f;
         CreateMeshData();
     }
-
 
     int GetCubeConfiguration(float[] cube)
     {
@@ -98,7 +87,6 @@ public class TerrainManipulation : MonoBehaviour
         {
             if (cube[i] > terrainSurface)
                 configurationIndex |= 1 << i;
-
         }
 
         return configurationIndex;
@@ -135,30 +123,31 @@ public class TerrainManipulation : MonoBehaviour
                     float vert1Sample = cube[EdgeIndexes[indice, 0]];
                     float vert2Sample = cube[EdgeIndexes[indice, 1]];
 
-                    float diffrence = vert2Sample - vert1Sample;
-
-                    if (diffrence == 0)
-                        diffrence = terrainSurface;
+                    float difference = vert2Sample - vert1Sample;
+                    
+                    if (difference == 0)
+                        difference = terrainSurface;
                     else
-                        diffrence = (terrainSurface - vert1Sample) / diffrence;
+                        difference = (terrainSurface - vert1Sample) / difference;
 
-                    vertPosition = vert1 + ((vert2 - vert1) * diffrence);
+                    vertPosition = vert1 + ((vert2 - vert1) * difference);
                 }
                 else
                 {
                     vertPosition = (vert1 + vert2) / 2.0f;
                 }
 
-                if (flatShaded)
-                {
-                    vertices.Add(vertPosition);
-                    triangles.Add(vertices.Count - 1);
-                    uvs.Add(new Vector2(UnityEngine.Random.value, UnityEngine.Random.value));
-                }
-                else
-                {
-                    triangles.Add(VertForIndice(vertPosition));
-                }
+
+                    if (flatShaded)
+                    {
+                        vertices.Add(vertPosition);
+                        triangles.Add(vertices.Count - 1);
+                        uvs.Add(new Vector2(0.5f, 0.5f));
+                    }
+                    else
+                    {
+                        triangles.Add(VertForIndice(vertPosition));
+                    }
                 edgeIndex++;
             }
         }
@@ -171,7 +160,7 @@ public class TerrainManipulation : MonoBehaviour
             if (vertices[i] == vert)
                 return i;
         }
-        uvs.Add(new Vector2(UnityEngine.Random.value, UnityEngine.Random.value));
+        uvs.Add(new Vector2(0.5f, 0.5f));
         vertices.Add(vert);
         return vertices.Count - 1;
     }

@@ -28,7 +28,7 @@ public class Tool : MonoBehaviour
                 {
                     if (hit.transform.tag == "Ice")
                     {
-                        hit.transform.GetComponent<TerrainManipulation>().Burn(hit.point, freezeRadius);
+                        hit.transform.GetComponent<TerrainManager>().Burn(hit.point, freezeRadius);
                         toolFuel -= Time.deltaTime * blowtorchFuelLossRate;
                     }
                 }
@@ -37,7 +37,7 @@ public class Tool : MonoBehaviour
                 {
                     if (hit.transform.tag == "Ice")
                     {
-                        hit.transform.GetComponent<TerrainManipulation>().Freeze(hit.point, freezeRadius);
+                        hit.transform.GetComponent<TerrainManager>().Freeze(hit.point, freezeRadius);
                         toolFuel += Time.deltaTime * freezeFuelLossRate;
                     }
                 }
