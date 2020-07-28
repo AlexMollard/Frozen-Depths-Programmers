@@ -12,7 +12,8 @@ public class Tool : MonoBehaviour
     public float freezeRadius;
     public float freezeFuelLossRate;
 
-    float toolFuel = 50.0f;
+    [HideInInspector]
+    public float toolFuel = 50.0f;
 
     void Update()
     {
