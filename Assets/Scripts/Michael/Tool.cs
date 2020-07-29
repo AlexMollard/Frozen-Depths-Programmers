@@ -6,7 +6,7 @@ public class Tool : MonoBehaviour
 {
     [Header("General")]
     public float range = 10.0f;
-    public MenuManager menu;
+    //public MenuManager menu;
     [HideInInspector]
     public float toolFuel = 50.0f;
 
@@ -22,11 +22,11 @@ public class Tool : MonoBehaviour
 
     void Update()
     {
-        if (menu.inGame &&
+        if (
             Input.GetMouseButton(0) && toolFuel > 0.0f ||
             Input.GetMouseButton(1) && toolFuel < 100.0f)
         {
-            Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f,0.5f,1.0f));
+            Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 1.0f));
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, range))
             {
@@ -35,8 +35,8 @@ public class Tool : MonoBehaviour
                 {
                     if (hit.transform.tag == "Ice")
                     {
-                        hit.transform.GetComponent<TerrainManager>().Burn(hit.point, freezeRadius);
-                        toolFuel -= Time.deltaTime * blowtorchFuelLossRate;
+                        if (hit.transform.GetComponent<EditableTerrain>().Burn(hit.point, freezeRadius))
+                            toolFuel -= Time.deltaTime * blowtorchFuelLossRate;
                     }
                 }
                 // freezer
@@ -44,8 +44,8 @@ public class Tool : MonoBehaviour
                 {
                     if (hit.transform.tag == "Ice")
                     {
-                        hit.transform.GetComponent<TerrainManager>().Freeze(hit.point, freezeRadius);
-                        toolFuel += Time.deltaTime * freezeFuelLossRate;
+                        if (hit.transform.GetComponent<EditableTerrain>().Freeze(hit.point, freezeRadius))
+                            toolFuel += Time.deltaTime * freezeFuelLossRate;
                     }
                 }
             }
