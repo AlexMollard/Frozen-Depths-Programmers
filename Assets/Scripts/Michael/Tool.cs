@@ -18,7 +18,10 @@ public class Tool : MonoBehaviour
 
     [Header("FuelDisplay")]
     public Text fuelDisplay;
+
+    [Header("Other")]
     /*public MenuManager menu;*/
+    public Camera playerCamera;
 
     void Update()
     {
@@ -26,7 +29,7 @@ public class Tool : MonoBehaviour
             Input.GetMouseButton(0)||
             Input.GetMouseButton(1) && toolFuel > 0.0f)
         {
-            Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f,0.5f,1.0f));
+            Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f,0.5f,1.0f));
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, range))
             {
