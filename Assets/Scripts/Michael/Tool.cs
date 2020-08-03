@@ -1,30 +1,30 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Tool : MonoBehaviour
 {
-    [Header("General")]
+    [Header("Tool Use")]
     public float range = 10.0f;
-    public MenuManager menu;
+    public float radius;
+
+    [Header("Fuel Economy")]
     [HideInInspector]
-    public float toolFuel = 50.0f;
+    public float toolFuel = 0.0f;
+    public float FuelGainRate = 100.0f;
+    public float FuelLossRate = 100.0f;
+    public float capacity = 1000.0f;
 
-    [Header("Blowtorch")]
-    public float burnRadius;
-    public float blowtorchFuelLossRate;
-
-    [Header("Freezer")]
-    public float freezeRadius;
-    public float freezeFuelLossRate;
-
-
+    [Header("FuelDisplay")]
+    public Text fuelDisplay;
+    /*public MenuManager menu;*/
 
     void Update()
     {
-        if (menu.inGame &&
-            Input.GetMouseButton(0) && toolFuel > 0.0f ||
-            Input.GetMouseButton(1) && toolFuel < 100.0f)
+        if (/*menu.inGame &&*/
+            Input.GetMouseButton(0)||
+            Input.GetMouseButton(1) && toolFuel > 0.0f)
         {
             Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f,0.5f,1.0f));
             RaycastHit hit;
@@ -35,8 +35,12 @@ public class Tool : MonoBehaviour
                 {
                     if (hit.transform.tag == "Ice")
                     {
-                        hit.transform.GetComponent<TerrainManipulation>().Burn(hit.point, freezeRadius);
-                        toolFuel -= Time.deltaTime * blowtorchFuelLossRate;
+                        hit.transform.GetComponent<TerrainManipulation>().Burn(hit.point, radius);
+                        toolFuel += Time.deltaTime * FuelGainRate;
+                        if (capacity > 0.0f && toolFuel > capacity)
+                        {
+                            toolFuel = capacity;
+                        }
                     }
                 }
                 // freezer
@@ -44,11 +48,16 @@ public class Tool : MonoBehaviour
                 {
                     if (hit.transform.tag == "Ice")
                     {
-                        hit.transform.GetComponent<TerrainManipulation>().Freeze(hit.point, freezeRadius);
-                        toolFuel += Time.deltaTime * freezeFuelLossRate;
+                        hit.transform.GetComponent<TerrainManipulation>().Freeze(hit.point, radius);
+                        toolFuel -= Time.deltaTime * FuelLossRate;
+                        if (toolFuel < 0.0f)
+                        {
+                            toolFuel = 0.0f;
+                        }
                     }
                 }
             }
+            fuelDisplay.text = toolFuel.ToString("F2") + "mL";
         }
     }
 }
