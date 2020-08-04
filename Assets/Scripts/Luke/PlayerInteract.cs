@@ -26,7 +26,7 @@ public class PlayerInteract : MonoBehaviour
     private void Awake()
     {
         pmScript = GetComponent<PlayerMovement>();
-        //mlScript = playerCamera.gameObject.GetComponent<MouseLook>();
+        mlScript = playerCamera.gameObject.GetComponent<MouseLook>();
     }
 
     private void Update()
