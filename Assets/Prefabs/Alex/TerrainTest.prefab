@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dfc36df21a137a4b94e2b0ddf3f2e34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  smoothTerrain: 1
+  smoothTerrain: 0
   flatShaded: 1
 --- !u!33 &5050879582006432436
 MeshFilter:

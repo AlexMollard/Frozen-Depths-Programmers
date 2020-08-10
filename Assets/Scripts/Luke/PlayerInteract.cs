@@ -42,7 +42,7 @@ public class PlayerInteract : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && pmScript.enabled == false)
         {
             DisableArtifactViewer();
         }

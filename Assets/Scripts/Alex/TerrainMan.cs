@@ -1,108 +1,146 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using UnityEngine;
 
-public class TerrainManipulation : MonoBehaviour
+public class TerrainMan : MonoBehaviour
 {
+    [SerializeField]
+    GameObject terrainPrefab;
+
+    List<List<EditableTerrain>> terrains = new List<List<EditableTerrain>>();
+    List<List<GameObject>> terrainsOBJS = new List<List<GameObject>>();
+
+    [SerializeField]
+    int terrainTotalX = 4;
+
+    [SerializeField]
+    int terrainTotalZ = 4;
+
+
+    [SerializeField]
+    int terrainWidth = 4;
+
+    [SerializeField]
+    int terrainHeight = 4;
+
+    [SerializeField]
+    int terrainDepth = 4;
+
+
     public bool smoothTerrain;
     public bool flatShaded;
 
-    List<Vector3> vertices = new List<Vector3>();
-    List<int> triangles = new List<int>();
-    List<Vector2> uvs = new List<Vector2>();
-
-    MeshFilter meshFilter;
-    MeshCollider meshCollider;
-
     float terrainSurface = 0.5f;
-    int width = 32;
-    int height = 8;
-    float[,,] terrainMap;
 
-    int _configIndex;
+    float[,,] surroundingTerrainMap;
+    List<Vector3> surroundingTerrainVertices = new List<Vector3>();
+    List<int> surroundingTerrainTriangles = new List<int>();
+    List<Vector2> surroundingTerrainUvs = new List<Vector2>();
 
-    // Start is called before the first frame update
-    private void Start()
+    void Start()
     {
-        meshFilter = GetComponent<MeshFilter>();
-        meshCollider = GetComponent<MeshCollider>();
-        transform.tag = "Ice";
+        surroundingTerrainMap = new float[(terrainWidth * 3) + 1, (terrainHeight * 3) + 1, (terrainDepth * 3) + 1];
+        Vector3 currentManPos = transform.position;
 
-        terrainMap = new float[width + 1, height + 1, width + 1];
-
-        PopulateTerrainMap();
-        CreateMeshData();
+        for (int x = 0; x < terrainTotalX; x++)
+        {
+            terrains.Add(new List<EditableTerrain>());
+            terrainsOBJS.Add(new List<GameObject>());
+            for (int z = 0; z < terrainTotalZ; z++)
+            {
+                terrainsOBJS[x].Add(Instantiate(terrainPrefab, new Vector3(x * terrainWidth, 0, z * terrainDepth) - currentManPos, Quaternion.identity));
+                terrainsOBJS[x][z].name = x + ", " + z;
+                terrains[x].Add(terrainsOBJS[x][z].GetComponent<EditableTerrain>());
+                terrains[x][z].CreateMesh(this, new Vector2Int(x, z), new Vector3Int(terrainWidth, terrainHeight, terrainDepth));
+            }
+        }
     }
 
-    void PopulateTerrainMap()
+    public void UpdateMesh(Vector2Int index)
     {
-        float randomOffset = (float)UnityEngine.Random.Range(0, 1000000);
-        float randomOffset2 = (float)UnityEngine.Random.Range(0, 1000000);
-        float noiseZoom = 18.0f;
+        /*
+         *  [0,2|1,2|2,2]
+         *  [0,1|1,1|2,1]
+         *  [0,0|1,0|2,0]
+         */
+        surroundingTerrainVertices.Clear();
+        surroundingTerrainTriangles.Clear();
+        surroundingTerrainUvs.Clear();
 
-        for (int x = 0; x < width + 1; x++)
+
+
+        // Top Row
+        bool topLeft = (index.y + 1 < terrainTotalZ && index.x - 1 >= 0) ? true : false;
+        AddToMap(new Vector2Int(0, 2), index.x - 1, index.y + 1, topLeft);
+
+        bool topCenter = (index.y + 1 < terrainTotalZ) ? true : false;
+        AddToMap(new Vector2Int(1, 2), index.x, index.y + 1, topCenter);
+
+        bool topRight = (index.y + 1 < terrainTotalZ && index.x + 1 < terrainTotalX) ? true : false;
+        AddToMap(new Vector2Int(2, 2), index.x + 1, index.y + 1, topRight);
+
+        // Middle Row
+        bool middleLeft = (index.x - 1 >= 0) ? true : false;
+        AddToMap(new Vector2Int(0, 1), index.x - 1, index.y, middleLeft);
+
+        // Center
+        AddToMap(new Vector2Int(1, 1), index.x, index.y, middleLeft);
+
+        bool middleRight = (index.x + 1 < terrainTotalX) ? true : false;
+        AddToMap(new Vector2Int(2, 1), index.x + 1, index.y, middleRight);
+
+        // Bottom Row
+        bool bottomLeft = (index.y - 1 >= 0 && index.x - 1 >= 0) ? true : false;
+        AddToMap(new Vector2Int(0, 0), index.x - 1, index.y - 1, bottomLeft);
+
+        bool bottomCenter = (index.y - 1 >= 0) ? true : false;
+        AddToMap(new Vector2Int(1, 0), index.x, index.y - 1, bottomCenter);
+
+        bool bottomRight = (index.y - 1 >= 0 && index.x + 1 < terrainTotalX) ? true : false;
+        AddToMap(new Vector2Int(2, 0), index.x + 1, index.y - 1, bottomRight);
+
+
+        for (int x = 0; x < terrainWidth * 3; x++)
         {
-            for (int y = 0; y < height + 1; y++)
+            for (int y = 0; y < terrainHeight * 3; y++)
             {
-                for (int z = 0; z < width + 1; z++)
+                for (int z = 0; z < terrainDepth * 3; z++)
                 {
-                   // float thisHeight =  (PerlinNoise3D((float)x / noiseZoom + randomOffset, (float)y / noiseZoom + randomOffset, (float)z / noiseZoom + randomOffset) + PerlinNoise3D((float)x / (noiseZoom * 0.75f) + randomOffset2, (float)y / (noiseZoom * 0.75f) + randomOffset2, (float)z / (noiseZoom * 0.75f) + randomOffset2));
-                   // thisHeight *= (Mathf.PerlinNoise((float)x / noiseZoom + randomOffset, (float)z / noiseZoom + randomOffset) / 2) + (Mathf.PerlinNoise((float)x / (noiseZoom * 0.5f) + randomOffset2, (float)z / (noiseZoom * 0.5f) + randomOffset2) / 2);
-                    
-                    float thisHeight = 0;
-                    
-                    thisHeight *= (float)height;
+                    MarchCube(new Vector3Int(x, y, z));
+                }
+            }
+        }
 
-                    terrainMap[x, y, z] = (float)y - thisHeight;
+        // We now have a array of all the float values of all surronding chunks now we need to give the new updated
+        // vertices, tris and uvs back to the chunks.
+
+        terrains[index.x][index.y].ClearMeshData();
+        terrains[index.x][index.y].vertices = surroundingTerrainVertices.GetRange((surroundingTerrainVertices.Count / 9) * 4, (surroundingTerrainVertices.Count / 9));
+        terrains[index.x][index.y].triangles = surroundingTerrainTriangles.GetRange((surroundingTerrainTriangles.Count / 9) * 4, (surroundingTerrainTriangles.Count / 9));
+        terrains[index.x][index.y].uvs = surroundingTerrainUvs.GetRange((surroundingTerrainUvs.Count / 9) * 4, (surroundingTerrainUvs.Count / 9));
+        terrains[index.x][index.y].BuildMesh();
+
+        //terrains[index.x][index.y].CreateMeshData();
+    }
+
+    void AddToMap(Vector2Int StartPos, int indexX, int indexZ, bool mapExist)
+    {
+        for (int x = 0; x < terrainWidth; x++)
+        {
+            for (int y = 0; y < terrainHeight; y++)
+            {
+                for (int z = 0; z < terrainDepth; z++)
+                {
+                    if (mapExist)
+                        surroundingTerrainMap[x + ((StartPos.x) * terrainWidth), y, z + ((StartPos.y) * terrainDepth)] = terrains[indexX][indexZ].terrainMap[x, y, z];
+                    else
+                        surroundingTerrainMap[x + ((StartPos.x) * terrainWidth), y, z + ((StartPos.y) * terrainDepth)] = terrainSurface;
                 }
             }
         }
     }
 
-    void CreateMeshData()
-    {
-        ClearMeshData();
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                for (int z = 0; z < width; z++)
-                {
-                    MarchCube(new Vector3Int(x,y,z));
-                }
-            }
-        }
-        BuildMesh();
-    }
-
-    public void Freeze (Vector3 pos, float radius)
-    {
-        Vector3Int v3Int = new Vector3Int(Mathf.CeilToInt(pos.x), Mathf.CeilToInt(pos.y), Mathf.CeilToInt(pos.z));
-        terrainMap[v3Int.x, v3Int.y, v3Int.z] = 0.0f;
-        CreateMeshData();
-    }
-
-    public void Burn(Vector3 pos, float radius)
-    {
-        Vector3Int v3Int = new Vector3Int(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
-        terrainMap[v3Int.x, v3Int.y, v3Int.z] = 1.0f;
-        CreateMeshData();
-    }
-
-
-    int GetCubeConfiguration(float[] cube)
-    {
-        int configurationIndex = 0;
-        for (int i = 0; i < 8; i++)
-        {
-            if (cube[i] > terrainSurface)
-                configurationIndex |= 1 << i;
-
-        }
-
-        return configurationIndex;
-    }
 
     void MarchCube(Vector3Int position)
     {
@@ -135,29 +173,30 @@ public class TerrainManipulation : MonoBehaviour
                     float vert1Sample = cube[EdgeIndexes[indice, 0]];
                     float vert2Sample = cube[EdgeIndexes[indice, 1]];
 
-                    float diffrence = vert2Sample - vert1Sample;
+                    float difference = vert2Sample - vert1Sample;
 
-                    if (diffrence == 0)
-                        diffrence = terrainSurface;
+                    if (difference == 0)
+                        difference = terrainSurface;
                     else
-                        diffrence = (terrainSurface - vert1Sample) / diffrence;
+                        difference = (terrainSurface - vert1Sample) / difference;
 
-                    vertPosition = vert1 + ((vert2 - vert1) * diffrence);
+                    vertPosition = vert1 + ((vert2 - vert1) * difference);
                 }
                 else
                 {
                     vertPosition = (vert1 + vert2) / 2.0f;
                 }
 
+
                 if (flatShaded)
                 {
-                    vertices.Add(vertPosition);
-                    triangles.Add(vertices.Count - 1);
-                    uvs.Add(new Vector2(UnityEngine.Random.value, UnityEngine.Random.value));
+                    surroundingTerrainVertices.Add(vertPosition);
+                    surroundingTerrainTriangles.Add(surroundingTerrainVertices.Count - 1);
+                    surroundingTerrainUvs.Add(new Vector2(0.5f, 0.5f));
                 }
                 else
                 {
-                    triangles.Add(VertForIndice(vertPosition));
+                    surroundingTerrainTriangles.Add(VertForIndice(vertPosition));
                 }
                 edgeIndex++;
             }
@@ -166,37 +205,32 @@ public class TerrainManipulation : MonoBehaviour
 
     int VertForIndice(Vector3 vert)
     {
-        for (int i = 0; i < vertices.Count; i++)
+        for (int i = 0; i < surroundingTerrainVertices.Count; i++)
         {
-            if (vertices[i] == vert)
+            if (surroundingTerrainVertices[i] == vert)
                 return i;
         }
-        uvs.Add(new Vector2(UnityEngine.Random.value, UnityEngine.Random.value));
-        vertices.Add(vert);
-        return vertices.Count - 1;
+        surroundingTerrainUvs.Add(new Vector2(0.5f, 0.5f));
+        surroundingTerrainVertices.Add(vert);
+        return surroundingTerrainVertices.Count - 1;
     }
 
-    void ClearMeshData()
+
+    int GetCubeConfiguration(float[] cube)
     {
-        vertices.Clear();
-        triangles.Clear();
-        uvs.Clear();
+        int configurationIndex = 0;
+        for (int i = 0; i < 8; i++)
+        {
+            if (cube[i] > terrainSurface)
+                configurationIndex |= 1 << i;
+        }
+
+        return configurationIndex;
     }
 
     float SampleTerrain(Vector3Int point)
     {
-        return terrainMap[point.x, point.y, point.z];
-    }
-
-    void BuildMesh()
-    {
-        Mesh mesh = new Mesh();
-        mesh.vertices = vertices.ToArray();
-        mesh.triangles = triangles.ToArray();
-        mesh.SetUVs(0, uvs);
-        mesh.RecalculateNormals();
-        meshFilter.mesh = mesh;
-        meshCollider.sharedMesh = mesh;
+        return surroundingTerrainMap[point.x, point.y, point.z];
     }
 
     Vector3Int[] CornerTable = new Vector3Int[8]
@@ -211,7 +245,7 @@ public class TerrainManipulation : MonoBehaviour
         new Vector3Int(0, 1, 1)
     };
 
-    int[,] EdgeIndexes = new int[12, 2] 
+    int[,] EdgeIndexes = new int[12, 2]
     {
         {0, 1}, {1, 2}, {3, 2}, {0, 3}, {4, 5}, {5, 6}, {7, 6}, {4, 7}, {0, 4}, {1, 5}, {2, 6}, {3, 7}
     };
@@ -476,21 +510,5 @@ public class TerrainManipulation : MonoBehaviour
         {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
     };
 
-    public static float PerlinNoise3D(float x, float y, float z)
-    {
-        y += 1;
-        z += 2;
-        float xy = _perlin3DFixed(x, y);
-        float xz = _perlin3DFixed(x, z);
-        float yz = _perlin3DFixed(y, z);
-        float yx = _perlin3DFixed(y, x);
-        float zx = _perlin3DFixed(z, x);
-        float zy = _perlin3DFixed(z, y);
-        return xy * xz * yz * yx * zx * zy;
-    }
 
-    static float _perlin3DFixed(float a, float b)
-    {
-        return Mathf.Sin(Mathf.PI * Mathf.PerlinNoise(a, b));
-    }
 }
