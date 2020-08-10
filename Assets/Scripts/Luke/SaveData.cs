@@ -12,5 +12,8 @@ public class SaveData
     public float playerPosZ;
 
     public float toolFuel;
+
+    public int currentCheckpoint;
+
     // TODO: multidimensional array of floats for the terrain mesh
 }

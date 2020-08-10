@@ -14,6 +14,7 @@ public static class SaveManager
         data.playerPosY = player.transform.position.y;
         data.playerPosZ = player.transform.position.z;
         data.toolFuel = player.GetComponent<Tool>().toolFuel;
+        data.currentCheckpoint = CheckpointManager.checkpointCounter;
         // save terrain mesh here
 
         BinaryFormatter bf = new BinaryFormatter();
@@ -32,11 +33,20 @@ public static class SaveManager
             SaveData data = (SaveData)bf.Deserialize(file);
             file.Close();
 
-            Debug.Log(player.transform.position);
-            Debug.Log("Saved pos: " + data.playerPosX + ", " + data.playerPosY + ", " + data.playerPosZ);
             player.transform.position = new Vector3(data.playerPosX, data.playerPosY, data.playerPosZ);
-            Debug.Log(player.transform.position);
             player.GetComponent<Tool>().toolFuel = data.toolFuel;
+            CheckpointManager.checkpointCounter = data.currentCheckpoint;
+
+            CheckpointManager.Instance.UpdateCheckpoints();
         }
+    }
+
+    public static void PrintSaveData(SaveData data)
+    {
+        Debug.Log("----- Save Data -----");
+        Debug.Log("Player position: (" + data.playerPosX + ", " + data.playerPosY + ", " + data.playerPosZ + ")");
+        Debug.Log("Tool fuel: " + data.toolFuel);
+        Debug.Log("Checkpoint counter: " + data.currentCheckpoint);
+        Debug.Log("---------------------");
     }
 }
