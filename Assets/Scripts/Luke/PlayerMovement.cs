@@ -15,7 +15,7 @@ public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private CharacterController controller;
     [SerializeField] private float speed = 12;
-    [SerializeField] private float gravity = -9.81f;
+    public float gravity = -9.81f;
     [SerializeField] private float jumpHeight = 3;
 
     [SerializeField] private Transform groundCheck;
