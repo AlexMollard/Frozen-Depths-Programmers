@@ -38,11 +38,13 @@ public class Tool : MonoBehaviour
                 {
                     if (hit.transform.tag == "Ice")
                     {
-                        hit.transform.GetComponent<EditableTerrain>().Burn(hit.point, radius);
-                        toolFuel += Time.deltaTime * FuelGainRate;
-                        if (capacity > 0.0f && toolFuel > capacity)
+                        if (hit.transform.GetComponent<EditableTerrain>().Burn(hit.point, radius))
                         {
-                            toolFuel = capacity;
+                            toolFuel += Time.deltaTime * FuelGainRate;
+                            if (capacity > 0.0f && toolFuel > capacity)
+                            {
+                                toolFuel = capacity;
+                            }
                         }
                     }
                 }
@@ -51,11 +53,13 @@ public class Tool : MonoBehaviour
                 {
                     if (hit.transform.tag == "Ice")
                     {
-                        hit.transform.GetComponent<EditableTerrain>().Freeze(hit.point, radius);
-                        toolFuel -= Time.deltaTime * FuelLossRate;
-                        if (toolFuel < 0.0f)
+                        if (hit.transform.GetComponent<EditableTerrain>().Freeze(hit.point, radius))
                         {
-                            toolFuel = 0.0f;
+                            toolFuel -= Time.deltaTime * FuelLossRate;
+                            if (toolFuel < 0.0f)
+                            {
+                                toolFuel = 0.0f;
+                            }
                         }
                     }
                 }

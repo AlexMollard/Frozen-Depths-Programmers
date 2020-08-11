@@ -48,6 +48,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   smoothTerrain: 0
   flatShaded: 1
+  vertices: []
+  triangles: 
+  uvs: []
 --- !u!33 &5050879582006432436
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -73,7 +76,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 94a026a715acd4046ba77cd73a6d2bc9, type: 2}
+  - {fileID: 2100000, guid: 760bdb57043bef444ac829e1a7bdb80c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

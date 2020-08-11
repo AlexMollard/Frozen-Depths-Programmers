@@ -43,10 +43,12 @@ public class TerrainMan : MonoBehaviour
             terrainsOBJS.Add(new List<GameObject>());
             for (int z = 0; z < terrainTotalZ; z++)
             {
-                terrainsOBJS[x].Add(Instantiate(terrainPrefab, new Vector3(x * (terrainWidth - 1), 0, z * (terrainDepth - 1)) - currentManPos, Quaternion.identity));
+                terrainsOBJS[x].Add(Instantiate(terrainPrefab, new Vector3(x * (terrainWidth - 1), 0, z * (terrainDepth - 1)) + currentManPos, Quaternion.identity));
                 terrainsOBJS[x][z].name = x + ", " + z;
                 terrains[x].Add(terrainsOBJS[x][z].GetComponent<EditableTerrain>());
                 terrains[x][z].CreateMesh(this, new Vector2Int(x, z), new Vector3Int(terrainWidth - 1, terrainHeight, terrainDepth - 1));
+                terrains[x][z].flatShaded = flatShaded;
+                terrains[x][z].smoothTerrain = smoothTerrain;
             }
         }
 
@@ -60,14 +62,6 @@ public class TerrainMan : MonoBehaviour
         {
             terrains[index.x][index.y].CreateMeshData();
         }
-
-        //for (int tX = 0; tX < terrainTotalX; tX++)
-        //{
-        //    for (int tZ = 0; tZ < terrainTotalZ; tZ++)
-        //    {
-        //           terrains[tX][tZ].CreateMeshData();
-        //    }
-        //}
     }
 
    void AssignEdgeValues()
