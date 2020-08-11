@@ -63,6 +63,8 @@ public class EditableTerrain : MonoBehaviour
 
     void PopulateTerrainMap()
     {
+        float noiseZoom = 4.5f;
+
         for (int x = 0; x < width + 1; x++)
         {
             for (int y = 0; y < height + 1; y++)
@@ -70,6 +72,12 @@ public class EditableTerrain : MonoBehaviour
                 for (int z = 0; z < depth + 1; z++)
                 {
                     terrainMap[x, y, z] = new floatMyGuy(y);
+
+                    float thisHeight = (Mathf.PerlinNoise(((float)x + (managerIndex.x * width)) / noiseZoom, (float)z + (managerIndex.y * depth)) / noiseZoom);
+                    thisHeight *= (float)height / 4;
+
+                    terrainMap[x, y, z].value = (float)y - thisHeight;
+
                 }
             }
         }

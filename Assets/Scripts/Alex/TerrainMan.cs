@@ -53,7 +53,19 @@ public class TerrainMan : MonoBehaviour
         }
 
         AssignEdgeValues();
+        RefreshAllChunks();
 
+    }
+
+    public void RefreshAllChunks()
+    {
+        for (int x = 0; x < terrainTotalX; x++)
+        {
+            for (int z = 0; z < terrainTotalZ; z++)
+            {
+                terrains[x][z].CreateMeshData();
+            }
+        }
     }
 
     public void UpdateChunk(Vector2Int index)
