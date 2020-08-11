@@ -9,7 +9,8 @@ public class Checkpoint : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        CheckpointManager.checkpointCounter++;
+        CheckpointManager.checkpointCounter = checkpointNumber + 1;
+        CheckpointManager.Instance.UpdateCheckpoints();
         SaveManager.SaveGame(other.gameObject);
 
         if (CheckpointManager.checkpointCounter > checkpointNumber)

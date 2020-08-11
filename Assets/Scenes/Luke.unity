@@ -518,6 +518,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1025482440 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4995710742402149464, guid: 7e6a3b1587db5a042b1b29a4b4537089,
+    type: 3}
+  m_PrefabInstance: {fileID: 4995710742626217808}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1051032328
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -541,6 +553,16 @@ PrefabInstance:
       propertyPath: viewerDescription
       value: 
       objectReference: {fileID: 1025203438}
+    - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
+        type: 3}
+      propertyPath: playerCamera
+      value: 
+      objectReference: {fileID: 1110701114}
+    - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
+        type: 3}
+      propertyPath: fuelDisplay
+      value: 
+      objectReference: {fileID: 1025482440}
     - target: {fileID: 6641315128160775797, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
       propertyPath: m_Name
@@ -603,6 +625,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cba56d5f368d6e54783161c488cfd8d3, type: 3}
+--- !u!20 &1110701114 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 6641315126594596370, guid: cba56d5f368d6e54783161c488cfd8d3,
+    type: 3}
+  m_PrefabInstance: {fileID: 1051032328}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1317643980
 PrefabInstance:
   m_ObjectHideFlags: 0
