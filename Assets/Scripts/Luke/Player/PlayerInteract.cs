@@ -54,6 +54,7 @@ public class PlayerInteract : MonoBehaviour
         viewerDescription.gameObject.SetActive(true);
 
         artifactViewer.mesh = obj.GetComponent<MeshFilter>().mesh;
+        artifactViewer.transform.localScale = obj.transform.localScale;
 
         try
         {
