@@ -14,6 +14,9 @@ public class MenuManager : MonoBehaviour
 
     public GameObject playerObject;
 
+    [Header("Player Script References")]
+    public MouseLook mouseLook;
+
     [HideInInspector]
     public GameObject currentUI;
     [HideInInspector]
@@ -24,6 +27,9 @@ public class MenuManager : MonoBehaviour
     GameObject[] UIs;
     bool willReset = false;
 
+    // references to scripts on the player, used to enable and disable movement
+    PlayerMovement pmScript;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,6 +39,9 @@ public class MenuManager : MonoBehaviour
         UIs = new GameObject[4] { mainMenuUI, gameMenuUI, inGameUI, settingsUI };
         SwitchUI(mainMenuUI);
         inGame = false;
+
+        pmScript = playerObject.GetComponent<PlayerMovement>();
+        DisablePlayerMovement();
     }
 
     private void Update()
@@ -42,16 +51,19 @@ public class MenuManager : MonoBehaviour
             if (currentUI == gameMenuUI)
             {
                 SwitchUI(inGameUI);
+                EnablePlayerMovement();
             }
             else if (currentUI == inGameUI)
             {
                 SwitchUI(gameMenuUI);
+                DisablePlayerMovement();
             }
             else if (currentUI == settingsUI)
             {
                 if (lastUI == gameMenuUI)
                 {
                     SwitchUI(inGameUI);
+                    EnablePlayerMovement();
                 }
                 else if (lastUI == mainMenuUI)
                 {
@@ -83,6 +95,7 @@ public class MenuManager : MonoBehaviour
     {
         SwitchUI(inGameUI);
         SwapCamera();
+        EnablePlayerMovement();
     }
 
     public void SettingsButton()
@@ -115,6 +128,21 @@ public class MenuManager : MonoBehaviour
     public void BackToGame()
     {
         SwitchUI(inGameUI);
+        EnablePlayerMovement();
+    }
+
+    private void DisablePlayerMovement()
+    {
+        mouseLook.enabled = false;
+        pmScript.enabled = false;
+        Cursor.lockState = CursorLockMode.None;
+    }
+
+    private void EnablePlayerMovement()
+    {
+        mouseLook.enabled = true;
+        pmScript.enabled = true;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void LateUpdate()

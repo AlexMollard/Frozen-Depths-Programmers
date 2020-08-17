@@ -300,6 +300,11 @@ PrefabInstance:
       propertyPath: playerObject
       value: 
       objectReference: {fileID: 1173826721}
+    - target: {fileID: 2081287389013166702, guid: 7ce4e0b45e8ce0841bb4ad05af0abd24,
+        type: 3}
+      propertyPath: mouseLook
+      value: 
+      objectReference: {fileID: 1416394671}
     - target: {fileID: 2081287389013166703, guid: 7ce4e0b45e8ce0841bb4ad05af0abd24,
         type: 3}
       propertyPath: m_Name
@@ -1205,6 +1210,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1416394669}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1416394671 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6641315126594596380, guid: cba56d5f368d6e54783161c488cfd8d3,
+    type: 3}
+  m_PrefabInstance: {fileID: 1416394669}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1416394670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d1efbc6089d3734982ecf8d26e8d714, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!20 &1416394673 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 6641315126594596370, guid: cba56d5f368d6e54783161c488cfd8d3,
@@ -1543,6 +1560,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: BackToMainMenu
+      objectReference: {fileID: 0}
+    - target: {fileID: 950115656684102609, guid: eab17894252a5bc439880b13bea02db0,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 950115656763248185, guid: eab17894252a5bc439880b13bea02db0,
         type: 3}
