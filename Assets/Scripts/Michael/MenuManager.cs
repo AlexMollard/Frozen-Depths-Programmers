@@ -12,6 +12,8 @@ public class MenuManager : MonoBehaviour
     public GameObject inGameUI;
     public GameObject settingsUI;
 
+    public GameObject playerObject;
+
     [HideInInspector]
     public GameObject currentUI;
     [HideInInspector]
@@ -20,6 +22,7 @@ public class MenuManager : MonoBehaviour
 
     GameObject lastUI;
     GameObject[] UIs;
+    bool willReset = false;
 
     // Start is called before the first frame update
     void Start()
@@ -101,7 +104,7 @@ public class MenuManager : MonoBehaviour
 
     public void Reset()
     {
-
+        willReset = true;
     }
 
     public void BackFromSettings()
@@ -112,5 +115,14 @@ public class MenuManager : MonoBehaviour
     public void BackToGame()
     {
         SwitchUI(inGameUI);
+    }
+
+    private void LateUpdate()
+    {
+        if (willReset)
+        {
+            SaveManager.LoadGame(playerObject);
+            willReset = false;
+        }
     }
 }
