@@ -6,6 +6,7 @@
     Last Modified: 22/07/2020
 */
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,7 +19,8 @@ public class ViewerRotate : MonoBehaviour
     {
         if (Input.GetMouseButton(0))
         {
-            Vector3 rotVector = new Vector3(Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime, Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime, 0);
+            Vector3 rotVector = new Vector3(Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime, Input.GetAxis("Mouse X") * -mouseSensitivity * Time.deltaTime, 0);
+            rotVector = transform.parent.TransformVector(rotVector);
             transform.Rotate(rotVector, Space.World);
         }
     }
