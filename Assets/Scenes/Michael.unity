@@ -967,6 +967,11 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 218026881}
+    - target: {fileID: 950115655728738872, guid: eab17894252a5bc439880b13bea02db0,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: BackToCheckpoint
+      objectReference: {fileID: 0}
     - target: {fileID: 950115655736140840, guid: eab17894252a5bc439880b13bea02db0,
         type: 3}
       propertyPath: m_LocalPosition.x
