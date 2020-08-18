@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Enables interaction and opens artifact viewer
     Creation Date: 21/07/2020
-    Last Modified: 22/07/2020
+    Last Modified: 18/08/2020
 */
 
 using System;
@@ -44,7 +44,7 @@ public class PlayerInteract : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) && pmScript.enabled == false)
         {
-            DisableArtifactViewer();
+            DisableArtifactViewer(true);
         }
     }
 
@@ -71,13 +71,16 @@ public class PlayerInteract : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
     }
 
-    public void DisableArtifactViewer()
+    public void DisableArtifactViewer(bool shouldEnableScripts)
     {
         artifactViewer.gameObject.SetActive(false);
         viewerDescription.gameObject.SetActive(false);
 
-        pmScript.enabled = true;
-        mlScript.enabled = true;
+        if (shouldEnableScripts)
+        {
+            pmScript.enabled = true;
+            mlScript.enabled = true;
+        }
 
         Cursor.lockState = CursorLockMode.Locked;
     }

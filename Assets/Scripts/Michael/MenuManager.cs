@@ -64,6 +64,9 @@ public class MenuManager : MonoBehaviour
             // if the current UI is the in-game UI, switch to the in-game menu
             else if (currentUI == inGameUI)
             {
+                // Disable artifact viewer when pausing, but do not enable movement scripts
+                player.GetComponent<PlayerInteract>().DisableArtifactViewer(false);
+
                 SwitchUI(gameMenuUI);
             }
             // if the current UI is the settings
