@@ -111,7 +111,7 @@ public class EditableTerrain : MonoBehaviour
 
     public bool Freeze (Vector3 pos, float radius, float strength)
     {
-        Vector3Int v3Int = new Vector3Int(Mathf.CeilToInt(pos.x), Mathf.CeilToInt(pos.y), Mathf.CeilToInt(pos.z));
+        Vector3Int v3Int = new Vector3Int(Mathf.CeilToInt(pos.x * scale), Mathf.CeilToInt(pos.y * scale), Mathf.CeilToInt(pos.z * scale));
         v3Int -= Vector3Int.RoundToInt(transform.position);
 
         int tilesInRadiusX = (int)(radius / width);
@@ -137,16 +137,6 @@ public class EditableTerrain : MonoBehaviour
                 }
             }
         }
-
-
-
-        //Vector3Int v3Int = new Vector3Int(Mathf.CeilToInt(pos.x), Mathf.CeilToInt(pos.y), Mathf.CeilToInt(pos.z));
-        //v3Int -= Vector3Int.RoundToInt(transform.position);
-       
-        //if (terrainMap[v3Int.x, v3Int.y, v3Int.z].value < 0.0f)
-        //    return false;
-        
-        //terrainMap[v3Int.x, v3Int.y, v3Int.z].value -= strength;
 
         CreateMeshData();
 
@@ -211,15 +201,6 @@ public class EditableTerrain : MonoBehaviour
             }
         }
 
-
-
-        //Vector3Int v3Int = new Vector3Int(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
-        //v3Int -= Vector3Int.RoundToInt(transform.position);
-
-        //if (terrainMap[v3Int.x, v3Int.y, v3Int.z].value > 1.0f)
-        //    return false;
-        //
-        //terrainMap[v3Int.x, v3Int.y, v3Int.z].value += strength;
         CreateMeshData();
 
         if (v3Int.x <= radius)

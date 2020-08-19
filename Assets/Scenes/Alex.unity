@@ -125,22 +125,22 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 543343494}
+    m_TransformParent: {fileID: 1128892323}
     m_Modifications:
     - target: {fileID: 1006591071520275106, guid: 52c6018349d5ac0478910d7c91fc67f6,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.59
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1006591071520275106, guid: 52c6018349d5ac0478910d7c91fc67f6,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.54121196
+      value: -0.75
       objectReference: {fileID: 0}
     - target: {fileID: 1006591071520275106, guid: 52c6018349d5ac0478910d7c91fc67f6,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.9998507
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1006591071520275106, guid: 52c6018349d5ac0478910d7c91fc67f6,
         type: 3}
@@ -165,7 +165,7 @@ PrefabInstance:
     - target: {fileID: 1006591071520275106, guid: 52c6018349d5ac0478910d7c91fc67f6,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1006591071520275106, guid: 52c6018349d5ac0478910d7c91fc67f6,
         type: 3}
@@ -567,6 +567,12 @@ MonoBehaviour:
   toolStrength: 0.5
   fuelDisplay: {fileID: 2031272459}
   playerCamera: {fileID: 1516137981}
+--- !u!4 &1128892323 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6641315126594596381, guid: cba56d5f368d6e54783161c488cfd8d3,
+    type: 3}
+  m_PrefabInstance: {fileID: 2138003740}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1146090246
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -587,12 +593,12 @@ PrefabInstance:
     - target: {fileID: 4718783068257040540, guid: d6657c26fb022024eb71ba5974d378a7,
         type: 3}
       propertyPath: terrainTotalX
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 4718783068257040540, guid: d6657c26fb022024eb71ba5974d378a7,
         type: 3}
       propertyPath: terrainTotalZ
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 4718783068257040540, guid: d6657c26fb022024eb71ba5974d378a7,
         type: 3}
@@ -796,7 +802,7 @@ RectTransform:
   m_Children:
   - {fileID: 1415797068}
   m_Father: {fileID: 543343494}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -892,6 +898,21 @@ PrefabInstance:
       propertyPath: playerCamera
       value: 
       objectReference: {fileID: 1516137981}
+    - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
+        type: 3}
+      propertyPath: toolStrength
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
+        type: 3}
+      propertyPath: radius
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
+        type: 3}
+      propertyPath: FuelLossRate
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6641315128160775797, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
       propertyPath: m_Name
