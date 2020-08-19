@@ -1,12 +1,18 @@
-﻿using System.Collections;
+﻿/*
+    File name: SaveData.cs
+    Author:    Luke Lazzaro
+    Summary: Used to store data that needs to be saved and loaded
+    Creation Date: 3/08/2020
+    Last Modified: 10/08/2020
+*/
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
 public class SaveData
 {
-    //public Transform playerTransform;
-    //public Vector3 playerPos;
     public float playerPosX;
     public float playerPosY;
     public float playerPosZ;

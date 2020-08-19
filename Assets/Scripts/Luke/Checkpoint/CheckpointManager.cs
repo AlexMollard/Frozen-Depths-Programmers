@@ -1,4 +1,12 @@
-﻿using System.Collections;
+﻿/*
+    File name: CheckpointManager.cs
+    Author:    Luke Lazzaro
+    Summary: Handles the current checkpoint counter and updates checkpoints
+    Creation Date: 10/08/2020
+    Last Modified: 10/08/2020
+*/
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +14,8 @@ public class CheckpointManager : MonoBehaviour
 {
     public static CheckpointManager Instance { get; private set; }
 
+    // The current checkpoint counter. The current value represents the last checkpoint you touched, not how many you've passed.
+    // All previous checkpoints will be disabled when updated.
     public static int checkpointCounter = 0;
 
     private void Awake()
@@ -16,12 +26,11 @@ public class CheckpointManager : MonoBehaviour
             Instance = this;
     }
 
-    // This will check the current checkpoint counter and enable/disable checkpoints accordingly. Currently used when loading the game.
     public void UpdateCheckpoints()
     {
         foreach (Transform child in transform)
         {
-            // Will this still work if the object is currently disabled?
+            // Update checkpoints based on checkpoint counter
             Checkpoint current = child.gameObject.GetComponent<Checkpoint>();
 
             if (current.checkpointNumber < checkpointCounter)

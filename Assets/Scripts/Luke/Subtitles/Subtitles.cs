@@ -28,6 +28,7 @@ public class Subtitles : MonoBehaviour
 
     private void Update()
     {
+        // Count down until disappearing
         if (timeLeft > 0)
             timeLeft -= Time.deltaTime;
         else

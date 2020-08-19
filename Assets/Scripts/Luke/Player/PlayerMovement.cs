@@ -18,7 +18,9 @@ public class PlayerMovement : MonoBehaviour
     public float gravity = -9.81f;
     [SerializeField] private float jumpHeight = 3;
 
+    [Tooltip("The position of this transform determines where the player touches the ground.")]
     [SerializeField] private Transform groundCheck;
+    [Tooltip("The layer for all objects you can walk on.")]
     [SerializeField] private LayerMask groundMask;
 
     private float groundDistance = 0.4f;
