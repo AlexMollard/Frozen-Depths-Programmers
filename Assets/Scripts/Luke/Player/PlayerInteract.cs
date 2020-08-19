@@ -20,6 +20,7 @@ public class PlayerInteract : MonoBehaviour
     [SerializeField] private MeshFilter artifactViewer;
     [SerializeField] private Text viewerDescription;
 
+    // Used for enabling and disabling player movement
     private PlayerMovement pmScript;
     private MouseLook mlScript;
 
@@ -31,6 +32,7 @@ public class PlayerInteract : MonoBehaviour
 
     private void Update()
     {
+        // Pressing E while standing in front of an interactable enables the artifact viewer for that object
         if (Input.GetKeyDown(KeyCode.E))
         {
             Vector3 camPos = playerCamera.position;

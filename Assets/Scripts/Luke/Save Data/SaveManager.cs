@@ -1,4 +1,12 @@
-﻿using System.Collections;
+﻿/*
+    File name: SaveManager.cs
+    Author:    Luke Lazzaro
+    Summary: Handles saving and loading of game data
+    Creation Date: 3/08/2020
+    Last Modified: 10/08/2020
+*/
+
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
