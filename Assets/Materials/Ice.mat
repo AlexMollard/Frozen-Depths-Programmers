@@ -13,7 +13,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 0
   stringTagMap: {}
   disabledShaderPasses:
   - SHADOWCASTER
@@ -44,12 +44,28 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Glossiness:
+        m_Texture: {fileID: 2800000, guid: 48dad9117a3b70b42a61c9ec54951891, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: cc343e71e614c354a8a31eb20c05734e, type: 3}
+        m_Texture: {fileID: 2800000, guid: 36d47e59c6071dc47939d94a7f3ce88a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Metallic:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 2800000, guid: 1a31e88ac1cef6d44862ca84e4877575, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Normal:
+        m_Texture: {fileID: 2800000, guid: 5a1edfb6fce868b48ba49bed725f9356, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NormalMap:
+        m_Texture: {fileID: 2800000, guid: 5a1edfb6fce868b48ba49bed725f9356, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -64,6 +80,14 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _TexThree:
+        m_Texture: {fileID: 2800000, guid: 36d47e59c6071dc47939d94a7f3ce88a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TexTwo:
+        m_Texture: {fileID: 2800000, guid: 36d47e59c6071dc47939d94a7f3ce88a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _WallTex:
         m_Texture: {fileID: 2800000, guid: cc343e71e614c354a8a31eb20c05734e, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -71,6 +95,7 @@ Material:
     m_Floats:
     - _AlphaClip: 0
     - _Blend: 0
+    - _BlueMulti: 0.5
     - _BumpScale: 1
     - _Cull: 2
     - _Cutoff: 0.765
@@ -92,7 +117,7 @@ Material:
     - _SpecularHighlights: 0
     - _SrcBlend: 5
     - _Surface: 1
-    - _TexScale: 1
+    - _TexScale: 15
     - _UVSec: 0
     - _WorkflowMode: 1
     - _ZWrite: 0

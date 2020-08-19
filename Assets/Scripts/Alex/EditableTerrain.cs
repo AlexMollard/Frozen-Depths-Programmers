@@ -108,15 +108,15 @@ public class EditableTerrain : MonoBehaviour
     public int GetHeight() { return height; }
     public void SetHeight(int newHeight) { height = newHeight; }
 
-    public bool Freeze (Vector3 pos, float radius)
+    public bool Freeze (Vector3 pos, float radius, float strength)
     {
         Vector3Int v3Int = new Vector3Int(Mathf.CeilToInt(pos.x), Mathf.CeilToInt(pos.y), Mathf.CeilToInt(pos.z));
         v3Int -= Vector3Int.RoundToInt(transform.position);
        
-        if (terrainMap[v3Int.x, v3Int.y, v3Int.z].Equals(0.0f))
+        if (terrainMap[v3Int.x, v3Int.y, v3Int.z].value < 0.0f)
             return false;
 
-        terrainMap[v3Int.x, v3Int.y, v3Int.z].value = 0.0f;
+        terrainMap[v3Int.x, v3Int.y, v3Int.z].value -= strength;
 
         CreateMeshData();
 
@@ -150,15 +150,15 @@ public class EditableTerrain : MonoBehaviour
         return true;
     }
 
-    public bool Burn(Vector3 pos, float radius)
+    public bool Burn(Vector3 pos, float radius, float strength)
     {
         Vector3Int v3Int = new Vector3Int(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
         v3Int -= Vector3Int.RoundToInt(transform.position);
 
-        if (terrainMap[v3Int.x, v3Int.y, v3Int.z].Equals(1.0f))
+        if (terrainMap[v3Int.x, v3Int.y, v3Int.z].value > 1.0f)
             return false;
 
-        terrainMap[v3Int.x, v3Int.y, v3Int.z].value = 1.0f;
+        terrainMap[v3Int.x, v3Int.y, v3Int.z].value += strength;
         CreateMeshData();
 
 

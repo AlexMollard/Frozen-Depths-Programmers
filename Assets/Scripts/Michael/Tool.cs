@@ -23,6 +23,7 @@ public class Tool : MonoBehaviour
     public float FuelGainRate = 100.0f;
     public float FuelLossRate = 100.0f;
     public float capacity = 1000.0f;
+    public float toolStrength = 0.1f;
 
     [Header("FuelDisplay")]
     public Text fuelDisplay;
@@ -45,7 +46,7 @@ public class Tool : MonoBehaviour
                 if (Input.GetMouseButton(0))
                 {
                     // burn the ice at the point of the collision. If this succeeds
-                    if (hit.transform.GetComponent<EditableTerrain>().Burn(hit.point, radius))
+                    if (hit.transform.GetComponent<EditableTerrain>().Burn(hit.point, radius, toolStrength))
                     {
                         // increase the fuel by the fuel gain rate per second
                         toolFuel += Time.deltaTime * FuelGainRate;
@@ -61,7 +62,7 @@ public class Tool : MonoBehaviour
                 else
                 {
                     // freeze the ice at the point of the collision. If this succeeds
-                    if (hit.transform.GetComponent<EditableTerrain>().Freeze(hit.point, radius))
+                    if (hit.transform.GetComponent<EditableTerrain>().Freeze(hit.point, radius, toolStrength))
                     {
                         // decrease the the fuel by the fuel loss rate per second
                         toolFuel -= Time.deltaTime * FuelLossRate;
