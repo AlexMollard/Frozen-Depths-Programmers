@@ -2,6 +2,7 @@
 {
     Properties
     {
+        _Transparancy("Transparancy", Float) = 0.9
         _MainTex ("Texture", 2D) = "white" {}
         _TexTwo("Texture2", 2D) = "white" {}
         _TexThree("Texture3", 2D) = "white" {}
@@ -11,11 +12,11 @@
     }
         SubShader
     {
-        Tags { "RenderType" = "transparent" }
+        Tags {  "Queue" = "Transparent" "RenderType" = "Transparent" }
        LOD 300
 
         CGPROGRAM
-        #pragma surface surf Standard fullforwardshadows
+        #pragma surface surf Standard fullforwardshadows alpha
         #pragma target 3.0
 
         struct Input {
@@ -28,6 +29,7 @@
         sampler2D _TexThree;
         float _TexScale;
         float _BlueMulti;
+        float _Transparancy;
 
         sampler2D _Glossiness;
 
@@ -49,6 +51,7 @@
 
             o.Albedo = ((xP + yP + zP) / 2) + offsetmultiplier * _BlueMulti;
             o.Smoothness = xG + yG + zG;
+            o.Alpha = _Transparancy;
 
         }
 
