@@ -558,11 +558,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61cb7db9c1ad40649bd4222c32e53417, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  range: 10
-  radius: 1
+  range: 5
+  radius: 2
   toolFuel: 0
   FuelGainRate: 100
-  FuelLossRate: 100
+  FuelLossRate: 0
   capacity: 1000
   toolStrength: 0.5
   fuelDisplay: {fileID: 2031272459}
@@ -587,12 +587,37 @@ PrefabInstance:
     - target: {fileID: 4718783068257040540, guid: d6657c26fb022024eb71ba5974d378a7,
         type: 3}
       propertyPath: terrainTotalX
-      value: 5
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4718783068257040540, guid: d6657c26fb022024eb71ba5974d378a7,
         type: 3}
       propertyPath: terrainTotalZ
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4718783068257040540, guid: d6657c26fb022024eb71ba5974d378a7,
+        type: 3}
+      propertyPath: meshScale
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4718783068257040540, guid: d6657c26fb022024eb71ba5974d378a7,
+        type: 3}
+      propertyPath: verticeDistance
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4718783068257040540, guid: d6657c26fb022024eb71ba5974d378a7,
+        type: 3}
+      propertyPath: terrainWidth
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4718783068257040540, guid: d6657c26fb022024eb71ba5974d378a7,
+        type: 3}
+      propertyPath: terrainDepth
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4718783068257040540, guid: d6657c26fb022024eb71ba5974d378a7,
+        type: 3}
+      propertyPath: terrainHeight
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 4718783068257040541, guid: d6657c26fb022024eb71ba5974d378a7,
         type: 3}

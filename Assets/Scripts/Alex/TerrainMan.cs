@@ -27,6 +27,9 @@ public class TerrainMan : MonoBehaviour
     [SerializeField]
     int terrainDepth = 4;
 
+    // A value of 1 is one unit in unity space
+    [SerializeField]
+    float verticeDistance = 1.0f;
 
     public bool smoothTerrain;
     public bool flatShaded;
@@ -43,10 +46,10 @@ public class TerrainMan : MonoBehaviour
             terrainsOBJS.Add(new List<GameObject>());
             for (int z = 0; z < terrainTotalZ; z++)
             {
-                terrainsOBJS[x].Add(Instantiate(terrainPrefab, new Vector3(x * (terrainWidth - 1), 0, z * (terrainDepth - 1)) + currentManPos, Quaternion.identity));
+                terrainsOBJS[x].Add(Instantiate(terrainPrefab, new Vector3(x * (terrainWidth - 1) * verticeDistance, 0, z * (terrainDepth - 1) * verticeDistance) + currentManPos, Quaternion.identity));
                 terrainsOBJS[x][z].name = x + ", " + z;
                 terrains[x].Add(terrainsOBJS[x][z].GetComponent<EditableTerrain>());
-                terrains[x][z].CreateMesh(this, new Vector2Int(x, z), new Vector3Int(terrainWidth - 1, terrainHeight, terrainDepth - 1));
+                terrains[x][z].CreateMesh(this, new Vector2Int(x, z), new Vector3Int(terrainWidth - 1, terrainHeight, terrainDepth - 1), verticeDistance);
                 terrains[x][z].flatShaded = flatShaded;
                 terrains[x][z].smoothTerrain = smoothTerrain;
             }
