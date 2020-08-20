@@ -1240,6 +1240,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 6641315128160775798, guid: cba56d5f368d6e54783161c488cfd8d3,
+        type: 3}
+      propertyPath: playerCamera
+      value: 
+      objectReference: {fileID: 1416394670}
+    - target: {fileID: 6641315128160775798, guid: cba56d5f368d6e54783161c488cfd8d3,
+        type: 3}
+      propertyPath: ccHeight
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6641315128160775798, guid: cba56d5f368d6e54783161c488cfd8d3,
+        type: 3}
+      propertyPath: ccCrouchHeight
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6641315128160775799, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
       propertyPath: m_LocalPosition.x
