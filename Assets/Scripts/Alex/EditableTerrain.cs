@@ -22,7 +22,7 @@ public class EditableTerrain : MonoBehaviour
     int height = 5;
     int width = 5;
     int depth = 5;
-
+    float scale = 1.0f;
     public class floatMyGuy
     {
         public floatMyGuy(float val)
@@ -47,13 +47,14 @@ public class EditableTerrain : MonoBehaviour
         transform.tag = "Ice";
     }
 
-    public void CreateMesh(TerrainMan newManager, Vector2Int index, Vector3Int meshSize)
+    public void CreateMesh(TerrainMan newManager, Vector2Int index, Vector3Int meshSize, float meshScale)
     {
         managerIndex = index;
         manager = newManager;
         SetWidth(meshSize.x);
         SetHeight(meshSize.y);
         SetDepth(meshSize.z);
+        scale = meshScale;
 
         terrainMap = new floatMyGuy[width + 1, height + 1, depth + 1];
 
@@ -110,43 +111,62 @@ public class EditableTerrain : MonoBehaviour
 
     public bool Freeze (Vector3 pos, float radius, float strength)
     {
-        Vector3Int v3Int = new Vector3Int(Mathf.CeilToInt(pos.x), Mathf.CeilToInt(pos.y), Mathf.CeilToInt(pos.z));
+        Vector3Int v3Int = new Vector3Int(Mathf.CeilToInt(pos.x * scale), Mathf.CeilToInt(pos.y * scale), Mathf.CeilToInt(pos.z * scale));
         v3Int -= Vector3Int.RoundToInt(transform.position);
-       
-        if (terrainMap[v3Int.x, v3Int.y, v3Int.z].value < 0.0f)
-            return false;
 
-        terrainMap[v3Int.x, v3Int.y, v3Int.z].value -= strength;
+        int tilesInRadiusX = (int)(radius / width);
+        int tilesInRadiusY = (int)(radius / height);
+        int tilesInRadiusZ = (int)(radius / depth);
+
+        for (int x = -tilesInRadiusX; x <= tilesInRadiusX; x++)
+        {
+            for (int y = -tilesInRadiusY; y <= tilesInRadiusY; y++)
+            {
+                for (int z = -tilesInRadiusZ; z <= tilesInRadiusZ; z++)
+                {
+                    Vector3 offsetVec = new Vector3(x, y, z) * scale;
+                    if (offsetVec.magnitude < radius)
+                    {
+                        Vector3 newPoint = v3Int + offsetVec;
+                        if (newPoint.x < 0 || newPoint.y < 0 || newPoint.z < 0 || newPoint.x > width || newPoint.y > height || newPoint.z > depth)
+                        {
+                            continue;
+                        }
+                        terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value -= strength;
+                    }
+                }
+            }
+        }
 
         CreateMeshData();
 
-        if (v3Int.x == 0)
+
+        if (v3Int.x <= radius)
         {
             manager.UpdateChunk(managerIndex + new Vector2Int(-1, 0));
-            if (v3Int.z == 0)
+            if (v3Int.z <= radius)
                 manager.UpdateChunk(managerIndex + new Vector2Int(-1, -1));
-            if (v3Int.z >= depth - 1)
+            if (v3Int.z >= depth - radius)
                 manager.UpdateChunk(managerIndex + new Vector2Int(-1, 1));
 
         }
-        if (v3Int.x >= width - 1)
+        if (v3Int.x >= width - radius)
         {
             manager.UpdateChunk(managerIndex + new Vector2Int(1, 0));
-            if (v3Int.z == 0)
+            if (v3Int.z <= radius)
                 manager.UpdateChunk(managerIndex + new Vector2Int(1, -1));
-            if (v3Int.z >= depth - 1)
+            if (v3Int.z >= depth - radius)
                 manager.UpdateChunk(managerIndex + new Vector2Int(1, 1));
         }
 
-        if (v3Int.z == 0)
+        if (v3Int.z <= radius)
         {
             manager.UpdateChunk(managerIndex + new Vector2Int(0, -1));
         }
-        if (v3Int.z >= depth - 1)
+        if (v3Int.z >= depth - radius)
         {
             manager.UpdateChunk(managerIndex + new Vector2Int(0, 1));
         }
-
         return true;
     }
 
@@ -155,36 +175,57 @@ public class EditableTerrain : MonoBehaviour
         Vector3Int v3Int = new Vector3Int(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
         v3Int -= Vector3Int.RoundToInt(transform.position);
 
-        if (terrainMap[v3Int.x, v3Int.y, v3Int.z].value > 1.0f)
-            return false;
+        int tilesInRadiusX = (int)(radius / width);
+        int tilesInRadiusY = (int)(radius / height);
+        int tilesInRadiusZ = (int)(radius / depth);
 
-        terrainMap[v3Int.x, v3Int.y, v3Int.z].value += strength;
+        for (int x = -tilesInRadiusX; x <= tilesInRadiusX; x++)
+        {
+            for (int y = -tilesInRadiusY; y <= tilesInRadiusY; y++)
+            {
+                for (int z = -tilesInRadiusZ; z <= tilesInRadiusZ; z++)
+                {
+                    Vector3 offsetVec = new Vector3(x, y, z) * scale;
+                    if (offsetVec.magnitude < radius)
+                    {
+                        Vector3 newPoint = v3Int + offsetVec;
+
+                        if (newPoint.x < 0 || newPoint.y < 0 || newPoint.z < 0 || newPoint.x > width || newPoint.y > height || newPoint.z > depth)
+                        {
+                            continue;
+                        }
+
+                        terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value += strength;
+                    }
+                }
+            }
+        }
+
         CreateMeshData();
 
-
-        if (v3Int.x == 0)
+        if (v3Int.x <= radius)
         {
             manager.UpdateChunk(managerIndex + new Vector2Int(-1, 0));
-            if (v3Int.z == 0)
+            if (v3Int.z <= radius)
                 manager.UpdateChunk(managerIndex + new Vector2Int(-1, -1));
-            if (v3Int.z >= depth - 1)
+            if (v3Int.z >= depth - radius)
                 manager.UpdateChunk(managerIndex + new Vector2Int(-1, 1));
 
         }
-        if (v3Int.x >= width - 1)
+        if (v3Int.x >= width - radius)
         {
             manager.UpdateChunk(managerIndex + new Vector2Int(1, 0));
-            if (v3Int.z == 0)
+            if (v3Int.z <= radius)
                 manager.UpdateChunk(managerIndex + new Vector2Int(1, -1));
-            if (v3Int.z >= depth - 1)
+            if (v3Int.z >= depth - radius)
                 manager.UpdateChunk(managerIndex + new Vector2Int(1, 1));
         }
 
-        if (v3Int.z == 0)
+        if (v3Int.z <= radius)
         {
             manager.UpdateChunk(managerIndex + new Vector2Int(0, -1));
         }
-        if (v3Int.z >= depth - 1)
+        if (v3Int.z >= depth - radius)
         {
             manager.UpdateChunk(managerIndex + new Vector2Int(0, 1));
         }
@@ -242,11 +283,11 @@ public class EditableTerrain : MonoBehaviour
                     else
                         difference = (terrainSurface - vert1Sample) / difference;
 
-                    vertPosition = vert1 + ((vert2 - vert1) * difference);
+                    vertPosition = (vert1 + ((vert2 - vert1) * difference)) * scale;
                 }
                 else
                 {
-                    vertPosition = (vert1 + vert2) / 2.0f;
+                    vertPosition = ((vert1 + vert2) / 2.0f) * scale;
                 }
 
 

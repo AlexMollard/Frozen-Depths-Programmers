@@ -15,7 +15,7 @@ public class Tool : MonoBehaviour
 {
     [Header("Tool Use")]
     public float range = 10.0f;
-    public float radius;
+    public float radius = 10.0f;
 
     [Header("Fuel Economy")]
     [HideInInspector]
