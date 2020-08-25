@@ -8,9 +8,9 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Ice
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: _EMISSION _METALLICSPECGLOSSMAP _OCCLUSIONMAP _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
-    _SPECULARHIGHLIGHTS_OFF
+  m_Shader: {fileID: 4800000, guid: 662b30e103ae2af4480de0ace1c665dd, type: 3}
+  m_ShaderKeywords: _ALPHAPREMULTIPLY_ON _EMISSION _METALLICSPECGLOSSMAP _OCCLUSIONMAP
+    _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A _SPECULARHIGHLIGHTS_OFF
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 1
@@ -46,7 +46,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Glossiness:
-        m_Texture: {fileID: 2800000, guid: e95672112dcef0346968e8b92667778b, type: 3}
+        m_Texture: {fileID: 2800000, guid: d41271a33600ae94ca43a8a12ae7dea9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -101,14 +101,14 @@ Material:
     - _Cull: 2
     - _Cutoff: 0.765
     - _DetailNormalMapScale: 1
-    - _DstBlend: 0
+    - _DstBlend: 10
     - _EmissionScaleUI: 0
     - _EnvironmentReflections: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.473
     - _GlossyReflections: 1
     - _Metallic: 0.482
-    - _Mode: 0
+    - _Mode: 3
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _QueueOffset: 22
@@ -118,14 +118,14 @@ Material:
     - _SpecularHighlights: 0
     - _SrcBlend: 1
     - _Surface: 1
-    - _TexScale: 15
+    - _TexScale: 12
     - _Transparancy: 0.95
     - _UVSec: 0
     - _WorkflowMode: 1
-    - _ZWrite: 1
+    - _ZWrite: 0
     m_Colors:
     - _BaseColor: {r: 0.20287468, g: 0.83868605, b: 0.9150943, a: 0.84705883}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.0047169924, g: 0.91511333, b: 1, a: 1}
     - _EmissionColor: {r: 0.03270737, g: 0.18997209, b: 0.3301887, a: 0}
     - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 0, g: 0.20754719, b: 0.19950306, a: 1}
