@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Adds first person movement to the player
     Creation Date: 20/07/2020
-    Last Modified: 20/08/2020
+    Last Modified: 25/08/2020
 */
 
 using System;
@@ -25,8 +25,8 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Camera")]
     [SerializeField] private GameObject playerCamera;
-    //[SerializeField] private float camHeight = 2;
-    //[SerializeField] private float camCrouchHeight = 1;
+    [SerializeField] private float camHeight = 2;
+    [SerializeField] private float camCrouchHeight = 1;
 
     [Header("Char. Controller")]
     [SerializeField] private float ccHeight = 3;
@@ -38,7 +38,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded;
     private bool isCrouching = true;
 
-    private void Awake()
+    private void Start()
     {
         controller = GetComponent<CharacterController>();
         Crouch();
@@ -85,20 +85,29 @@ public class PlayerMovement : MonoBehaviour
         if (isCrouching)
         {
             controller.height = ccCrouchHeight;
-            controller.center.Set(controller.center.x, 0.5f, controller.center.z);
+            Vector3 newCenter = new Vector3(controller.center.x, -0.5f, controller.center.z);
+            controller.center = newCenter;
 
-            //float camX = playerCamera.transform.position.x;
-            //float camZ = playerCamera.transform.position.z;
-            //playerCamera.transform.position.Set(camX, camCrouchHeight, camZ);
+            float camX = playerCamera.transform.localPosition.x;
+            float camZ = playerCamera.transform.localPosition.z;
+            Vector3 newCamPos = new Vector3(camX, camCrouchHeight, camZ);
+            playerCamera.transform.localPosition = newCamPos;
         }
         else
         {
             controller.height = ccHeight;
-            controller.center.Set(controller.center.x, 0f, controller.center.z);
+            Vector3 newCenter = new Vector3(controller.center.x, 0f, controller.center.z);
+            controller.center = newCenter;
 
-            //float camX = playerCamera.transform.position.x;
-            //float camZ = playerCamera.transform.position.z;
-            //playerCamera.transform.position.Set(camX, camHeight, camZ);
+            float camX = playerCamera.transform.localPosition.x;
+            float camZ = playerCamera.transform.localPosition.z;
+            Vector3 newCamPos = new Vector3(camX, camHeight, camZ);
+            playerCamera.transform.localPosition = newCamPos;
         }
+
+        float gcX = groundCheck.localPosition.x;
+        float gcZ = groundCheck.localPosition.z;
+        Vector3 newPos = new Vector3(gcX, controller.center.y - controller.height * 0.5f, gcZ);
+        groundCheck.localPosition = newPos;
     }
 }
