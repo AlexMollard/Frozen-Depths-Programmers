@@ -29,11 +29,16 @@ public class Tool : MonoBehaviour
     [Header("Camera")]
     public Camera playerCamera;
 
+    float timer = 0.0f;
+    public float stopWatchTime = 0.15f;
     void Update()
     {
+        timer += Time.deltaTime;
+
         // if the mouse is left clicked or if the mouse is right clicked and the tool has fuel
-        if (Input.GetMouseButton(0)|| Input.GetMouseButton(1) && toolFuel > 0.0f)
+        if ((Input.GetMouseButton(0)|| Input.GetMouseButton(1)) && timer > stopWatchTime)
         {
+            timer = 0.0f;
             // cast a ray forward from the center of the player camera viewport
             Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f,0.5f,1.0f));
             RaycastHit hit;

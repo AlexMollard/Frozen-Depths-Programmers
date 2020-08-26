@@ -65,7 +65,28 @@ public class TerrainMan : MonoBehaviour
 
         AssignEdgeValues();
         RefreshAllChunks();
+        PopulateAllChunks();
+        RefreshAllChunks();
+    }
 
+    private void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.P))
+            RefreshAllChunks();
+    }
+
+    public void PopulateAllChunks()
+    {
+        for (int x = 0; x < terrainTotalX; x++)
+        {
+            for (int y = 0; y < terrainTotalY; y++)
+            {
+                for (int z = 0; z < terrainTotalZ; z++)
+                {
+                    terrains[x][y][z].PopulateTerrainMap();
+                }
+            }
+        }
     }
 
     public void RefreshAllChunks()
@@ -102,15 +123,15 @@ public class TerrainMan : MonoBehaviour
                     //tX = ->
                     //tZ = /\
 
-                    //Left
-                    if (tX - 1 >= 0)
+                    //Top
+                    if (tY + 1 < terrainTotalY)
                     {
-                        // Need to grab left chunks right row and assign it to current chunks left row points
-                        for (int z = 0; z < terrainDepth; z++)
+                        // Need to grab above chunks bottom row and assign it to current chunks top row points
+                        for (int x = 0; x < terrainWidth; x++)
                         {
-                            for (int y = 0; y < terrainHeight; y++)
+                            for (int z = 0; z < terrainDepth; z++)
                             {
-                                terrains[tX][tY][tZ].terrainMap[0, y, z] = terrains[tX - 1][tY][tZ].terrainMap[terrainWidth - 1, y, z];
+                                terrains[tX][tY][tZ].terrainMap[x, terrainHeight - 1, z] = terrains[tX][tY + 1][tZ].terrainMap[x, 0, z];
                             }
                         }
                     }
@@ -142,6 +163,20 @@ public class TerrainMan : MonoBehaviour
                         }
                     }
 
+
+                    //Left
+                    if (tX - 1 >= 0)
+                    {
+                        // Need to grab left chunks right row and assign it to current chunks left row points
+                        for (int z = 0; z < terrainDepth; z++)
+                        {
+                            for (int y = 0; y < terrainHeight; y++)
+                            {
+                                terrains[tX][tY][tZ].terrainMap[0, y, z] = terrains[tX - 1][tY][tZ].terrainMap[terrainWidth - 1, y, z];
+                            }
+                        }
+                    }
+
                     //Back
                     if (tZ - 1 >= 0)
                     {
@@ -167,19 +202,7 @@ public class TerrainMan : MonoBehaviour
                             }
                         }
                     }
-                    
-                    //Top
-                    if (tY + 1 < terrainTotalY)
-                    {
-                        // Need to grab above chunks bottom row and assign it to current chunks top row points
-                        for (int x = 0; x < terrainWidth; x++)
-                        {
-                            for (int z = 0; z < terrainDepth; z++)
-                            {
-                                terrains[tX][tY][tZ].terrainMap[x, terrainHeight - 1, z] = terrains[tX][tY + 1][tZ].terrainMap[x, 0, z];
-                            }
-                        }
-                    }
+                   
                 }
             }
         }

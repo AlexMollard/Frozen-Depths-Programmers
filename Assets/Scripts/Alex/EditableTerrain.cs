@@ -62,7 +62,7 @@ public class EditableTerrain : MonoBehaviour
         CreateMeshData();
     }
 
-    void PopulateTerrainMap()
+    public void PopulateTerrainMap()
     {
         for (int x = 0; x < width + 1; x++)
         {
@@ -70,9 +70,10 @@ public class EditableTerrain : MonoBehaviour
             {
                 for (int z = 0; z < depth + 1; z++)
                 {
-                    terrainMap[x, y, z] = new floatMyGuy(0.0f);
+                    if (terrainMap[x, y, z] == null)
+                        terrainMap[x, y, z] = new floatMyGuy(0.0f);
 
-                    terrainMap[x, y, z].value = (managerIndex.y < manager.terrainTotalY / 2) ? 0.0f : 1.0f;
+                    terrainMap[x, y, z].value = (managerIndex.y < manager.terrainTotalY / 2) ? 0.0f : 2.0f;
                 }
             }
         }
@@ -120,118 +121,30 @@ public class EditableTerrain : MonoBehaviour
                 for (int z = -tilesInRadiusZ; z <= tilesInRadiusZ; z++)
                 {
                     Vector3 offsetVec = new Vector3(x, y, z) * scale;
+                    //                    if (Vector3.Distance(v3Int, offsetVec) > 0.5f)
                     if (offsetVec.magnitude < radius)
                     {
                         Vector3 newPoint = v3Int + offsetVec;
+
+                        if (Vector3.Distance(v3Int, newPoint) > 2)
+                            continue;
+
                         if (newPoint.x < 0 || newPoint.y < 0 || newPoint.z < 0 || newPoint.x > width || newPoint.y > height || newPoint.z > depth)
                         {
                             continue;
                         }
-                        terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value -= strength;
+
+                        float newStrength = strength - (radius / offsetVec.magnitude );
+
+                        terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value -= Vector3.Distance(v3Int, newPoint) * strength;
                     }
                 }
             }
         }
 
         CreateMeshData();
+        UpdateNeighbours(v3Int, radius);
 
-
-        if (v3Int.x <= radius)
-        {
-            manager.UpdateChunk(managerIndex + new Vector3Int(-1, 0, 0));
-
-            if (v3Int.z <= radius)
-                manager.UpdateChunk(managerIndex + new Vector3Int(-1, 0, -1));
-
-            if (v3Int.z >= depth - radius)
-                manager.UpdateChunk(managerIndex + new Vector3Int(-1, 0, 1));
-
-        }
-        if (v3Int.x >= width - radius)
-        {
-            manager.UpdateChunk(managerIndex + new Vector3Int(1, 0, 0));
-
-            if (v3Int.z <= radius)
-                manager.UpdateChunk(managerIndex + new Vector3Int(1, 0, -1));
-
-            if (v3Int.z >= depth - radius)
-                manager.UpdateChunk(managerIndex + new Vector3Int(1, 0, 1));
-        }
-
-        if (v3Int.z <= radius)
-        {
-            manager.UpdateChunk(managerIndex + new Vector3Int(0, 0, -1));
-        }
-        if (v3Int.z >= depth - radius)
-        {
-            manager.UpdateChunk(managerIndex + new Vector3Int(0, 0, 1));
-        }
-
-        if (v3Int.y <= radius)
-        {
-            manager.UpdateChunk(managerIndex + new Vector3Int(0, -1, 0));
-
-            if (v3Int.z <= radius)
-                manager.UpdateChunk(managerIndex + new Vector3Int(0, -1, -1));
-
-            if (v3Int.z >= depth - radius)
-                manager.UpdateChunk(managerIndex + new Vector3Int(0, -1, 1));
-
-            if (v3Int.x <= radius)
-            {
-                manager.UpdateChunk(managerIndex + new Vector3Int(-1, -1, 0));
-
-                if (v3Int.z <= radius)
-                    manager.UpdateChunk(managerIndex + new Vector3Int(-1, -1, -1));
-
-                if (v3Int.z >= depth - radius)
-                    manager.UpdateChunk(managerIndex + new Vector3Int(-1, -1, 1));
-
-            }
-            if (v3Int.x >= width - radius)
-            {
-                manager.UpdateChunk(managerIndex + new Vector3Int(1, -1, 0));
-
-                if (v3Int.z <= radius)
-                    manager.UpdateChunk(managerIndex + new Vector3Int(1, -1, -1));
-
-                if (v3Int.z >= depth - radius)
-                    manager.UpdateChunk(managerIndex + new Vector3Int(1, -1, 1));
-            }
-
-        }
-        if (v3Int.y >= height - radius)
-        {
-            manager.UpdateChunk(managerIndex + new Vector3Int(0, 1, 0));
-
-            if (v3Int.z <= radius)
-                manager.UpdateChunk(managerIndex + new Vector3Int(0, 1, -1));
-
-            if (v3Int.z >= depth - radius)
-                manager.UpdateChunk(managerIndex + new Vector3Int(0, 1, 1));
-
-            if (v3Int.x <= radius)
-            {
-                manager.UpdateChunk(managerIndex + new Vector3Int(-1, 1, 0));
-
-                if (v3Int.z <= radius)
-                    manager.UpdateChunk(managerIndex + new Vector3Int(-1, 1, -1));
-
-                if (v3Int.z >= depth - radius)
-                    manager.UpdateChunk(managerIndex + new Vector3Int(-1, 1, 1));
-
-            }
-            if (v3Int.x >= width - radius)
-            {
-                manager.UpdateChunk(managerIndex + new Vector3Int(1, 1, 0));
-
-                if (v3Int.z <= radius)
-                    manager.UpdateChunk(managerIndex + new Vector3Int(1, 1, -1));
-
-                if (v3Int.z >= depth - radius)
-                    manager.UpdateChunk(managerIndex + new Vector3Int(1, 1, 1));
-            }
-        }
         return true;
     }
 
@@ -255,19 +168,28 @@ public class EditableTerrain : MonoBehaviour
                     {
                         Vector3 newPoint = v3Int + offsetVec;
 
+                        if (Vector3.Distance(v3Int, newPoint) > 2)
+                            continue;
+
                         if (newPoint.x < 0 || newPoint.y < 0 || newPoint.z < 0 || newPoint.x > width || newPoint.y > height || newPoint.z > depth)
                         {
                             continue;
                         }
 
-                        terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value += strength;
+                        terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value += Vector3.Distance(v3Int, newPoint) * strength;
                     }
                 }
             }
         }
 
         CreateMeshData();
+        UpdateNeighbours(v3Int,radius);
 
+        return true;
+    }
+
+    void UpdateNeighbours(Vector3Int v3Int, float radius)
+    {
         if (v3Int.x <= radius)
         {
             manager.UpdateChunk(managerIndex + new Vector3Int(-1, 0, 0));
@@ -364,7 +286,6 @@ public class EditableTerrain : MonoBehaviour
                     manager.UpdateChunk(managerIndex + new Vector3Int(1, 1, 1));
             }
         }
-        return true;
     }
 
     int GetCubeConfiguration(float[] cube)
