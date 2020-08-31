@@ -3,6 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public class floatMyGuy
+{
+    public floatMyGuy(float val)
+    {
+        value = val;
+    }
+
+    public bool Equals(float val)
+    {
+        return (val == value);
+    }
+
+    public float value = 0.0f;
+}
+
 public class EditableTerrain : MonoBehaviour
 {
     TerrainMan manager;
@@ -22,21 +37,8 @@ public class EditableTerrain : MonoBehaviour
     int height = 5;
     int width = 5;
     int depth = 5;
-    float scale = 1.0f;
-    public class floatMyGuy
-    {
-        public floatMyGuy(float val)
-        {
-            value = val;
-        }
-        
-        public bool Equals(float val)
-        {
-            return (val == value);
-        }
 
-        public float value = 0.0f;
-    }
+    public TerrainMan.spawnPrefabs spawnPrefab;
 
     public floatMyGuy[,,] terrainMap;
 
@@ -47,19 +49,25 @@ public class EditableTerrain : MonoBehaviour
         transform.tag = "Ice";
     }
 
-    public void CreateMesh(TerrainMan newManager, Vector3Int index, Vector3Int meshSize, float meshScale)
+    public void CreateMesh(TerrainMan newManager, Vector3Int index, Vector3Int meshSize)
     {
         managerIndex = index;
         manager = newManager;
         SetWidth(meshSize.x);
         SetHeight(meshSize.y);
         SetDepth(meshSize.z);
-        scale = meshScale;
 
         terrainMap = new floatMyGuy[width + 1, height + 1, depth + 1];
-
-        PopulateTerrainMap();
-        CreateMeshData();
+        for (int x = 0; x < width + 1; x++)
+        {
+            for (int y = 0; y < height + 1; y++)
+            {
+                for (int z = 0; z < depth + 1; z++)
+                {
+                        terrainMap[x, y, z] = new floatMyGuy(0.0f);
+                }
+            }
+        }
     }
 
     public void PopulateTerrainMap()
@@ -73,10 +81,47 @@ public class EditableTerrain : MonoBehaviour
                     if (terrainMap[x, y, z] == null)
                         terrainMap[x, y, z] = new floatMyGuy(0.0f);
 
-                    terrainMap[x, y, z].value = (managerIndex.y < manager.terrainTotalY / 2) ? 0.0f : 2.0f;
+                    switch (spawnPrefab)
+                    {
+                        case TerrainMan.spawnPrefabs.FlatAtBottom:
+                            terrainMap[x, y, z].value = (managerIndex.y > 0) ? 0.0f : (float)y - height / 4;
+                            break;
+                        case TerrainMan.spawnPrefabs.FlatAtTop:
+                            terrainMap[x, y, z].value = (managerIndex.y < manager.terrainTotalY - 1) ? 0.0f : (float)y - height / 4;
+                            break;
+                        case TerrainMan.spawnPrefabs.HalfFill:
+                            terrainMap[x, y, z].value = (managerIndex.y > manager.terrainTotalY / 2) ? 1.0f : 0.5f;
+                            break;
+                        case TerrainMan.spawnPrefabs.Bowl:
+                            terrainMap[x, y, z].value = (managerIndex.y == 0 || managerIndex.x == 0 || managerIndex.z == 0 || managerIndex.x == manager.terrainTotalX - 1 || managerIndex.z == manager.terrainTotalZ - 1) ? 0.0f : 1.0f;
+                            break;
+                        case TerrainMan.spawnPrefabs.XPlusWall:
+                            terrainMap[x, y, z].value = (managerIndex.x > manager.terrainTotalX * 0.5) ? 0.0f : 1.0f;
+                            break;
+                        case TerrainMan.spawnPrefabs.XNegWall:
+                            terrainMap[x, y, z].value = (managerIndex.x > manager.terrainTotalX * 0.5) ? 1.0f : 0.0f;
+                            break;
+                        case TerrainMan.spawnPrefabs.ZPlusWall:
+                            terrainMap[x, y, z].value = (managerIndex.z > manager.terrainTotalZ * 0.5) ? 0.0f : 1.0f;
+                            break;
+                        case TerrainMan.spawnPrefabs.ZNegWall:
+                            terrainMap[x, y, z].value = (managerIndex.z > manager.terrainTotalZ * 0.5) ? 1.0f : 0.0f;
+                            break;
+                        case TerrainMan.spawnPrefabs.PreMade:
+                            LoadFromFile(x, y, z);
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
+
+
+    }
+
+    public void LoadFromFile(int x, int y, int z)
+    {
 
     }
 
@@ -105,9 +150,9 @@ public class EditableTerrain : MonoBehaviour
     public int GetHeight() { return height; }
     public void SetHeight(int newHeight) { height = newHeight; }
 
-    public bool Freeze (Vector3 pos, float radius, float strength)
+    public bool EditTerrain (bool freeze, Vector3 pos, float radius, float strength)
     {
-        Vector3Int v3Int = new Vector3Int(Mathf.CeilToInt(pos.x * scale), Mathf.CeilToInt(pos.y * scale), Mathf.CeilToInt(pos.z * scale));
+        Vector3Int v3Int = new Vector3Int(Mathf.CeilToInt(pos.x), Mathf.CeilToInt(pos.y), Mathf.CeilToInt(pos.z));
         v3Int -= Vector3Int.RoundToInt(transform.position);
 
         int tilesInRadiusX = (int)(radius / width);
@@ -120,23 +165,21 @@ public class EditableTerrain : MonoBehaviour
             {
                 for (int z = -tilesInRadiusZ; z <= tilesInRadiusZ; z++)
                 {
-                    Vector3 offsetVec = new Vector3(x, y, z) * scale;
-                    //                    if (Vector3.Distance(v3Int, offsetVec) > 0.5f)
+                    Vector3 offsetVec = new Vector3(x, y, z);
+
                     if (offsetVec.magnitude < radius)
                     {
                         Vector3 newPoint = v3Int + offsetVec;
-
-                        if (Vector3.Distance(v3Int, newPoint) > 2)
-                            continue;
 
                         if (newPoint.x < 0 || newPoint.y < 0 || newPoint.z < 0 || newPoint.x > width || newPoint.y > height || newPoint.z > depth)
                         {
                             continue;
                         }
 
-                        float newStrength = strength - (radius / offsetVec.magnitude );
-
-                        terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value -= Vector3.Distance(v3Int, newPoint) * strength;
+                        if (freeze)
+                            terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value -= strength;
+                        else
+                            terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value += strength;
                     }
                 }
             }
@@ -144,46 +187,6 @@ public class EditableTerrain : MonoBehaviour
 
         CreateMeshData();
         UpdateNeighbours(v3Int, radius);
-
-        return true;
-    }
-
-    public bool Burn(Vector3 pos, float radius, float strength)
-    {
-        Vector3Int v3Int = new Vector3Int(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y), Mathf.FloorToInt(pos.z));
-        v3Int -= Vector3Int.RoundToInt(transform.position);
-
-        int tilesInRadiusX = (int)(radius / width);
-        int tilesInRadiusY = (int)(radius / height);
-        int tilesInRadiusZ = (int)(radius / depth);
-
-        for (int x = -tilesInRadiusX; x <= tilesInRadiusX; x++)
-        {
-            for (int y = -tilesInRadiusY; y <= tilesInRadiusY; y++)
-            {
-                for (int z = -tilesInRadiusZ; z <= tilesInRadiusZ; z++)
-                {
-                    Vector3 offsetVec = new Vector3(x, y, z) * scale;
-                    if (offsetVec.magnitude < radius)
-                    {
-                        Vector3 newPoint = v3Int + offsetVec;
-
-                        if (Vector3.Distance(v3Int, newPoint) > 2)
-                            continue;
-
-                        if (newPoint.x < 0 || newPoint.y < 0 || newPoint.z < 0 || newPoint.x > width || newPoint.y > height || newPoint.z > depth)
-                        {
-                            continue;
-                        }
-
-                        terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value += Vector3.Distance(v3Int, newPoint) * strength;
-                    }
-                }
-            }
-        }
-
-        CreateMeshData();
-        UpdateNeighbours(v3Int,radius);
 
         return true;
     }
@@ -338,11 +341,11 @@ public class EditableTerrain : MonoBehaviour
                     else
                         difference = (terrainSurface - vert1Sample) / difference;
 
-                    vertPosition = (vert1 + ((vert2 - vert1) * difference)) * scale;
+                    vertPosition = (vert1 + ((vert2 - vert1) * difference));
                 }
                 else
                 {
-                    vertPosition = ((vert1 + vert2) / 2.0f) * scale;
+                    vertPosition = ((vert1 + vert2) / 2.0f);
                 }
 
 

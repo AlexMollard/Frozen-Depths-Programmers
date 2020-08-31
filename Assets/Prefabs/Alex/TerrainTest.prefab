@@ -48,9 +48,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   smoothTerrain: 0
   flatShaded: 1
+  startNoise: 0
   vertices: []
   triangles: 
   uvs: []
+  spawnPrefab: 0
 --- !u!33 &5050879582006432436
 MeshFilter:
   m_ObjectHideFlags: 0

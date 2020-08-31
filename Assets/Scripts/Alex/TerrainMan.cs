@@ -2,47 +2,104 @@
 using System.Collections.Generic;
 using System.Data;
 using UnityEngine;
+using UnityEditor;
+using System;
+using System.Security.AccessControl;
+
+[CustomEditor(typeof(TerrainMan))]
+public class ObjectBuilderEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+
+        TerrainMan myScript = (TerrainMan)target;
+
+        if (GUILayout.Button("Save Manager Mesh"))
+        {
+            myScript.SaveMesh();
+        }
+    }
+}
 
 public class TerrainMan : MonoBehaviour
 {
+    public enum spawnPrefabs
+    {
+        FlatAtBottom = 0,
+        FlatAtTop,
+        HalfFill,
+        Bowl,
+        XPlusWall,
+        XNegWall,
+        ZPlusWall,
+        ZNegWall,
+        PreMade
+    }
+
+    [Header("Chunk Prefab")]
     [SerializeField]
     GameObject terrainPrefab;
 
     List<List<List<EditableTerrain>>> terrains = new List<List<List<EditableTerrain>>>();
-   List<List<List<GameObject>>> terrainsOBJS = new List<List<List<GameObject>>>();
+    List<List<List<GameObject>>> terrainsOBJS = new List<List<List<GameObject>>>();
 
-    [SerializeField]
-    int terrainTotalX = 4;
+    [Header("Player Object")]
+    [Tooltip("This will be used to disable manager or meshes when player cant interact with them")]
+    public GameObject player;
 
-    [SerializeField]
-    public int terrainTotalY = 4;
+    [Header("Optimizations")]
+    [Tooltip("Variables that will greatly effect FPS")]
+    public float maxDistanceFromMesh = 100; // Distance from mesh until mesh renderer is disabled
 
-    [SerializeField]
-    int terrainTotalZ = 4;
+    [Header("Total Chunks")]
+    [Tooltip("This will determine how many chunks will be spawned in each axis")]
+    public int terrainTotalX = 10;
+    public int terrainTotalY = 10;
+    public int terrainTotalZ = 10;
 
+    [Header("Single Chunk Size")]
+    [Tooltip("Terrain Width: X, TerrainHeight: Y, TerrainDepth: Z")]
+    public int terrainWidth = 8;
+    public int terrainHeight = 8;
+    public int terrainDepth = 8;
 
-    [SerializeField]
-    int terrainWidth = 4;
+    [Header("Geometry Settings")]
+    [Tooltip("Changing these values will change how lighting and terrain manipulation effects a mesh")]
+    public bool smoothTerrain = true;
+    public bool flatShaded = true;
 
-    [SerializeField]
-    int terrainHeight = 4;
+    [Header("Chunk Spawn Settings")]
+    [Tooltip("Changing these values will change how each chunk will be populated")]
+    public spawnPrefabs chunkPrefab = 0;
 
-    [SerializeField]
-    int terrainDepth = 4;
+    Vector3 centerOfMeshes;
+    Vector3 ChunkTotal;
 
-    // A value of 1 is one unit in unity space
-    [SerializeField]
-    float verticeDistance = 1.0f;
+    MeshRenderer[] chunkRenderers;
 
-    public bool smoothTerrain;
-    public bool flatShaded;
+    void OnDrawGizmosSelected()
+    {
+        Vector3 currentManPos = transform.position;
+        Vector3 centerOfMeshes = new Vector3((terrainWidth * terrainTotalX) * 0.5f, (terrainHeight * terrainTotalY) * 0.5f, (terrainDepth * terrainTotalZ) * 0.5f) + currentManPos;
+        Vector3 scale = new Vector3(terrainTotalX * terrainWidth, terrainTotalY * terrainHeight, terrainTotalZ * terrainDepth);
+        Gizmos.color = new Color(1, 1, 0, 0.75f);
+        Gizmos.DrawCube(centerOfMeshes, scale);
+
+        Gizmos.color = new Color(1, 0, 1, 0.75f);
+        Gizmos.DrawCube(centerOfMeshes, new Vector3(terrainWidth, terrainHeight, terrainDepth));
+    }
 
 
 
     void Start()
     {
         Vector3 currentManPos = transform.position;
-
+        chunkRenderers = new MeshRenderer[terrainTotalX * terrainTotalY * terrainTotalZ];
+        centerOfMeshes = new Vector3((terrainWidth * terrainTotalX) * 0.5f, (terrainHeight * terrainTotalY) * 0.5f, (terrainDepth * terrainTotalZ) * 0.5f) + currentManPos;
+        ChunkTotal = new Vector3(terrainTotalX, terrainTotalY, terrainTotalZ);
+        int i = 0;
+        
         for (int x = 0; x < terrainTotalX; x++)
         {
             terrains.Add(new List<List<EditableTerrain>>());
@@ -53,29 +110,173 @@ public class TerrainMan : MonoBehaviour
                 terrainsOBJS[x].Add(new List<GameObject>());
                 for (int z = 0; z < terrainTotalZ; z++)
                 {
-                    terrainsOBJS[x][y].Add(Instantiate(terrainPrefab, new Vector3(x * (terrainWidth - 1) * verticeDistance, y * (terrainHeight - 1) * verticeDistance, z * (terrainDepth - 1) * verticeDistance) + currentManPos, Quaternion.identity));
+                    terrainsOBJS[x][y].Add(Instantiate(terrainPrefab, new Vector3(x * (terrainWidth - 1), y * (terrainHeight - 1), z * (terrainDepth - 1)) + currentManPos, Quaternion.identity));
                     terrainsOBJS[x][y][z].name = x + ", " + y + ", " + z;
                     terrains[x][y].Add(terrainsOBJS[x][y][z].GetComponent<EditableTerrain>());
-                    terrains[x][y][z].CreateMesh(this, new Vector3Int(x,y, z), new Vector3Int(terrainWidth - 1, terrainHeight - 1, terrainDepth - 1), verticeDistance);
+                    terrains[x][y][z].spawnPrefab = chunkPrefab;
+                    terrains[x][y][z].CreateMesh(this, new Vector3Int(x,y, z), new Vector3Int(terrainWidth - 1, terrainHeight - 1, terrainDepth - 1));
                     terrains[x][y][z].flatShaded = flatShaded;
                     terrains[x][y][z].smoothTerrain = smoothTerrain;
+                    terrains[x][y][z].transform.parent = transform;
+
+                    chunkRenderers[i] = terrains[x][y][z].GetComponent<MeshRenderer>();
+                    i++;
                 }
             }
         }
 
         AssignEdgeValues();
-        RefreshAllChunks();
-        PopulateAllChunks();
+
+        bool bruh = (chunkPrefab == spawnPrefabs.PreMade) ? LoadMesh() : PopulateAllChunks();
+        
         RefreshAllChunks();
     }
 
+    bool isInDistance = true;
     private void Update()
     {
         if (Input.GetKeyUp(KeyCode.P))
             RefreshAllChunks();
+
+        if (isInDistance == true)
+        {
+            if (Vector3.Distance(player.transform.position, centerOfMeshes) > maxDistanceFromMesh)
+            {
+                isInDistance = false;
+                for (int i = 0; i < chunkRenderers.Length; i++)
+                    chunkRenderers[i].enabled = false;
+
+                Debug.Log("Disabled renderers");
+            }
+        }
+        else if(Vector3.Distance(player.transform.position, centerOfMeshes) <= maxDistanceFromMesh)
+        {
+            if (isInDistance == false)
+            {
+                for (int i = 0; i < chunkRenderers.Length; i++)
+                    chunkRenderers[i].enabled = true;
+            }
+
+                Debug.Log("Enabled renderers");
+            isInDistance = true;
+        }
     }
 
-    public void PopulateAllChunks()
+
+    public void SaveMesh()
+    {
+        System.IO.FileStream oFileStream = null;
+        oFileStream = new System.IO.FileStream(Application.dataPath + "\\TerrainSaves\\" + gameObject.name + ".txt", System.IO.FileMode.Create);
+
+
+        for (int x = 0; x < terrainTotalX; x++)
+        {
+            for (int y = 0; y < terrainTotalY; y++)
+            {
+                for (int z = 0; z < terrainTotalZ; z++)
+                {
+                    for (int xIN = 0; xIN < terrainWidth; xIN++)
+                    {
+                        for (int yIN = 0; yIN < terrainHeight; yIN++)
+                        {
+                            for (int zIN = 0; zIN < terrainDepth; zIN++)
+                            {
+                                
+                                oFileStream.Write(BitConverter.GetBytes(terrains[x][y][z].terrainMap[xIN, yIN, zIN].value), 0, BitConverter.GetBytes(terrains[x][y][z].terrainMap[xIN, yIN, zIN].value).Length);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        oFileStream.Close();
+
+    }
+
+    public bool LoadMesh()
+    {
+        if (System.IO.File.Exists(Application.dataPath + "\\TerrainSaves\\" + gameObject.name + ".txt") == false)
+        {
+            for (int x = 0; x < terrainTotalX; x++)
+            {
+                for (int y = 0; y < terrainTotalY; y++)
+                {
+                    for (int z = 0; z < terrainTotalZ; z++)
+                    {
+                        terrains[x][y][z].spawnPrefab = spawnPrefabs.HalfFill;
+                    }
+                }
+            }
+
+            PopulateAllChunks();
+            return true;
+        }
+
+
+        System.IO.FileStream oFileStream = null;
+        oFileStream = new System.IO.FileStream(Application.dataPath + "\\TerrainSaves\\" + gameObject.name + ".txt", System.IO.FileMode.Open);
+
+
+        int length = (int)oFileStream.Length;  // get file length
+        byte[] buffer = new byte[length];            // create buffer
+        int count;                            // actual number of bytes read
+        int sum = 0;                          // total number of bytes read
+
+
+        for (int x = 0; x < terrainTotalX; x++)
+        {
+            for (int y = 0; y < terrainTotalY; y++)
+            {
+                for (int z = 0; z < terrainTotalZ; z++)
+                {
+                    for (int xIN = 0; xIN < terrainWidth; xIN++)
+                    {
+                        for (int yIN = 0; yIN < terrainHeight; yIN++)
+                        {
+                            for (int zIN = 0; zIN < terrainDepth; zIN++)
+                            {
+                                terrains[x][y][z].terrainMap[xIN, yIN, zIN] = new floatMyGuy(0.0f);
+                                count = oFileStream.Read(buffer, sum, length - sum);
+                                sum += count;
+                            } 
+                        }
+                    }
+                }
+            }
+        }
+
+        int offset = 0;
+        for (int x = 0; x < terrainTotalX; x++)
+        {
+            for (int y = 0; y < terrainTotalY; y++)
+            {
+                for (int z = 0; z < terrainTotalZ; z++)
+                {
+                    for (int xIN = 0; xIN < terrainWidth; xIN++)
+                    {
+                        for (int yIN = 0; yIN < terrainHeight; yIN++)
+                        {
+                            for (int zIN = 0; zIN < terrainDepth; zIN++)
+                            {
+                                terrains[x][y][z].terrainMap[xIN, yIN, zIN].value = BitConverter.ToSingle(buffer, offset);
+                                offset += 4;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        AssignEdgeValues();
+
+
+
+        oFileStream.Close();
+
+        return true;
+    }
+
+
+    public bool PopulateAllChunks()
     {
         for (int x = 0; x < terrainTotalX; x++)
         {
@@ -87,6 +288,7 @@ public class TerrainMan : MonoBehaviour
                 }
             }
         }
+        return true;
     }
 
     public void RefreshAllChunks()

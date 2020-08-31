@@ -25,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4718783068257040541}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 100, y: 0, z: 100}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -45,10 +45,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   terrainPrefab: {fileID: 5050879582006432440, guid: aa2ad7d72ad697049be2cbeef785346c,
     type: 3}
+  player: {fileID: 0}
+  maxDistanceFromMesh: 100
   terrainTotalX: 20
+  terrainTotalY: 10
   terrainTotalZ: 20
   terrainWidth: 10
   terrainHeight: 20
   terrainDepth: 10
   smoothTerrain: 1
   flatShaded: 1
+  chunkPrefab: 0

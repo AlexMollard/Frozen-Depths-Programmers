@@ -50,7 +50,7 @@ public class Tool : MonoBehaviour
                 if (Input.GetMouseButton(0))
                 {
                     // burn the ice at the point of the collision. If this succeeds
-                    if (hit.transform.GetComponent<EditableTerrain>().Burn(hit.point, effectRadius, toolStrength))
+                    if (hit.transform.GetComponent<EditableTerrain>().EditTerrain(false, hit.point, effectRadius, toolStrength))
                     {
                         // increase the fuel by the fuel gain rate per second
                         toolFuel += Time.deltaTime * FuelGainRate;
@@ -66,7 +66,7 @@ public class Tool : MonoBehaviour
                 else if (hit.distance >= minimumFreezeDistance)
                 {
                     // freeze the ice at the point of the collision. If this succeeds
-                    if (hit.transform.GetComponent<EditableTerrain>().Freeze(hit.point, effectRadius, toolStrength))
+                    if (hit.transform.GetComponent<EditableTerrain>().EditTerrain(true, hit.point, effectRadius, toolStrength))
                     {
                         // decrease the the fuel by the fuel loss rate per second
                         toolFuel -= Time.deltaTime * FuelLossRate;
