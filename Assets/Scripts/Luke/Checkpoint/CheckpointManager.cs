@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Handles the current checkpoint counter and updates checkpoints
     Creation Date: 10/08/2020
-    Last Modified: 10/08/2020
+    Last Modified: 31/08/2020
 */
 
 using System.Collections;
@@ -17,6 +17,7 @@ public class CheckpointManager : MonoBehaviour
     // The current checkpoint counter. The current value represents the last checkpoint you touched, not how many you've passed.
     // All previous checkpoints will be disabled when updated.
     public static int checkpointCounter = 0;
+    public static GameObject currentCheckpoint;
 
     private void Awake()
     {
