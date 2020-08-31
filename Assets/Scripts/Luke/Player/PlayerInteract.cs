@@ -40,7 +40,22 @@ public class PlayerInteract : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(camPos, playerCamera.TransformDirection(Vector3.forward), out hit, interactReach, interactableMask))
             {
-                EnableArtifactViewer(hit.collider.gameObject);
+                Interactable interactable = hit.collider.GetComponent<Interactable>();
+                Key key = hit.collider.GetComponent<Key>();
+                Keyhole keyhole = hit.collider.GetComponent<Keyhole>();
+
+                if (interactable != null)
+                {
+                    EnableArtifactViewer(hit.collider.gameObject);
+                }
+                else if (key != null)
+                {
+                    key.Collect();
+                }
+                else if (keyhole != null)
+                {
+                    keyhole.Open();
+                }
             }
         }
 
