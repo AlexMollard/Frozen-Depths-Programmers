@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Does something if the player has a required key
     Creation Date: 31/08/2020
-    Last Modified: 31/08/2020
+    Last Modified: 1/09/2020
 */
 
 using System.Collections;
@@ -21,8 +21,17 @@ public class Keyhole : MonoBehaviour
     [SerializeField] private GameObject objectToOpen;
     [SerializeField] private OpenBehaviour openBehaviour = OpenBehaviour.RisingDoor;
 
+    [Header("Rising Door")]
+    [SerializeField] private Vector3 targetPos = new Vector3();
+    [SerializeField] private float doorRisingSpeed = 10;
+
+    private Vector3 originalPos;
+    private bool isRising = false;
+
     private void Start()
     {
+        originalPos = objectToOpen.transform.position;
+
         if (string.IsNullOrEmpty(id))
             Debug.LogError("One of your keyholes doesn't have an ID!");
     }
@@ -39,14 +48,24 @@ public class Keyhole : MonoBehaviour
         {
             case OpenBehaviour.RisingDoor:
                 Debug.Log("Opening door...");
-                // TODO: Use Vector3.MoveTowards for a more realistic look
-                float posX = objectToOpen.transform.position.x;
-                float posY = objectToOpen.transform.position.y;
-                float posZ = objectToOpen.transform.position.z;
-                objectToOpen.transform.position = new Vector3(posX, posY + 5, posZ);
+                isRising = true;
                 break;
             default:
                 break;
+        }
+    }
+
+    private void Update()
+    {
+        if (isRising)
+        {
+            objectToOpen.transform.position = Vector3.MoveTowards(objectToOpen.transform.position, originalPos + targetPos, doorRisingSpeed * Time.deltaTime);
+
+            if (objectToOpen.transform.position == originalPos + targetPos)
+            {
+                Debug.Log("Done!");
+                isRising = false;
+            }
         }
     }
 }
