@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Handles saving and loading of game data
     Creation Date: 3/08/2020
-    Last Modified: 10/08/2020
+    Last Modified: 1/09/2020
 */
 
 using System.Collections;
@@ -45,6 +45,7 @@ public static class SaveManager
             CheckpointManager.checkpointCounter = data.currentCheckpoint;
 
             CheckpointManager.Instance.UpdateCheckpoints();
+            SubtitleManager.Instance.UpdateSubtitles();
         }
     }
 

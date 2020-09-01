@@ -3,15 +3,13 @@
     Author:    Luke Lazzaro
     Summary: Controls how the subtitles appear and change
     Creation Date: 27/07/2020
-    Last Modified: 27/07/2020
+    Last Modified: 1/09/2020
 */
 
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
-// TODO: Add subtitle sequences, so one subtitle will lead into another subtitle if needed.
 
 public class Subtitles : MonoBehaviour
 {
