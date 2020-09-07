@@ -50,6 +50,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        Vector3 temp = new Vector3(controller.center.x, controller.height - controller.center.y, controller.center.z);
+
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
         if (isGrounded && velocity.y < deathVelocity)
@@ -98,12 +100,26 @@ public class PlayerMovement : MonoBehaviour
 
     private void Crouch()
     {
-        isCrouching = !isCrouching;
+        // While crouching, use a raycast pointing upwards from the center of the character controller to the top of the controller's collider
+        // If there is anything in the way, prevent them from standing up from a crouching position
+
+        if (isCrouching)
+        {
+            Debug.Log("Height: " + controller.height);
+            Debug.Log("Center.Y: " + controller.center.y);
+            if (Physics.Raycast(transform.position, Vector3.up, ccHeight * 0.5f, groundMask))
+            {
+                Debug.Log("blocked!");
+                return;
+            }
+        }
+
+        isCrouching = !isCrouching;        
 
         if (isCrouching)
         {
             controller.height = ccCrouchHeight;
-            Vector3 newCenter = new Vector3(controller.center.x, -0.5f, controller.center.z);
+            Vector3 newCenter = new Vector3(controller.center.x, (controller.center.y - (ccHeight - ccCrouchHeight) * 0.5f), controller.center.z);
             controller.center = newCenter;
 
             float camX = playerCamera.transform.localPosition.x;
@@ -114,7 +130,7 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             controller.height = ccHeight;
-            Vector3 newCenter = new Vector3(controller.center.x, 0f, controller.center.z);
+            Vector3 newCenter = new Vector3(controller.center.x, (ccHeight - ccCrouchHeight) * 0.5f, controller.center.z);
             controller.center = newCenter;
 
             float camX = playerCamera.transform.localPosition.x;
