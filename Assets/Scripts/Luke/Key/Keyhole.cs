@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Does something if the player has a required key
     Creation Date: 31/08/2020
-    Last Modified: 1/09/2020
+    Last Modified: 7/09/2020
 */
 
 using System.Collections;
@@ -38,7 +38,7 @@ public class Keyhole : MonoBehaviour
 
     public void Open()
     {
-        if (!KeyManager.keys.Contains(id))
+        if (!KeyManager.Instance.keys.Contains(id))
         {
             Debug.Log("No key matches this keyhole.");
             return;

@@ -1,9 +1,9 @@
-﻿/*
+/*
     File name: Key.cs
     Author:    Luke Lazzaro
     Summary: Adds key functionality to interactable objects
     Creation Date: 31/08/2020
-    Last Modified: 31/08/2020
+    Last Modified: 7/09/2020
 */
 
 using System.Collections;
@@ -19,7 +19,7 @@ public class Key : MonoBehaviour
         if (!string.IsNullOrEmpty(id))
         {
             Debug.Log("Collected!");
-            KeyManager.keys.Add(id);
+            KeyManager.Instance.keys.Add(id);
             Destroy(gameObject);
         }
         else

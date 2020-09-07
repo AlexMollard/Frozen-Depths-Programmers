@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Used to store data that needs to be saved and loaded
     Creation Date: 3/08/2020
-    Last Modified: 10/08/2020
+    Last Modified: 7/09/2020
 */
 
 using System.Collections;
@@ -20,6 +20,7 @@ public class SaveData
     public float toolFuel;
 
     public int currentCheckpoint;
+    public List<string> keys;
 
     // TODO: multidimensional array of floats for the terrain mesh
 }
