@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Handles the current checkpoint counter and updates checkpoints
     Creation Date: 10/08/2020
-    Last Modified: 31/08/2020
+    Last Modified: 8/09/2020
 */
 
 using System.Collections;
@@ -33,6 +33,10 @@ public class CheckpointManager : MonoBehaviour
         {
             // Update checkpoints based on checkpoint counter
             Checkpoint current = child.gameObject.GetComponent<Checkpoint>();
+
+            // Set the current checkpoint based on checkpointCounter
+            if (current.checkpointNumber == checkpointCounter - 1)
+                currentCheckpoint = current.gameObject;
 
             if (current.checkpointNumber < checkpointCounter)
                 current.gameObject.SetActive(false);

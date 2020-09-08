@@ -33,13 +33,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float ccCrouchHeight = 2;
     [SerializeField] private float deathVelocity = -20;
 
+    [HideInInspector] public bool willDie = false;
+
     private CharacterController controller;
     private float groundDistance = 0.4f;
     private Vector3 velocity;
     private bool isGrounded;
     private bool isCrouching = true;
     private Vector3 originalPos;
-    private bool willDie = false;
 
     // used to store the distance between controller.center and the halfway point on the collider
     private float standCenterHeight = 0f;

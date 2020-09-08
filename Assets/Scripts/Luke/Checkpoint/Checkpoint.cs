@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Saves game data on player collision
     Creation Date: 10/08/2020
-    Last Modified: 31/08/2020
+    Last Modified: 8/09/2020
 */
 
 using System.Collections;
@@ -18,7 +18,6 @@ public class Checkpoint : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         CheckpointManager.checkpointCounter = checkpointNumber + 1;
-        CheckpointManager.currentCheckpoint = gameObject;
         CheckpointManager.Instance.UpdateCheckpoints();
         SaveManager.SaveGame(other.gameObject);
 
