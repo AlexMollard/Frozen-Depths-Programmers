@@ -22,5 +22,7 @@ public class SaveData
     public int currentCheckpoint;
     public List<string> keys;
 
+    public List<string> artifactIds;
+
     // TODO: multidimensional array of floats for the terrain mesh
 }

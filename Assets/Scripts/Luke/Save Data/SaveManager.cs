@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Handles saving and loading of game data
     Creation Date: 3/08/2020
-    Last Modified: 7/09/2020
+    Last Modified: 8/09/2020
 */
 
 using System.Collections;
@@ -23,6 +23,7 @@ public static class SaveManager
         data.toolFuel = player.GetComponent<Tool>().toolFuel;
         data.currentCheckpoint = CheckpointManager.checkpointCounter;
         data.keys = KeyManager.Instance.keys;
+        data.artifactIds = ArtifactManager.artifactIds;
         // save terrain mesh here
 
         PrintSaveData(data);
@@ -47,6 +48,7 @@ public static class SaveManager
             player.GetComponent<Tool>().toolFuel = data.toolFuel;
             CheckpointManager.checkpointCounter = data.currentCheckpoint;
             KeyManager.Instance.keys = data.keys;
+            ArtifactManager.artifactIds = data.artifactIds;
 
             PrintSaveData(data);
 
@@ -66,6 +68,13 @@ public static class SaveManager
         foreach (string key in data.keys)
         {
             message += key + ", ";
+        }
+        Debug.Log(message);
+
+        message = "Artifacts: ";
+        foreach (string artifact in data.artifactIds)
+        {
+            message += artifact + ", ";
         }
         Debug.Log(message);
 
