@@ -84,13 +84,13 @@ public class EditableTerrain : MonoBehaviour
                     switch (spawnPrefab)
                     {
                         case TerrainMan.spawnPrefabs.FlatAtBottom:
-                            terrainMap[x, y, z].value = (managerIndex.y > 0) ? 0.0f : (float)y - height / 4;
+                            terrainMap[x, y, z].value = (managerIndex.y > 0) ? 1.0f : 0.0f;
                             break;
                         case TerrainMan.spawnPrefabs.FlatAtTop:
-                            terrainMap[x, y, z].value = (managerIndex.y < manager.terrainTotalY - 1) ? 0.0f : (float)y - height / 4;
+                            terrainMap[x, y, z].value = (managerIndex.y < manager.terrainTotalY - 1) ? 0.0f : 1.0f;
                             break;
                         case TerrainMan.spawnPrefabs.HalfFill:
-                            terrainMap[x, y, z].value = (managerIndex.y > manager.terrainTotalY / 2) ? 1.0f : 0.5f;
+                            terrainMap[x, y, z].value = (managerIndex.y >= manager.terrainTotalY / 2) ? 1.0f : 0.0f;
                             break;
                         case TerrainMan.spawnPrefabs.Bowl:
                             terrainMap[x, y, z].value = (managerIndex.y == 0 || managerIndex.x == 0 || managerIndex.z == 0 || managerIndex.x == manager.terrainTotalX - 1 || managerIndex.z == manager.terrainTotalZ - 1) ? 0.0f : 1.0f;

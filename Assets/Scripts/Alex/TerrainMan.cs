@@ -6,6 +6,7 @@ using UnityEditor;
 using System;
 using System.Security.AccessControl;
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(TerrainMan))]
 public class ObjectBuilderEditor : Editor
 {
@@ -21,6 +22,8 @@ public class ObjectBuilderEditor : Editor
         }
     }
 }
+#endif
+
 
 public class TerrainMan : MonoBehaviour
 {
@@ -80,14 +83,48 @@ public class TerrainMan : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
+        float halfChunkHeight = terrainHeight * 0.5f;
+        float halfChunkWidth = terrainHeight * 0.5f;
+        float halfChunkDepth = terrainHeight * 0.5f;
+
         Vector3 currentManPos = transform.position;
-        Vector3 centerOfMeshes = new Vector3((terrainWidth * terrainTotalX) * 0.5f, (terrainHeight * terrainTotalY) * 0.5f, (terrainDepth * terrainTotalZ) * 0.5f) + currentManPos;
-        Vector3 scale = new Vector3(terrainTotalX * terrainWidth, terrainTotalY * terrainHeight, terrainTotalZ * terrainDepth);
-        Gizmos.color = new Color(1, 1, 0, 0.75f);
+        Vector3 scale = new Vector3((terrainWidth - 1) * (terrainTotalX), (terrainHeight - 1) * (terrainTotalY), (terrainDepth - 1) * (terrainTotalZ));
+
+        Vector3 centerOfMeshes = new Vector3(scale.x * 0.5f, scale.y * 0.5f, scale.z * 0.5f) + currentManPos;
+        
+        Gizmos.color = new Color(1, 1, 0, 0.55f);
         Gizmos.DrawCube(centerOfMeshes, scale);
 
-        Gizmos.color = new Color(1, 0, 1, 0.75f);
-        Gizmos.DrawCube(centerOfMeshes, new Vector3(terrainWidth, terrainHeight, terrainDepth));
+        Gizmos.color = new Color(1, 0, 1, 0.65f);
+
+        switch (chunkPrefab)
+        {
+            case spawnPrefabs.FlatAtBottom:
+                Gizmos.DrawCube(centerOfMeshes - new Vector3(0, scale.y * 0.5f - halfChunkHeight, 0), new Vector3(scale.x, terrainHeight, scale.z));
+                break;
+            case spawnPrefabs.FlatAtTop:
+                Gizmos.DrawCube(centerOfMeshes - new Vector3(0, halfChunkHeight, 0), new Vector3(scale.x, scale.y - terrainHeight, scale.z));
+                break;
+            case spawnPrefabs.HalfFill:
+                Gizmos.DrawCube(centerOfMeshes - new Vector3(0, scale.y * 0.25f, 0), new Vector3(scale.x, scale.y * 0.5f, scale.z));
+                break;
+            case spawnPrefabs.Bowl:
+                break;
+            case spawnPrefabs.XPlusWall:
+                break;
+            case spawnPrefabs.XNegWall:
+                break;
+            case spawnPrefabs.ZPlusWall:
+                break;
+            case spawnPrefabs.ZNegWall:
+                    Gizmos.DrawCube(centerOfMeshes, new Vector3(terrainWidth, terrainHeight, terrainDepth));
+                break;
+            case spawnPrefabs.PreMade:
+                    Gizmos.DrawCube(centerOfMeshes, new Vector3(terrainWidth, terrainHeight, terrainDepth));
+                break;
+            default:
+                break;
+        }
     }
 
 
