@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Adds first person movement to the player
     Creation Date: 20/07/2020
-    Last Modified: 7/09/2020
+    Last Modified: 8/09/2020
 */
 
 using System;
@@ -41,10 +41,14 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 originalPos;
     private bool willDie = false;
 
+    // used to store the distance between controller.center and the halfway point on the collider
+    private float standCenterHeight = 0f;
+
     private void Start()
     {
         originalPos = transform.position;
         controller = GetComponent<CharacterController>();
+        standCenterHeight = (ccHeight - ccCrouchHeight) * 0.5f;
         Crouch();
     }
 
@@ -100,14 +104,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void Crouch()
     {
-        // While crouching, use a raycast pointing upwards from the center of the character controller to the top of the controller's collider
-        // If there is anything in the way, prevent them from standing up from a crouching position
-
         if (isCrouching)
         {
-            Debug.Log("Height: " + controller.height);
-            Debug.Log("Center.Y: " + controller.center.y);
-            if (Physics.Raycast(transform.position, Vector3.up, ccHeight * 0.5f, groundMask))
+            if (Physics.Raycast(transform.position, Vector3.up, standCenterHeight + (ccHeight / 2), groundMask))
             {
                 Debug.Log("blocked!");
                 return;
