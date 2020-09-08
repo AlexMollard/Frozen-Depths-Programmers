@@ -187,6 +187,7 @@ public class EditableTerrain : MonoBehaviour
 
         CreateMeshData();
         UpdateNeighbours(v3Int, radius);
+        Debug.Log("Hit");
 
         return true;
     }

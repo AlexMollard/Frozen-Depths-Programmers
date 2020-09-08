@@ -109,15 +109,23 @@ public class TerrainMan : MonoBehaviour
                 Gizmos.DrawCube(centerOfMeshes - new Vector3(0, scale.y * 0.25f, 0), new Vector3(scale.x, scale.y * 0.5f, scale.z));
                 break;
             case spawnPrefabs.Bowl:
+                Gizmos.DrawCube(centerOfMeshes - new Vector3(0, scale.y * 0.5f - halfChunkHeight, 0), new Vector3(scale.x, terrainHeight, scale.z));
+                Gizmos.DrawCube(centerOfMeshes + new Vector3(scale.x * 0.375f, 0, 0), new Vector3(scale.x / 4, scale.y, scale.z));
+                Gizmos.DrawCube(centerOfMeshes - new Vector3(scale.x * 0.375f, 0, 0), new Vector3(scale.x / 4, scale.y, scale.z));
+                Gizmos.DrawCube(centerOfMeshes + new Vector3(0, 0, scale.z * 0.375f), new Vector3(scale.x, scale.y, scale.z / 4));
+                Gizmos.DrawCube(centerOfMeshes - new Vector3(0, 0, scale.z * 0.375f), new Vector3(scale.x, scale.y, scale.z / 4));
                 break;
             case spawnPrefabs.XPlusWall:
+                Gizmos.DrawCube(centerOfMeshes + new Vector3(scale.x * 0.25f, 0, 0), new Vector3(scale.x / 2, scale.y, scale.z));
                 break;
             case spawnPrefabs.XNegWall:
+                Gizmos.DrawCube(centerOfMeshes - new Vector3(scale.x * 0.25f, 0, 0), new Vector3(scale.x / 2, scale.y, scale.z));
                 break;
             case spawnPrefabs.ZPlusWall:
+                Gizmos.DrawCube(centerOfMeshes + new Vector3(0, 0, scale.z * 0.25f), new Vector3(scale.x, scale.y, scale.z / 2));
                 break;
             case spawnPrefabs.ZNegWall:
-                    Gizmos.DrawCube(centerOfMeshes, new Vector3(terrainWidth, terrainHeight, terrainDepth));
+                Gizmos.DrawCube(centerOfMeshes - new Vector3(0, 0, scale.z * 0.25f), new Vector3(scale.x, scale.y, scale.z / 2));
                 break;
             case spawnPrefabs.PreMade:
                     Gizmos.DrawCube(centerOfMeshes, new Vector3(terrainWidth, terrainHeight, terrainDepth));
