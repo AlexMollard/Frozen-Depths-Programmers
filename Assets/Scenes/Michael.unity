@@ -2776,7 +2776,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 613bde3d9849a9f44b15ba09b29ac0bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  description: 
+  description: artifact
 --- !u!65 &880992824
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3429,6 +3429,10 @@ PrefabInstance:
       propertyPath: viewerDescription
       value: 
       objectReference: {fileID: 2826508479633269570}
+    - target: {fileID: 1367854099, guid: cba56d5f368d6e54783161c488cfd8d3, type: 3}
+      propertyPath: interactableMask.m_Bits
+      value: 512
+      objectReference: {fileID: 0}
     - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
       propertyPath: blowtorchFuelLossRate
@@ -4437,7 +4441,7 @@ PrefabInstance:
     - target: {fileID: 2344815949102025590, guid: d90e245406b96564f8e865214ba32869,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2344815949102025590, guid: d90e245406b96564f8e865214ba32869,
         type: 3}
@@ -4489,7 +4493,8 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4827399993009097336, guid: d90e245406b96564f8e865214ba32869, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: d90e245406b96564f8e865214ba32869, type: 3}
 --- !u!33 &1634225877 stripped
 MeshFilter:
