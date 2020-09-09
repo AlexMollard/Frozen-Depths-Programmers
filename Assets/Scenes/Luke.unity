@@ -897,6 +897,11 @@ PrefabInstance:
       propertyPath: fuelDisplay
       value: 
       objectReference: {fileID: 1025482440}
+    - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6641315128160775797, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
       propertyPath: m_Name

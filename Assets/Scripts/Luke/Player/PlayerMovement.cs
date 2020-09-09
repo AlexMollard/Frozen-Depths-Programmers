@@ -1,9 +1,9 @@
-﻿/*
+/*
     File name: PlayerMovement.cs
     Author:    Luke Lazzaro
     Summary: Adds first person movement to the player
     Creation Date: 20/07/2020
-    Last Modified: 8/09/2020
+    Last Modified: 9/09/2020
 */
 
 using System;
@@ -36,7 +36,7 @@ public class PlayerMovement : MonoBehaviour
     [HideInInspector] public bool willDie = false;
 
     private CharacterController controller;
-    private float groundDistance = 0.4f;
+    private float groundDistance = 0.6f;
     private Vector3 velocity;
     private bool isGrounded;
     private bool isCrouching = true;
@@ -107,11 +107,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isCrouching)
         {
-            if (Physics.Raycast(transform.position, Vector3.up, standCenterHeight + (ccHeight / 2), groundMask))
-            {
-                Debug.Log("blocked!");
+            if (Physics.Raycast(transform.position, Vector3.up, standCenterHeight + (ccHeight / 2)))
                 return;
-            }
         }
 
         isCrouching = !isCrouching;        
