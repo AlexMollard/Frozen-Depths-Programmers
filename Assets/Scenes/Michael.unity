@@ -1091,7 +1091,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 03c172bc562cf0548bbba678b2510e3f, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2903,6 +2903,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 613bde3d9849a9f44b15ba09b29ac0bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  id: 1
+  artifactDisplay: {fileID: 996673346}
   description: artifact
 --- !u!65 &880992824
 BoxCollider:
@@ -3231,7 +3233,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &963152431
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3409,7 +3411,7 @@ PrefabInstance:
     - target: {fileID: 4718783068257040543, guid: d6657c26fb022024eb71ba5974d378a7,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.5
+      value: -5.3
       objectReference: {fileID: 0}
     - target: {fileID: 4718783068257040543, guid: d6657c26fb022024eb71ba5974d378a7,
         type: 3}
@@ -3674,7 +3676,7 @@ PrefabInstance:
     - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
       propertyPath: beamRadius
-      value: 0
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 6641315128160775797, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
@@ -4895,7 +4897,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1707234100
 Transform:
   m_ObjectHideFlags: 0
@@ -6134,7 +6136,7 @@ PrefabInstance:
     - target: {fileID: 1006591071520275132, guid: 52c6018349d5ac0478910d7c91fc67f6,
         type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1006591071520275134, guid: 52c6018349d5ac0478910d7c91fc67f6,
         type: 3}
