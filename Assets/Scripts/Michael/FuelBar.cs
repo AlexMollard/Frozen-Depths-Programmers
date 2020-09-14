@@ -3,7 +3,7 @@
     Author: Michael Sweetman
     Summary: Manages the Fuel Bar display on the tool canvas
     Creation Date: 25/08/2020
-    Last Modified: 25/08/2020
+    Last Modified: 14/09/2020
 */
 
 using System.Collections;
@@ -14,19 +14,21 @@ using UnityEngine.UI;
 public class FuelBar : MonoBehaviour
 {
     public Tool tool;
-    public float fuelBarMaxWidth = 300.0f;
-    public float fuelBarMinWidth = 0.0f;
+    public float fuelBarMaxHeight = 300.0f;
+    public float fuelBarMinHeight = 0.0f; 
 
     RectTransform bar;
 
     private void Start()
     {
+        // get the rect transform
         bar = GetComponent<RectTransform>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        bar.sizeDelta = new Vector2(fuelBarMinWidth + (tool.toolFuel / tool.capacity * (fuelBarMaxWidth - fuelBarMinWidth)), bar.sizeDelta.y);
+        // determine the height of the bar using the percent of the tool capacity filled
+        bar.sizeDelta = new Vector2(bar.sizeDelta.x, fuelBarMinHeight + (tool.toolFuel / tool.capacity * (fuelBarMaxHeight - fuelBarMinHeight)));
     }
 }
