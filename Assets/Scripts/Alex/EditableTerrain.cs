@@ -170,16 +170,17 @@ public class EditableTerrain : MonoBehaviour
                     if (offsetVec.magnitude < radius)
                     {
                         Vector3 newPoint = v3Int + offsetVec;
-
+                        float newStrength = strength - Vector3.Distance(pos, transform.position + offsetVec);
+                        newStrength = Mathf.Lerp(0,1,newStrength);
                         if (newPoint.x < 0 || newPoint.y < 0 || newPoint.z < 0 || newPoint.x > width || newPoint.y > height || newPoint.z > depth)
                         {
                             continue;
                         }
 
                         if (freeze)
-                            terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value -= strength;
+                            terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value -= newStrength;
                         else
-                            terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value += strength;
+                            terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value += newStrength;
                     }
                 }
             }

@@ -37,22 +37,34 @@ public class Tool : MonoBehaviour
     public Material burnLaserMaterial;
     public Material freezeLaserMaterial;
 
+    public GameObject sphereOBJ;
+
     void Update()
     {
         laser.enabled = false;
         laser.SetPosition(0, laserStartPoint.position);
         timer += Time.deltaTime;
 
+       // sphereOBJ.transform.localScale = new Vector3(beamRadius, beamRadius, beamRadius);
+
+
+        // cast a ray forward from the center of the player camera viewport
+        Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 1.0f));
+        RaycastHit hit;
+
+        if (Physics.SphereCast(ray, beamRadius, out hit, maxRange))
+        {
+            sphereOBJ.transform.position = hit.point;
+        }
+
+
         // if the mouse is left clicked or if the mouse is right clicked and the tool has fuel
-        if ((Input.GetMouseButton(0)|| Input.GetMouseButton(1)) && timer > stopWatchTime)
+        if ((Input.GetMouseButton(0) || Input.GetMouseButton(1)) && timer > stopWatchTime)
         {
             laser.enabled = true;
             laser.material = (Input.GetMouseButton(0)) ? burnLaserMaterial : freezeLaserMaterial;
 
             timer = 0.0f;
-            // cast a ray forward from the center of the player camera viewport
-            Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f,0.5f,1.0f));
-            RaycastHit hit;
 
             // if the ray hit a game object
             if (Physics.SphereCast(ray, beamRadius, out hit, maxRange))
