@@ -13,6 +13,7 @@ using UnityEngine;
 public class Tool : MonoBehaviour
 {
     [Header("Tool Use")]
+    public bool canFreeze = false;
     public float minimumFreezeDistance = 2.0f;
     public float maxRange = 10.0f;
     public float beamRadius = 0.5f;
@@ -58,10 +59,14 @@ public class Tool : MonoBehaviour
         // if the mouse is left clicked, or right clicked with fuel
         if ((Input.GetMouseButton(0)|| (Input.GetMouseButton(1) && toolFuel > 0.0f)))
         {
-            // activate the laser
-            laser.SetActive(true);
-            // set the material of the laser based on the the tool's fire mode
-            laserRenderer.material = (Input.GetMouseButton(0)) ? burnLaserMaterial : freezeLaserMaterial;
+            // if the tool can freeze, or if the mouse was left clicked
+            if (canFreeze || Input.GetMouseButton(0))
+            {
+                // activate the laser
+                laser.SetActive(true);
+                // set the material of the laser based on the the tool's fire mode
+                laserRenderer.material = (Input.GetMouseButton(0)) ? burnLaserMaterial : freezeLaserMaterial;
+            }
 
             // if enough time has passed since the last terrain edit
             if (tickTimer > tickRate)
@@ -85,8 +90,8 @@ public class Tool : MonoBehaviour
                         // if the mouse was left clicked
                         if (Input.GetMouseButton(0))
                         {
-                            // burn the ice at the point of the collision. If this succeeds
-                            if (hit.transform.GetComponent<EditableTerrain>().EditTerrain(false, hit.point, effectRadius, toolStrength))
+                            // burn the ice at the point of the collision. If this succeeds and the tool is able to freeze ice
+                            if (hit.transform.GetComponent<EditableTerrain>().EditTerrain(false, hit.point, effectRadius, toolStrength) && canFreeze)
                             {
                                 // increase the fuel by the fuel gain rate per second
                                 toolFuel += Time.deltaTime * FuelGainRate;
@@ -98,8 +103,8 @@ public class Tool : MonoBehaviour
                                 }
                             }
                         }
-                        // if the mouse was right clicked and the collision point was beyond the minimum creation distance
-                        else if (hit.distance >= minimumFreezeDistance)
+                        // if the tool is able to freeze ice, the mouse was right clicked and the collision point was beyond the minimum creation distance
+                        else if (canFreeze && hit.distance >= minimumFreezeDistance)
                         {
                             // freeze the ice at the point of the collision. If this succeeds
                             if (hit.transform.GetComponent<EditableTerrain>().EditTerrain(true, hit.point, effectRadius, toolStrength))
