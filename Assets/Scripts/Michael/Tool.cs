@@ -3,7 +3,7 @@
     Author: Michael Sweetman
     Summary: Determines a point on the ice mesh the player wants burnt/frozen. Manages a fuel to limit the use of ice creation.
     Creation Date: 21/07/2020
-    Last Modified: 14/09/2020
+    Last Modified: 15/09/2020
 */
 
 using System.Collections;
@@ -37,11 +37,15 @@ public class Tool : MonoBehaviour
     public Material burnLaserMaterial;
     public Material freezeLaserMaterial;
     MeshRenderer laserRenderer;
+    float laserLengthScalar;
 
     private void Start()
     {
         // get the mesh renderer for the laser
         laserRenderer = laser.GetComponent<MeshRenderer>();
+
+        // get the relative length the display beam needs to be relative to the actual spherecast distance. Half this value as as scale 1 cylinder is 2 units long
+        laserLengthScalar = (new Vector3(playerCamera.transform.position.x, playerCamera.transform.position.y, playerCamera.transform.position.z + maxRange) - laserStartPoint.position).magnitude / maxRange * 0.5f;
     }
 
     void Update()
@@ -51,7 +55,7 @@ public class Tool : MonoBehaviour
         // increase the timer by the amount of time passed since last frame
         tickTimer += Time.deltaTime;
 
-        // if the mouse is left clicked or right clicked with fuel
+        // if the mouse is left clicked, or right clicked with fuel
         if ((Input.GetMouseButton(0)|| (Input.GetMouseButton(1) && toolFuel > 0.0f)))
         {
             // activate the laser
@@ -72,8 +76,8 @@ public class Tool : MonoBehaviour
                 if (Physics.SphereCast(ray, beamRadius, out hit, maxRange))
                 {
                     // position and scale the laser so it fires from the laser start point with a length based on the hit distance and a radius based on the beam radius
-                    laser.transform.position = laserStartPoint.position + laserStartPoint.forward * hit.distance * 0.375f;
-                    laser.transform.localScale = new Vector3(laser.transform.localScale.x, hit.distance * 0.375f, laser.transform.localScale.z);
+                    laser.transform.position = laserStartPoint.position + laserStartPoint.forward * hit.distance * laserLengthScalar;
+                    laser.transform.localScale = new Vector3(laser.transform.localScale.x, hit.distance * laserLengthScalar, laser.transform.localScale.z);
 
                     // if the hit gameobject has the tag "Ice"
                     if (hit.transform.tag == "Ice")
@@ -112,12 +116,12 @@ public class Tool : MonoBehaviour
                         }
                     }
                 }
-                // if the spherecast did not it a game object 
+                // if the spherecast did not hit a game object 
                 else
                 {
                     // position and scale the laser so it fires from the laser start point with a length based on the max range and a radius based on the beam radius
-                    laser.transform.position = laserStartPoint.position + laserStartPoint.forward * maxRange * 0.375f;
-                    laser.transform.localScale = new Vector3(laser.transform.localScale.x, maxRange * 0.375f, laser.transform.localScale.z);
+                    laser.transform.position = laserStartPoint.position + laserStartPoint.forward * maxRange * laserLengthScalar;
+                    laser.transform.localScale = new Vector3(laser.transform.localScale.x, maxRange * laserLengthScalar, laser.transform.localScale.z);
                 }
             }
         }

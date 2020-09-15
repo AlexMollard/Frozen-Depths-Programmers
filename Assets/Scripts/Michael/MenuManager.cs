@@ -3,7 +3,7 @@
     Author: Michael Sweetman
     Summary: Manages events triggered by clicking UI buttons such as switching between UIs and exiting the game.
     Creation Date: 29/07/2020
-    Last Modified: 18/08/2020
+    Last Modified: 15/09/2020
 */
 
 using System.Collections;
@@ -26,6 +26,9 @@ public class MenuManager : MonoBehaviour
     public GameObject player;
     public MouseLook mouseLook;
 
+    [Header("Start State")]
+    public bool startInMainMenu = true;
+
     PlayerMovement playerMovement;
     Tool tool;
 
@@ -41,14 +44,25 @@ public class MenuManager : MonoBehaviour
         playerMovement = player.GetComponent<PlayerMovement>();
         tool = player.GetComponent<Tool>();
         
-        // set the main menu camera to be the current active camera
-        mainMenuCamera.SetActive(true);
-        playerCamera.SetActive(false);
+        // activate the camera needed for the start UI, deactivate the other
+        mainMenuCamera.SetActive(startInMainMenu);
+        playerCamera.SetActive(!startInMainMenu);
 
         // store the UIs in an array
         UIs = new GameObject[4] { mainMenuUI, gameMenuUI, inGameUI, settingsUI };
-        // switch to the main menu UI
-        SwitchUI(mainMenuUI);
+
+        // if the start UI should be the main menu
+        if (startInMainMenu)
+        {
+            // switch to the main menu UI
+            SwitchUI(mainMenuUI);
+        }
+        // if the start UI should instead by the in game UI
+        else
+        {
+            // switch to the in game UI
+            SwitchUI(inGameUI);
+        }
     }
 
     private void Update()
