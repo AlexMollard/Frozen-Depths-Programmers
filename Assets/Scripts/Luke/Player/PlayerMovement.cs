@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Adds first person movement to the player
     Creation Date: 20/07/2020
-    Last Modified: 9/09/2020
+    Last Modified: 15/09/2020
 */
 
 using System;
@@ -22,6 +22,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform groundCheck;
     [Tooltip("The layer for all objects you can walk on.")]
     [SerializeField] private LayerMask groundMask;
+    [SerializeField] private float groundCheckRadius = 0.6f;
 
     [Header("Camera")]
     [SerializeField] private GameObject playerCamera;
@@ -36,7 +37,7 @@ public class PlayerMovement : MonoBehaviour
     [HideInInspector] public bool willDie = false;
 
     private CharacterController controller;
-    private float groundDistance = 0.6f;
+    
     private Vector3 velocity;
     private bool isGrounded;
     private bool isCrouching = true;
@@ -57,7 +58,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 temp = new Vector3(controller.center.x, controller.height - controller.center.y, controller.center.z);
 
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundMask);
 
         if (isGrounded && velocity.y < deathVelocity)
         {
