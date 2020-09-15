@@ -2706,7 +2706,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -3599,7 +3599,7 @@ PrefabInstance:
     - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
       propertyPath: toolStrength
-      value: 0.25
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
@@ -4029,7 +4029,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -5321,7 +5321,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -5394,7 +5394,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -6049,17 +6049,17 @@ PrefabInstance:
     - target: {fileID: 1006591071520275106, guid: 52c6018349d5ac0478910d7c91fc67f6,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.5707663
+      value: 0.49
       objectReference: {fileID: 0}
     - target: {fileID: 1006591071520275106, guid: 52c6018349d5ac0478910d7c91fc67f6,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.5496758
+      value: -0.47
       objectReference: {fileID: 0}
     - target: {fileID: 1006591071520275106, guid: 52c6018349d5ac0478910d7c91fc67f6,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.0336878
+      value: 3.14
       objectReference: {fileID: 0}
     - target: {fileID: 1006591071520275106, guid: 52c6018349d5ac0478910d7c91fc67f6,
         type: 3}
