@@ -9,6 +9,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
 {
@@ -25,6 +26,21 @@ public class MenuManager : MonoBehaviour
     [Header("Player")]
     public GameObject player;
     public MouseLook mouseLook;
+
+    [Header("Settings")]
+    public Slider masterVolumeSlider;
+    public Text masterVolumeValue;
+    public Slider musicVolumeSlider;
+    public Text musicVolumeValue;
+    public Slider dialogueVolumeSlider;
+    public Text dialogueVolumeValue;
+    public Slider soundEffectVolumeSlider;
+    public Text soundEffectVolumeValue;
+    public Slider sensitivitySlider;
+    public Text sensitivityValue;
+    public Slider fieldOfViewSlider;
+    public Text fieldOfViewValue;
+    public Toggle fullScreenToggle;
 
     [Header("Start State")]
     public bool startInMainMenu = true;
@@ -190,6 +206,59 @@ public class MenuManager : MonoBehaviour
     {
         // switch to the in-game UI
         SwitchUI(inGameUI);
+    }
+
+    // triggers when the value of the master volume slider changes
+    public void MasterVolume()
+    {
+        // update the master volume value text to display the new master volume value
+        masterVolumeValue.text = masterVolumeSlider.value.ToString();
+    }
+
+    // triggers when the value of the music volume slider changes
+    public void MusicVolume()
+    {
+        // update the music volume value text to display the new music volume value
+        musicVolumeValue.text = musicVolumeSlider.value.ToString();
+    }
+
+    // triggers when the value of the dialogue volume slider changes
+    public void DialogueVolume()
+    {
+        // update the dialogue volume value text to display the new dialogue volume value
+        dialogueVolumeValue.text = dialogueVolumeSlider.value.ToString();
+    }
+
+    // triggers when the value of the sound effect volume slider changes
+    public void SoundEffectVolume()
+    {
+        // update the sound effect volume value text to display the new sound effect volume value
+        soundEffectVolumeValue.text = soundEffectVolumeSlider.value.ToString();
+    }
+
+    // triggers when the value of the sensitivity slider changes
+    public void Sensitivity()
+    {
+        // update the sensitivity value text to display the new sensitivity value
+        sensitivityValue.text = sensitivitySlider.value.ToString("F1");
+        // set the mouse sensitivity to the value of the slider
+        mouseLook.mouseSensitivity = sensitivitySlider.value;
+    }
+
+    // triggers when the value of the field of view slider changes
+    public void FieldOfView()
+    {
+        // update the field of view value text to display the new field of view value
+        fieldOfViewValue.text = fieldOfViewSlider.value.ToString();
+        // set the player camera field of view to the value of the slider
+        playerCamera.GetComponent<Camera>().fieldOfView = fieldOfViewSlider.value;
+    }
+
+    // triggers when the fullscreen toggle is clicked
+    public void FullScreen()
+    {
+        // set the game to play in fullscreen if the toggle is on, windowed otherwise
+        Screen.fullScreen = fullScreenToggle.isOn;
     }
 
     private void LateUpdate()
