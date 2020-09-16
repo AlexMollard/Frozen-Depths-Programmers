@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Rotates a first person camera with the mouse
     Creation Date: 20/07/2020
-    Last Modified: 20/07/2020
+    Last Modified: 15/09/2020
 */
 
 using System.Collections;
@@ -12,7 +12,7 @@ using UnityEngine;
 
 public class MouseLook : MonoBehaviour
 {
-    [SerializeField] private float mouseSensitivity = 100;
+    public float mouseSensitivity = 100;
     [SerializeField] private Transform playerBody;
 
     private float xRotation = 0;
