@@ -20,7 +20,7 @@ public class Key : MonoBehaviour
         {
             Debug.Log("Collected!");
             KeyManager.Instance.keys.Add(id);
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
         else
             Debug.LogError("Please enter an ID for your key!");
