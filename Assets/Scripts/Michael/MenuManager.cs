@@ -14,36 +14,36 @@ using UnityEngine.UI;
 public class MenuManager : MonoBehaviour
 {
     [Header("Cameras")]
-    public GameObject mainMenuCamera;
-    public GameObject playerCamera;
+    [SerializeField] GameObject mainMenuCamera;
+    [SerializeField] GameObject playerCamera;
 
     [Header("UIs")]
-    public GameObject mainMenuUI;
-    public GameObject gameMenuUI;
-    public GameObject inGameUI;
-    public GameObject settingsUI;
+    [SerializeField] GameObject mainMenuUI;
+    [SerializeField] GameObject gameMenuUI;
+    [SerializeField] GameObject inGameUI;
+    [SerializeField] GameObject settingsUI;
 
     [Header("Player")]
-    public GameObject player;
-    public MouseLook mouseLook;
+    [SerializeField] GameObject player;
+    [SerializeField] MouseLook mouseLook;
 
     [Header("Settings")]
-    public Slider masterVolumeSlider;
-    public Text masterVolumeValue;
-    public Slider musicVolumeSlider;
-    public Text musicVolumeValue;
-    public Slider dialogueVolumeSlider;
-    public Text dialogueVolumeValue;
-    public Slider soundEffectVolumeSlider;
-    public Text soundEffectVolumeValue;
-    public Slider sensitivitySlider;
-    public Text sensitivityValue;
-    public Slider fieldOfViewSlider;
-    public Text fieldOfViewValue;
-    public Toggle fullScreenToggle;
+    [SerializeField] Slider masterVolumeSlider;
+    [SerializeField] Text masterVolumeValueText;
+    [SerializeField] Slider musicVolumeSlider;
+    [SerializeField] Text musicVolumeValueText;
+    [SerializeField] Slider dialogueVolumeSlider;
+    [SerializeField] Text dialogueVolumeValueText;
+    [SerializeField] Slider soundEffectVolumeSlider;
+    [SerializeField] Text soundEffectVolumeValueText;
+    [SerializeField] Slider sensitivitySlider;
+    [SerializeField] Text sensitivityValueText;
+    [SerializeField] Slider fieldOfViewSlider;
+    [SerializeField] Text fieldOfViewValueText;
+    [SerializeField] Toggle fullScreenToggle;
 
     [Header("Start State")]
-    public bool startInMainMenu = true;
+    [SerializeField] bool startInMainMenu = true;
 
     PlayerMovement playerMovement;
     Tool tool;
@@ -53,6 +53,10 @@ public class MenuManager : MonoBehaviour
     GameObject[] UIs;
     bool willGoBackToCheckpoint = false;
 
+    [HideInInspector] public float masterVolume = 10.0f;
+    [HideInInspector] public float musicVolume = 10.0f;
+    [HideInInspector] public float dialogueVolume = 10.0f;
+    [HideInInspector] public float soundEffectVolume = 10.0f;
 
     void Start()
     {
@@ -79,6 +83,14 @@ public class MenuManager : MonoBehaviour
             // switch to the in game UI
             SwitchUI(inGameUI);
         }
+
+        // trigger the settings functions to get the inital values from the sliders 
+        MasterVolume();
+        MusicVolume();
+        DialogueVolume();
+        SoundEffectVolume();
+        Sensitivity();
+        FieldOfView();
     }
 
     private void Update()
@@ -212,35 +224,43 @@ public class MenuManager : MonoBehaviour
     public void MasterVolume()
     {
         // update the master volume value text to display the new master volume value
-        masterVolumeValue.text = masterVolumeSlider.value.ToString();
+        masterVolumeValueText.text = masterVolumeSlider.value.ToString();
+        // store the new master volume value
+        masterVolume = masterVolumeSlider.value;
     }
 
     // triggers when the value of the music volume slider changes
     public void MusicVolume()
     {
         // update the music volume value text to display the new music volume value
-        musicVolumeValue.text = musicVolumeSlider.value.ToString();
+        musicVolumeValueText.text = musicVolumeSlider.value.ToString();
+        // store the new music volume value
+        musicVolume = musicVolumeSlider.value;
     }
 
     // triggers when the value of the dialogue volume slider changes
     public void DialogueVolume()
     {
         // update the dialogue volume value text to display the new dialogue volume value
-        dialogueVolumeValue.text = dialogueVolumeSlider.value.ToString();
+        dialogueVolumeValueText.text = dialogueVolumeSlider.value.ToString();
+        // store the new dialogue volume value
+        dialogueVolume = dialogueVolumeSlider.value;
     }
 
     // triggers when the value of the sound effect volume slider changes
     public void SoundEffectVolume()
     {
         // update the sound effect volume value text to display the new sound effect volume value
-        soundEffectVolumeValue.text = soundEffectVolumeSlider.value.ToString();
+        soundEffectVolumeValueText.text = soundEffectVolumeSlider.value.ToString();
+        // store the new sound effect volume value
+        soundEffectVolume = soundEffectVolumeSlider.value;
     }
 
     // triggers when the value of the sensitivity slider changes
     public void Sensitivity()
     {
         // update the sensitivity value text to display the new sensitivity value
-        sensitivityValue.text = sensitivitySlider.value.ToString("F1");
+        sensitivityValueText.text = sensitivitySlider.value.ToString("F1");
         // set the mouse sensitivity to the value of the slider
         mouseLook.mouseSensitivity = sensitivitySlider.value;
     }
@@ -249,7 +269,7 @@ public class MenuManager : MonoBehaviour
     public void FieldOfView()
     {
         // update the field of view value text to display the new field of view value
-        fieldOfViewValue.text = fieldOfViewSlider.value.ToString();
+        fieldOfViewValueText.text = fieldOfViewSlider.value.ToString();
         // set the player camera field of view to the value of the slider
         playerCamera.GetComponent<Camera>().fieldOfView = fieldOfViewSlider.value;
     }

@@ -3,7 +3,7 @@
     Author: Michael Sweetman
     Summary: Determines a point on the ice mesh the player wants burnt/frozen. Manages a fuel to limit the use of ice creation.
     Creation Date: 21/07/2020
-    Last Modified: 15/09/2020
+    Last Modified: 21/09/2020
 */
 
 using System.Collections;
@@ -14,29 +14,31 @@ public class Tool : MonoBehaviour
 {
     [Header("Tool Use")]
     public bool canFreeze = false;
-    public float minimumFreezeDistance = 2.0f;
-    public float maxRange = 10.0f;
-    public float beamRadius = 0.5f;
-    public float effectRadius = 10.0f;
-    public float tickRate = 0.0f;
+    [SerializeField] float minimumFreezeDistance = 2.0f;
+    [SerializeField] float maxRange = 10.0f;
+    [SerializeField] float beamRadius = 0.5f;
+    [SerializeField] float effectRadius = 10.0f;
+    [SerializeField] float tickRate = 0.0f;
     float tickTimer = 0.0f;
 
     [Header("Fuel Economy")]
-    public float FuelGainRate = 100.0f;
-    public float FuelLossRate = 100.0f;
+    [SerializeField] float FuelGainRate = 100.0f;
+    [SerializeField] float FuelLossRate = 100.0f;
     public float capacity = 1000.0f;
-    public float toolStrength = 0.1f;
-    [HideInInspector]
-    public float toolFuel = 0.0f;
+    [SerializeField] float toolStrength = 0.1f;
+    [SerializeField] float toolStrengthChangeRate = 100.0f;
+    [SerializeField] float maxToolStrength = 50.0f;
+    [SerializeField] float minToolStrength = 6.0f;
+    [HideInInspector] public float toolFuel = 0.0f;
 
     [Header("Camera")]
-    public Camera playerCamera;
+    [SerializeField] Camera playerCamera;
 
     [Header("Laser")]
-    public GameObject laser;
-    public Transform laserStartPoint;
-    public Material burnLaserMaterial;
-    public Material freezeLaserMaterial;
+    [SerializeField] GameObject laser;
+    [SerializeField] Transform laserStartPoint;
+    [SerializeField] Material burnLaserMaterial;
+    [SerializeField] Material freezeLaserMaterial;
     MeshRenderer laserRenderer;
     float laserLengthScalar;
 
@@ -51,6 +53,11 @@ public class Tool : MonoBehaviour
 
     void Update()
     {
+        // if the mouse wheel was scrolled, adjust the tool strength 
+        toolStrength += Input.mouseScrollDelta.y * Time.deltaTime * toolStrengthChangeRate;
+        // clamp the tool strength so it is within the min and max value
+        toolStrength = Mathf.Clamp(toolStrength, minToolStrength, maxToolStrength);
+
         // set the laser to be inactive
         laser.SetActive(false);
         // increase the timer by the amount of time passed since last frame
@@ -93,8 +100,8 @@ public class Tool : MonoBehaviour
                             // burn the ice at the point of the collision. If this succeeds and the tool is able to freeze ice
                             if (hit.transform.GetComponent<EditableTerrain>().EditTerrain(false, hit.point, effectRadius, toolStrength) && canFreeze)
                             {
-                                // increase the fuel by the fuel gain rate per second
-                                toolFuel += Time.deltaTime * FuelGainRate;
+                                // increase the fuel by the fuel gain rate per second. Multiply the result by the tool strength
+                                toolFuel += Time.deltaTime * FuelGainRate * toolStrength;
                                 // if there is a capacity and the tool fuel is above that capacity
                                 if (capacity > 0.0f && toolFuel > capacity)
                                 {
@@ -110,8 +117,8 @@ public class Tool : MonoBehaviour
                             // freeze the ice at the point of the collision. If this succeeds
                             if (hit.transform.GetComponent<EditableTerrain>().EditTerrain(true, hit.point, effectRadius, toolStrength))
                             {
-                                // decrease the the fuel by the fuel loss rate per second
-                                toolFuel -= Time.deltaTime * FuelLossRate;
+                                // decrease the the fuel by the fuel loss rate per second. Multiply the result by the tool strength
+                                toolFuel -= Time.deltaTime * FuelLossRate * toolStrength;
                                 // if there is less than 0 fuel
                                 if (toolFuel < 0.0f)
                                 {
