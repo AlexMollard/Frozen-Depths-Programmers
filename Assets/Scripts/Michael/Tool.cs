@@ -42,6 +42,13 @@ public class Tool : MonoBehaviour
     MeshRenderer laserRenderer;
     float laserLengthScalar;
 
+    Vector3 freezeDirection = Vector3.zero;
+    float freezeDistance = 0.0f;
+    Vector3 freezePoint = Vector3.zero;
+    EditableTerrain chunk = null;
+    Vector3 mouseDelta = Vector3.zero;
+    public float freezeOffset = 2.0f;
+
     private void Start()
     {
         // get the mesh renderer for the laser
@@ -81,24 +88,22 @@ public class Tool : MonoBehaviour
                 // reset the tick timer
                 tickTimer = 0.0f;
 
-                // cast a spherecast forward from the center of the player camera viewport
-                Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 1.0f));
-                RaycastHit hit;
-                // if the spherecast hit a game object
-                if (Physics.SphereCast(ray, beamRadius, out hit, maxRange))
+                if (Input.GetMouseButton(0) || (canFreeze && Input.GetMouseButtonDown(1)))
                 {
-                    // position and scale the laser so it fires from the laser start point with a length based on the hit distance and a radius based on the beam radius
-                    laser.transform.position = laserStartPoint.position + laserStartPoint.forward * hit.distance * laserLengthScalar;
-                    laser.transform.localScale = new Vector3(laser.transform.localScale.x, hit.distance * laserLengthScalar, laser.transform.localScale.z);
-
-                    // if the hit gameobject has the tag "Ice"
-                    if (hit.transform.tag == "Ice")
+                    // cast a spherecast forward from the center of the player camera viewport
+                    Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 1.0f));
+                    RaycastHit hit;
+                    // if the spherecast hit a game object
+                    if (Physics.SphereCast(ray, beamRadius, out hit, maxRange))
                     {
-                        // if the mouse was left clicked
+                        // position and scale the laser so it fires from the laser start point with a length based on the hit distance and a radius based on the beam radius
+                        laser.transform.position = laserStartPoint.position + laserStartPoint.forward * hit.distance * laserLengthScalar;
+                        laser.transform.localScale = new Vector3(laser.transform.localScale.x, hit.distance * laserLengthScalar, laser.transform.localScale.z);
+
                         if (Input.GetMouseButton(0))
                         {
-                            // burn the ice at the point of the collision. If this succeeds and the tool is able to freeze ice
-                            if (hit.transform.GetComponent<EditableTerrain>().EditTerrain(false, hit.point, effectRadius, toolStrength) && canFreeze)
+                            // if the hit gameobject has the tag "Ice", burn the ice at the point of the collision. If this succeeds and the tool is able to freeze ice
+                            if (hit.transform.tag == "Ice" && hit.transform.GetComponent<EditableTerrain>().EditTerrain(false, hit.point, effectRadius, toolStrength) && canFreeze)
                             {
                                 // increase the fuel by the fuel gain rate per second. Multiply the result by the tool strength
                                 toolFuel += Time.deltaTime * FuelGainRate * toolStrength;
@@ -111,7 +116,7 @@ public class Tool : MonoBehaviour
                             }
                         }
                         // if the tool is able to freeze ice, the mouse was right clicked and the collision point was beyond the minimum creation distance
-                        else if (canFreeze && hit.distance >= minimumFreezeDistance)
+                        else if (hit.distance >= minimumFreezeDistance)
                         {
                             // freeze the ice at the point of the collision. If this succeeds
                             if (hit.transform.GetComponent<EditableTerrain>().EditTerrain(true, hit.point, effectRadius, toolStrength))
@@ -124,16 +129,45 @@ public class Tool : MonoBehaviour
                                     // set the fuel to be 0
                                     toolFuel = 0.0f;
                                 }
+
+                                freezeDirection = hit.normal;
+                                freezeDistance = hit.distance;
+                                freezePoint = hit.point;
+                                chunk = hit.transform.GetComponent<EditableTerrain>();
+                                // get the editable terrain's terrain manager (get componenent from parent)
                             }
                         }
                     }
+                    // if the spherecast did not hit a game object 
+                    else
+                    {
+                        // position and scale the laser so it fires from the laser start point with a length based on the max range and a radius based on the beam radius
+                        laser.transform.position = laserStartPoint.position + laserStartPoint.forward * maxRange * laserLengthScalar;
+                        laser.transform.localScale = new Vector3(laser.transform.localScale.x, maxRange * laserLengthScalar, laser.transform.localScale.z);
+                    }
                 }
-                // if the spherecast did not hit a game object 
+                else if (canFreeze && Input.GetMouseButton(1))
+                {
+                    // check nothing is between player and next ice spawnpoint
+                    // determine whether to place ice along or away from the initial collision point
+                    //  - get mouse delta, dot product is with normal
+                    // spawn ice
+                    // store point at which ice was spawned
+
+                    Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 1.0f));
+                    if (true)//!Physics.Raycast(ray, freezeDistance))
+                    {
+                        mouseDelta.Set(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"), 0.0f);
+                        mouseDelta = mouseDelta.normalized;
+                        freezePoint = freezePoint + Vector3.Dot(mouseDelta, freezeDirection) * freezeDirection * freezeOffset;
+                        chunk.EditTerrain(true, freezePoint, effectRadius, toolStrength);
+                    }
+                }
                 else
                 {
-                    // position and scale the laser so it fires from the laser start point with a length based on the max range and a radius based on the beam radius
-                    laser.transform.position = laserStartPoint.position + laserStartPoint.forward * maxRange * laserLengthScalar;
-                    laser.transform.localScale = new Vector3(laser.transform.localScale.x, maxRange * laserLengthScalar, laser.transform.localScale.z);
+                    freezeDirection = Vector3.zero;
+                    freezeDistance = 0.0f;
+                    chunk = null;
                 }
             }
         }
