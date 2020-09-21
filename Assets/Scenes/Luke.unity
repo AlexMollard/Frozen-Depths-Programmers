@@ -1180,6 +1180,16 @@ PrefabInstance:
       propertyPath: ccCrouchHeight
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6641315128160775798, guid: cba56d5f368d6e54783161c488cfd8d3,
+        type: 3}
+      propertyPath: godMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6641315128160775798, guid: cba56d5f368d6e54783161c488cfd8d3,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6641315128160775799, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
       propertyPath: m_LocalPosition.x

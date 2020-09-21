@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Adds first person movement to the player
     Creation Date: 20/07/2020
-    Last Modified: 15/09/2020
+    Last Modified: 21/09/2020
 */
 
 using System;
@@ -34,6 +34,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float ccCrouchHeight = 2;
     [SerializeField] private float deathVelocity = -20;
 
+    [Space(10)]
+    [Tooltip("Enables flying through scene, and turns off player collider.")]
+    [SerializeField] private bool godMode = false;
+    [SerializeField] private float flySpeed = 20;
+
     [HideInInspector] public bool willDie = false;
 
     private CharacterController controller;
@@ -56,6 +61,26 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        if (godMode)
+            GodModeMovement();
+        else
+            NormalMovement();
+    }
+
+    private void LateUpdate()
+    {
+        if (willDie)
+        {
+            GoToLastCheckpoint();
+            willDie = false;
+        }
+    }
+
+    private void NormalMovement()
+    {
+        // Set player to Default layer
+        gameObject.layer = 0;
+
         Vector3 temp = new Vector3(controller.center.x, controller.height - controller.center.y, controller.center.z);
 
         isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundMask);
@@ -95,12 +120,39 @@ public class PlayerMovement : MonoBehaviour
         controller.Move(velocity * Time.deltaTime);
     }
 
-    private void LateUpdate()
+    private void GodModeMovement()
     {
-        if (willDie)
+        // Set player to NoCollision layer
+        gameObject.layer = 10;
+
+        if (Input.GetKey(KeyCode.W))
         {
-            GoToLastCheckpoint();
-            willDie = false;
+            controller.Move(transform.forward * flySpeed * Time.deltaTime);
+        }
+
+        if (Input.GetKey(KeyCode.A))
+        {
+            controller.Move(-transform.right * flySpeed * Time.deltaTime);
+        }
+
+        if (Input.GetKey(KeyCode.S))
+        {
+            controller.Move(-transform.forward * flySpeed * Time.deltaTime);
+        }
+
+        if (Input.GetKey(KeyCode.D))
+        {
+            controller.Move(transform.right * flySpeed * Time.deltaTime);
+        }
+
+        if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.Space))
+        {
+            controller.Move(transform.up * flySpeed * Time.deltaTime);
+        }
+
+        if (Input.GetKey(KeyCode.E))
+        {
+            controller.Move(-transform.up * flySpeed * Time.deltaTime);
         }
     }
 
