@@ -165,7 +165,7 @@ public class TerrainMan : MonoBehaviour
     {
         foreach (Transform child in transform)
         {
-            Vector3 halfScale = new Vector3(child.localScale.x / 2.0f, child.localScale.y / 2.0f, child.localScale.z / 2.0f);
+            Vector3 halfScale = new Vector3(child.localScale.x / 2.0f + 1, child.localScale.y / 2.0f + 1, child.localScale.z / 2.0f + 1);
             aabb newAABB = new aabb(child.position + halfScale, child.position - halfScale);
             fillSpots.Add(newAABB);
             child.GetComponent<MeshRenderer>().enabled = false;
