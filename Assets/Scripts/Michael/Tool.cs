@@ -101,6 +101,7 @@ public class Tool : MonoBehaviour
                                     // set the fuel be equal to the capacity
                                     toolFuel = capacity;
                                 }
+                                hit.transform.GetComponent<EditableTerrain>().manager.dirtyChunks.Clear();
                             }
                         }
                         // if the tool is able to freeze ice, the mouse was right clicked and the collision point was beyond the minimum creation distance
@@ -117,6 +118,7 @@ public class Tool : MonoBehaviour
                                     // set the fuel to be 0
                                     toolFuel = 0.0f;
                                 }
+                                hit.transform.GetComponent<EditableTerrain>().manager.dirtyChunks.Clear();
                             }
                         }
                     }

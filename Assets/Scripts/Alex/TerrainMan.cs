@@ -1,4 +1,12 @@
-﻿using System.Collections;
+﻿/*
+    File name: TerrainMan.cs
+    Author: Alex Mollard
+    Summary: Manage all editable terrain to help update them all and keep all vertices in sync.
+    Creation Date: 21/07/2020
+    Last Modified: 14/09/2020
+*/
+
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using UnityEngine;
@@ -24,6 +32,24 @@ public class ObjectBuilderEditor : Editor
 }
 #endif
 
+public class aabb
+{
+    public aabb(Vector3 pointOne, Vector3 pointTwo)
+    {
+        posOne = pointOne;
+        posTwo = pointTwo;
+    }
+
+    public bool IsColliding(Vector3Int point)
+    {
+        return ((posOne.x > point.x && posOne.y > point.y && posOne.z > point.z)
+            && (posTwo.x < point.x && posTwo.y < point.y && posTwo.z < point.z) );
+    }
+
+    public Vector3 posOne;
+    public Vector3 posTwo;
+}
+
 
 public class TerrainMan : MonoBehaviour
 {
@@ -37,7 +63,8 @@ public class TerrainMan : MonoBehaviour
         XNegWall,
         ZPlusWall,
         ZNegWall,
-        PreMade
+        PreMade,
+        CubePreMade
     }
 
     [Header("Chunk Prefab")]
@@ -63,9 +90,7 @@ public class TerrainMan : MonoBehaviour
 
     [Header("Single Chunk Size")]
     [Tooltip("Terrain Width: X, TerrainHeight: Y, TerrainDepth: Z")]
-    public int terrainWidth = 8;
-    public int terrainHeight = 8;
-    public int terrainDepth = 8;
+    public int chunkSize = 8;
 
     [Header("Geometry Settings")]
     [Tooltip("Changing these values will change how lighting and terrain manipulation effects a mesh")]
@@ -76,6 +101,9 @@ public class TerrainMan : MonoBehaviour
     [Tooltip("Changing these values will change how each chunk will be populated")]
     public spawnPrefabs chunkPrefab = 0;
 
+    public List<aabb> fillSpots = new List<aabb>();
+    public List<Vector3Int> dirtyChunks = new List<Vector3Int>();
+
     Vector3 centerOfMeshes;
     Vector3 ChunkTotal;
 
@@ -83,12 +111,10 @@ public class TerrainMan : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
-        float halfChunkHeight = terrainHeight * 0.5f;
-        float halfChunkWidth = terrainHeight * 0.5f;
-        float halfChunkDepth = terrainHeight * 0.5f;
+        float halfChunkSize = chunkSize - 1;
 
         Vector3 currentManPos = transform.position;
-        Vector3 scale = new Vector3((terrainWidth - 1) * (terrainTotalX), (terrainHeight - 1) * (terrainTotalY), (terrainDepth - 1) * (terrainTotalZ));
+        Vector3 scale = new Vector3((halfChunkSize - 1) * (terrainTotalX), (halfChunkSize - 1) * (terrainTotalY), (halfChunkSize - 1) * (terrainTotalZ));
 
         Vector3 centerOfMeshes = new Vector3(scale.x * 0.5f, scale.y * 0.5f, scale.z * 0.5f) + currentManPos;
         
@@ -100,16 +126,16 @@ public class TerrainMan : MonoBehaviour
         switch (chunkPrefab)
         {
             case spawnPrefabs.FlatAtBottom:
-                Gizmos.DrawCube(centerOfMeshes - new Vector3(0, scale.y * 0.5f - halfChunkHeight, 0), new Vector3(scale.x, terrainHeight, scale.z));
+                Gizmos.DrawCube(centerOfMeshes - new Vector3(0, scale.y * 0.5f - halfChunkSize, 0), new Vector3(scale.x, halfChunkSize, scale.z));
                 break;
             case spawnPrefabs.FlatAtTop:
-                Gizmos.DrawCube(centerOfMeshes - new Vector3(0, halfChunkHeight, 0), new Vector3(scale.x, scale.y - terrainHeight, scale.z));
+                Gizmos.DrawCube(centerOfMeshes - new Vector3(0, halfChunkSize, 0), new Vector3(scale.x, scale.y - halfChunkSize, scale.z));
                 break;
             case spawnPrefabs.HalfFill:
                 Gizmos.DrawCube(centerOfMeshes - new Vector3(0, scale.y * 0.25f, 0), new Vector3(scale.x, scale.y * 0.5f, scale.z));
                 break;
             case spawnPrefabs.Bowl:
-                Gizmos.DrawCube(centerOfMeshes - new Vector3(0, scale.y * 0.5f - halfChunkHeight, 0), new Vector3(scale.x, terrainHeight, scale.z));
+                Gizmos.DrawCube(centerOfMeshes - new Vector3(0, scale.y * 0.5f - halfChunkSize, 0), new Vector3(scale.x, halfChunkSize, scale.z));
                 Gizmos.DrawCube(centerOfMeshes + new Vector3(scale.x * 0.375f, 0, 0), new Vector3(scale.x / 4, scale.y, scale.z));
                 Gizmos.DrawCube(centerOfMeshes - new Vector3(scale.x * 0.375f, 0, 0), new Vector3(scale.x / 4, scale.y, scale.z));
                 Gizmos.DrawCube(centerOfMeshes + new Vector3(0, 0, scale.z * 0.375f), new Vector3(scale.x, scale.y, scale.z / 4));
@@ -128,20 +154,25 @@ public class TerrainMan : MonoBehaviour
                 Gizmos.DrawCube(centerOfMeshes - new Vector3(0, 0, scale.z * 0.25f), new Vector3(scale.x, scale.y, scale.z / 2));
                 break;
             case spawnPrefabs.PreMade:
-                    Gizmos.DrawCube(centerOfMeshes, new Vector3(terrainWidth, terrainHeight, terrainDepth));
+                    Gizmos.DrawCube(centerOfMeshes, new Vector3(halfChunkSize, halfChunkSize, halfChunkSize));
                 break;
             default:
                 break;
         }
     }
 
-
-
     void Start()
     {
+        foreach (Transform child in transform)
+        {
+            Vector3 halfScale = new Vector3(child.localScale.x / 2.0f, child.localScale.y / 2.0f, child.localScale.z / 2.0f);
+            aabb newAABB = new aabb(child.position + halfScale, child.position - halfScale);
+            fillSpots.Add(newAABB);
+        }
+
         Vector3 currentManPos = transform.position;
         chunkRenderers = new MeshRenderer[terrainTotalX * terrainTotalY * terrainTotalZ];
-        centerOfMeshes = new Vector3((terrainWidth * terrainTotalX) * 0.5f, (terrainHeight * terrainTotalY) * 0.5f, (terrainDepth * terrainTotalZ) * 0.5f) + currentManPos;
+        centerOfMeshes = new Vector3((chunkSize * terrainTotalX) * 0.5f, (chunkSize * terrainTotalY) * 0.5f, (chunkSize * terrainTotalZ) * 0.5f) + currentManPos;
         ChunkTotal = new Vector3(terrainTotalX, terrainTotalY, terrainTotalZ);
         int i = 0;
         
@@ -155,11 +186,11 @@ public class TerrainMan : MonoBehaviour
                 terrainsOBJS[x].Add(new List<GameObject>());
                 for (int z = 0; z < terrainTotalZ; z++)
                 {
-                    terrainsOBJS[x][y].Add(Instantiate(terrainPrefab, new Vector3(x * (terrainWidth - 1), y * (terrainHeight - 1), z * (terrainDepth - 1)) + currentManPos, Quaternion.identity));
+                    terrainsOBJS[x][y].Add(Instantiate(terrainPrefab, new Vector3(x * (chunkSize - 1), y * (chunkSize - 1), z * (chunkSize - 1)) + currentManPos, Quaternion.identity));
                     terrainsOBJS[x][y][z].name = x + ", " + y + ", " + z;
                     terrains[x][y].Add(terrainsOBJS[x][y][z].GetComponent<EditableTerrain>());
                     terrains[x][y][z].spawnPrefab = chunkPrefab;
-                    terrains[x][y][z].CreateMesh(this, new Vector3Int(x,y, z), new Vector3Int(terrainWidth - 1, terrainHeight - 1, terrainDepth - 1));
+                    terrains[x][y][z].CreateMesh(this, new Vector3Int(x,y, z), new Vector3Int(chunkSize - 1, chunkSize - 1, chunkSize - 1));
                     terrains[x][y][z].flatShaded = flatShaded;
                     terrains[x][y][z].smoothTerrain = smoothTerrain;
                     terrains[x][y][z].transform.parent = transform;
@@ -170,9 +201,17 @@ public class TerrainMan : MonoBehaviour
             }
         }
 
-        AssignEdgeValues();
 
-        bool bruh = (chunkPrefab == spawnPrefabs.PreMade) ? LoadMesh() : PopulateAllChunks();
+
+
+        AssignEdgeValues();
+        
+        if (chunkPrefab == spawnPrefabs.PreMade)
+            LoadMesh();
+        else
+            PopulateAllChunks();
+
+        AssignEdgeValues();
         
         RefreshAllChunks();
     }
@@ -183,28 +222,28 @@ public class TerrainMan : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.P))
             RefreshAllChunks();
 
-        if (isInDistance == true)
-        {
-            if (Vector3.Distance(player.transform.position, centerOfMeshes) > maxDistanceFromMesh)
-            {
-                isInDistance = false;
-                for (int i = 0; i < chunkRenderers.Length; i++)
-                    chunkRenderers[i].enabled = false;
-
-                Debug.Log("Disabled renderers");
-            }
-        }
-        else if(Vector3.Distance(player.transform.position, centerOfMeshes) <= maxDistanceFromMesh)
-        {
-            if (isInDistance == false)
-            {
-                for (int i = 0; i < chunkRenderers.Length; i++)
-                    chunkRenderers[i].enabled = true;
-            }
-
-                Debug.Log("Enabled renderers");
-            isInDistance = true;
-        }
+       // if (isInDistance == true)
+       // {
+       //     if (Vector3.Distance(player.transform.position, centerOfMeshes) > maxDistanceFromMesh)
+       //     {
+       //         isInDistance = false;
+       //         for (int i = 0; i < chunkRenderers.Length; i++)
+       //             chunkRenderers[i].enabled = false;
+       //
+       //         Debug.Log("Disabled renderers");
+       //     }
+       // }
+       // else if(Vector3.Distance(player.transform.position, centerOfMeshes) <= maxDistanceFromMesh)
+       // {
+       //     if (isInDistance == false)
+       //     {
+       //         for (int i = 0; i < chunkRenderers.Length; i++)
+       //             chunkRenderers[i].enabled = true;
+       //     }
+       //
+       //         Debug.Log("Enabled renderers");
+       //     isInDistance = true;
+       // }
     }
 
 
@@ -220,11 +259,11 @@ public class TerrainMan : MonoBehaviour
             {
                 for (int z = 0; z < terrainTotalZ; z++)
                 {
-                    for (int xIN = 0; xIN < terrainWidth; xIN++)
+                    for (int xIN = 0; xIN < chunkSize; xIN++)
                     {
-                        for (int yIN = 0; yIN < terrainHeight; yIN++)
+                        for (int yIN = 0; yIN < chunkSize; yIN++)
                         {
-                            for (int zIN = 0; zIN < terrainDepth; zIN++)
+                            for (int zIN = 0; zIN < chunkSize; zIN++)
                             {
                                 
                                 oFileStream.Write(BitConverter.GetBytes(terrains[x][y][z].terrainMap[xIN, yIN, zIN].value), 0, BitConverter.GetBytes(terrains[x][y][z].terrainMap[xIN, yIN, zIN].value).Length);
@@ -274,11 +313,11 @@ public class TerrainMan : MonoBehaviour
             {
                 for (int z = 0; z < terrainTotalZ; z++)
                 {
-                    for (int xIN = 0; xIN < terrainWidth; xIN++)
+                    for (int xIN = 0; xIN < chunkSize; xIN++)
                     {
-                        for (int yIN = 0; yIN < terrainHeight; yIN++)
+                        for (int yIN = 0; yIN < chunkSize; yIN++)
                         {
-                            for (int zIN = 0; zIN < terrainDepth; zIN++)
+                            for (int zIN = 0; zIN < chunkSize; zIN++)
                             {
                                 terrains[x][y][z].terrainMap[xIN, yIN, zIN] = new floatMyGuy(0.0f);
                                 count = oFileStream.Read(buffer, sum, length - sum);
@@ -297,11 +336,11 @@ public class TerrainMan : MonoBehaviour
             {
                 for (int z = 0; z < terrainTotalZ; z++)
                 {
-                    for (int xIN = 0; xIN < terrainWidth; xIN++)
+                    for (int xIN = 0; xIN < chunkSize; xIN++)
                     {
-                        for (int yIN = 0; yIN < terrainHeight; yIN++)
+                        for (int yIN = 0; yIN < chunkSize; yIN++)
                         {
-                            for (int zIN = 0; zIN < terrainDepth; zIN++)
+                            for (int zIN = 0; zIN < chunkSize; zIN++)
                             {
                                 terrains[x][y][z].terrainMap[xIN, yIN, zIN].value = BitConverter.ToSingle(buffer, offset);
                                 offset += 4;
@@ -350,11 +389,16 @@ public class TerrainMan : MonoBehaviour
         }
     }
 
-    public void UpdateChunk(Vector3Int index)
+    public void UpdateChunk(bool isFreeze, Vector3Int publicVertHitPoint, Vector3Int chunkIndex, float beamRadius, float beamStrength)
     {
-        if (index.x >= 0 && index.x < terrainTotalX && index.y >= 0 && index.y < terrainTotalY && index.z >= 0 && index.z < terrainTotalZ)
+        if (chunkIndex.x >= 0 && chunkIndex.x < terrainTotalX && chunkIndex.y >= 0 && chunkIndex.y < terrainTotalY && chunkIndex.z >= 0 && chunkIndex.z < terrainTotalZ)
         {
-            terrains[index.x][index.y][index.z].CreateMeshData();
+            //if (!dirtyChunks.Contains(chunkIndex))
+            //{
+            //    terrains[chunkIndex.x][chunkIndex.y][chunkIndex.z].EditTerrain(isFreeze,publicVertHitPoint,beamRadius,beamStrength);
+            //}
+
+            terrains[chunkIndex.x][chunkIndex.y][chunkIndex.z].CreateMeshData();
         }
     }
 
@@ -374,11 +418,11 @@ public class TerrainMan : MonoBehaviour
                     if (tY + 1 < terrainTotalY)
                     {
                         // Need to grab above chunks bottom row and assign it to current chunks top row points
-                        for (int x = 0; x < terrainWidth; x++)
+                        for (int x = 0; x < chunkSize; x++)
                         {
-                            for (int z = 0; z < terrainDepth; z++)
+                            for (int z = 0; z < chunkSize; z++)
                             {
-                                terrains[tX][tY][tZ].terrainMap[x, terrainHeight - 1, z] = terrains[tX][tY + 1][tZ].terrainMap[x, 0, z];
+                                terrains[tX][tY][tZ].terrainMap[x, chunkSize - 1, z] = terrains[tX][tY + 1][tZ].terrainMap[x, 0, z];
                             }
                         }
                     }
@@ -388,11 +432,11 @@ public class TerrainMan : MonoBehaviour
                     if (tX + 1 < terrainTotalX)
                     {
                         // Need to grab right chunks left row and assign it to current chunks right row points
-                        for (int z = 0; z < terrainDepth; z++)
+                        for (int z = 0; z < chunkSize; z++)
                         {
-                            for (int y = 0; y < terrainHeight; y++)
+                            for (int y = 0; y < chunkSize; y++)
                             {
-                                terrains[tX][tY][tZ].terrainMap[terrainWidth - 1, y, z] = terrains[tX + 1][tY][tZ].terrainMap[0, y, z];
+                                terrains[tX][tY][tZ].terrainMap[chunkSize - 1, y, z] = terrains[tX + 1][tY][tZ].terrainMap[0, y, z];
                             }
                         }
                     }
@@ -401,11 +445,11 @@ public class TerrainMan : MonoBehaviour
                     if (tZ + 1 < terrainTotalZ)
                     {
                         // Need to grab above chunks bottom row and assign it to current chunks top row points
-                        for (int x = 0; x < terrainWidth; x++)
+                        for (int x = 0; x < chunkSize; x++)
                         {
-                            for (int y = 0; y < terrainHeight; y++)
+                            for (int y = 0; y < chunkSize; y++)
                             {
-                                terrains[tX][tY][tZ].terrainMap[x, y, terrainDepth - 1] = terrains[tX][tY][tZ + 1].terrainMap[x, y, 0];
+                                terrains[tX][tY][tZ].terrainMap[x, y, chunkSize - 1] = terrains[tX][tY][tZ + 1].terrainMap[x, y, 0];
                             }
                         }
                     }
@@ -415,11 +459,11 @@ public class TerrainMan : MonoBehaviour
                     if (tX - 1 >= 0)
                     {
                         // Need to grab left chunks right row and assign it to current chunks left row points
-                        for (int z = 0; z < terrainDepth; z++)
+                        for (int z = 0; z < chunkSize; z++)
                         {
-                            for (int y = 0; y < terrainHeight; y++)
+                            for (int y = 0; y < chunkSize; y++)
                             {
-                                terrains[tX][tY][tZ].terrainMap[0, y, z] = terrains[tX - 1][tY][tZ].terrainMap[terrainWidth - 1, y, z];
+                                terrains[tX][tY][tZ].terrainMap[0, y, z] = terrains[tX - 1][tY][tZ].terrainMap[chunkSize - 1, y, z];
                             }
                         }
                     }
@@ -428,11 +472,11 @@ public class TerrainMan : MonoBehaviour
                     if (tZ - 1 >= 0)
                     {
                         // Need to grab below chunks top row and assign it to current chunks bottom row points
-                        for (int x = 0; x < terrainWidth; x++)
+                        for (int x = 0; x < chunkSize; x++)
                         {
-                            for (int y = 0; y < terrainHeight; y++)
+                            for (int y = 0; y < chunkSize; y++)
                             {
-                                terrains[tX][tY][tZ].terrainMap[x, y, 0] = terrains[tX][tY][tZ - 1].terrainMap[x, y, terrainDepth - 1];
+                                terrains[tX][tY][tZ].terrainMap[x, y, 0] = terrains[tX][tY][tZ - 1].terrainMap[x, y, chunkSize - 1];
                             }
                         }
                     }
@@ -441,11 +485,11 @@ public class TerrainMan : MonoBehaviour
                     if (tY - 1 >= 0)
                     {
                         // Need to grab below chunks top row and assign it to current chunks bottom row points
-                        for (int x = 0; x < terrainWidth; x++)
+                        for (int x = 0; x < chunkSize; x++)
                         {
-                            for (int z = 0; z < terrainDepth; z++)
+                            for (int z = 0; z < chunkSize; z++)
                             {
-                                terrains[tX][tY][tZ].terrainMap[x, 0, z] = terrains[tX][tY - 1][tZ].terrainMap[x, terrainHeight - 1, z];
+                                terrains[tX][tY][tZ].terrainMap[x, 0, z] = terrains[tX][tY - 1][tZ].terrainMap[x, chunkSize - 1, z];
                             }
                         }
                     }
