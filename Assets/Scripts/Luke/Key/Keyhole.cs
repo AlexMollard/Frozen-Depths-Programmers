@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Does something if the player has a required key
     Creation Date: 31/08/2020
-    Last Modified: 16/09/2020
+    Last Modified: 21/09/2020
 */
 
 using System.Collections;
@@ -50,6 +50,11 @@ public class Keyhole : MonoBehaviour
             case OpenBehaviour.RisingDoor:
                 Debug.Log("Opening door...");
                 isRising = true;
+
+                AudioSource source = objectToOpen.GetComponent<AudioSource>();
+                if (source.clip != null)
+                    source.Play();
+
                 break;
             default:
                 break;

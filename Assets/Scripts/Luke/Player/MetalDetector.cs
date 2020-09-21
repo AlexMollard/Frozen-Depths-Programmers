@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Detects nearby entrances, and plays a sound based on how close they are.
     Creation Date: 14/09/2020
-    Last Modified: 14/09/2020
+    Last Modified: 21/09/2020
 */
 
 using System.Collections;
@@ -15,11 +15,23 @@ public class MetalDetector : MonoBehaviour
     [SerializeField] private Transform entrancesParent;
 
     [SerializeField] private float maxDistance = 0;
+    [Space(10)]
     [SerializeField] private float distanceClose = 0;
+    [SerializeField] private AudioClip closeSound;
+    [Space(10)]
     [SerializeField] private float distanceCloser = 0;
+    [SerializeField] private AudioClip closerSound;
+    [Space(10)]
     [SerializeField] private float distanceClosest = 0;
+    [SerializeField] private AudioClip closestSound;
 
     private float currentShortestDistance = float.MaxValue;
+    private AudioSource audioPlayer;
+
+    private void Awake()
+    {
+        audioPlayer = gameObject.AddComponent<AudioSource>();
+    }
 
     private void Update()
     {
@@ -37,11 +49,30 @@ public class MetalDetector : MonoBehaviour
         // Play a sound based on how far the shortest distance is from the player
         // TODO: Add code to play audio when we get sound files
         if (currentShortestDistance < distanceClosest)
-            Debug.Log("Closest sound plays!");
+        {
+            // Play sound if not already playing
+            if (!audioPlayer.isPlaying)
+            {
+                audioPlayer.clip = closestSound;
+                audioPlayer.Play();
+            }
+        }
         else if (currentShortestDistance < distanceCloser)
-            Debug.Log("Closer sound plays!");
+        {
+            if (!audioPlayer.isPlaying)
+            {
+                audioPlayer.clip = closerSound;
+                audioPlayer.Play();
+            }
+        }
         else if (currentShortestDistance < distanceClose)
-            Debug.Log("Close sound plays!");
+        {
+            if (!audioPlayer.isPlaying)
+            {
+                audioPlayer.clip = closeSound;
+                audioPlayer.Play();
+            }
+        }
 
         // Reset distance
         currentShortestDistance = float.MaxValue;
