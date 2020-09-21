@@ -168,6 +168,7 @@ public class TerrainMan : MonoBehaviour
             Vector3 halfScale = new Vector3(child.localScale.x / 2.0f, child.localScale.y / 2.0f, child.localScale.z / 2.0f);
             aabb newAABB = new aabb(child.position + halfScale, child.position - halfScale);
             fillSpots.Add(newAABB);
+            child.GetComponent<MeshRenderer>().enabled = false;
         }
 
         Vector3 currentManPos = transform.position;
