@@ -1,4 +1,12 @@
-﻿using System;
+﻿/*
+    File name: EditableTerrain.cs
+    Author: Alex Mollard
+    Summary: Generate terrains that can be edited using marching cubes.
+    Creation Date: 21/07/2020
+    Last Modified: 14/09/2020
+*/
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,7 +28,8 @@ public class floatMyGuy
 
 public class EditableTerrain : MonoBehaviour
 {
-    TerrainMan manager;
+    [NonSerialized]
+    public TerrainMan manager;
     Vector3Int managerIndex;
 
     public bool smoothTerrain;
@@ -72,6 +81,12 @@ public class EditableTerrain : MonoBehaviour
 
     public void PopulateTerrainMap()
     {
+        int xOffSet = width * managerIndex.x;
+        int yOffSet = height * managerIndex.y;
+        int zOffSet = depth * managerIndex.z;
+
+        Vector3Int managerPosInt = new Vector3Int((int)manager.transform.position.x, (int)manager.transform.position.y, (int)manager.transform.position.z);
+
         for (int x = 0; x < width + 1; x++)
         {
             for (int y = 0; y < height + 1; y++)
@@ -80,6 +95,8 @@ public class EditableTerrain : MonoBehaviour
                 {
                     if (terrainMap[x, y, z] == null)
                         terrainMap[x, y, z] = new floatMyGuy(0.0f);
+                    else
+                        terrainMap[x, y, z].value = 0.0f;
 
                     switch (spawnPrefab)
                     {
@@ -109,6 +126,21 @@ public class EditableTerrain : MonoBehaviour
                             break;
                         case TerrainMan.spawnPrefabs.PreMade:
                             LoadFromFile(x, y, z);
+                            break;
+                        case TerrainMan.spawnPrefabs.CubePreMade:
+                            Vector3Int vertPos = new Vector3Int(x + xOffSet, y + yOffSet, z + zOffSet);
+
+                            foreach (aabb cube in manager.fillSpots)
+                            {
+                                if (cube.IsColliding(vertPos + managerPosInt))
+                                {
+                                    terrainMap[x, y, z].value = 0.2f;
+                                    break;
+                                }
+                                else
+                                    terrainMap[x, y, z].value = 1.0f;
+                            }
+
                             break;
                         default:
                             break;
@@ -152,9 +184,10 @@ public class EditableTerrain : MonoBehaviour
 
     public bool EditTerrain (bool freeze, Vector3 pos, float radius, float strength)
     {
-        Vector3Int v3Int = new Vector3Int(Mathf.CeilToInt(pos.x), Mathf.CeilToInt(pos.y), Mathf.CeilToInt(pos.z));
-        v3Int -= Vector3Int.RoundToInt(transform.position);
-
+        //manager.dirtyChunks.Add(managerIndex);
+        Vector3Int publicVertPos = new Vector3Int(Mathf.CeilToInt(pos.x), Mathf.CeilToInt(pos.y), Mathf.CeilToInt(pos.z));
+        Vector3Int localVertPos = publicVertPos - Vector3Int.RoundToInt(transform.position);
+        //Debug.Log("Before: " + terrainMap[localVertPos.x, localVertPos.y, localVertPos.z].value);
         int tilesInRadiusX = (int)(radius / width);
         int tilesInRadiusY = (int)(radius / height);
         int tilesInRadiusZ = (int)(radius / depth);
@@ -169,126 +202,126 @@ public class EditableTerrain : MonoBehaviour
 
                     if (offsetVec.magnitude < radius)
                     {
-                        Vector3 newPoint = v3Int + offsetVec;
-                        float newStrength = strength - Vector3.Distance(pos, transform.position + offsetVec);
-                        newStrength = Mathf.Lerp(0,1,newStrength);
+                        Vector3 newPoint = localVertPos + offsetVec;
+                        //float newStrength = strength - Vector3.Distance(newPoint, localVertPos);
                         if (newPoint.x < 0 || newPoint.y < 0 || newPoint.z < 0 || newPoint.x > width || newPoint.y > height || newPoint.z > depth)
                         {
                             continue;
                         }
 
                         if (freeze)
-                            terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value -= newStrength;
+                            terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value -= strength;
                         else
-                            terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value += newStrength;
+                            terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value += strength;
+
+                        //terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value = Mathf.Clamp(terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value, 0, 1);
                     }
                 }
             }
         }
 
+        //Debug.Log("After: " + terrainMap[localVertPos.x, localVertPos.y, localVertPos.z].value);
         CreateMeshData();
-        UpdateNeighbours(v3Int, radius);
-        Debug.Log("Hit");
-
+        UpdateNeighbours(freeze, publicVertPos, localVertPos, radius, strength);
         return true;
     }
 
-    void UpdateNeighbours(Vector3Int v3Int, float radius)
+    void UpdateNeighbours(bool isFreeze, Vector3Int publicVertPos, Vector3Int localVertPos, float radius, float beamStrength)
     {
-        if (v3Int.x <= radius)
+        if (localVertPos.x <= radius)
         {
-            manager.UpdateChunk(managerIndex + new Vector3Int(-1, 0, 0));
+            manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, 0, 0),radius, beamStrength);
 
-            if (v3Int.z <= radius)
-                manager.UpdateChunk(managerIndex + new Vector3Int(-1, 0, -1));
+            if (localVertPos.z <= radius)
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, 0, -1), radius, beamStrength);
 
-            if (v3Int.z >= depth - radius)
-                manager.UpdateChunk(managerIndex + new Vector3Int(-1, 0, 1));
+            if (localVertPos.z >= depth - radius)
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, 0, 1), radius, beamStrength);
 
         }
-        if (v3Int.x >= width - radius)
+        if (localVertPos.x >= width - radius)
         {
-            manager.UpdateChunk(managerIndex + new Vector3Int(1, 0, 0));
+            manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, 0, 0), radius, beamStrength);
 
-            if (v3Int.z <= radius)
-                manager.UpdateChunk(managerIndex + new Vector3Int(1, 0, -1));
+            if (localVertPos.z <= radius)
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, 0, -1), radius, beamStrength);
 
-            if (v3Int.z >= depth - radius)
-                manager.UpdateChunk(managerIndex + new Vector3Int(1, 0, 1));
+            if (localVertPos.z >= depth - radius)
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, 0, 1), radius, beamStrength);
         }
 
-        if (v3Int.z <= radius)
+        if (localVertPos.z <= radius)
         {
-            manager.UpdateChunk(managerIndex + new Vector3Int(0, 0, -1));
+            manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, 0, -1), radius, beamStrength);
         }
-        if (v3Int.z >= depth - radius)
+        if (localVertPos.z >= depth - radius)
         {
-            manager.UpdateChunk(managerIndex + new Vector3Int(0, 0, 1));
+            manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, 0, 1), radius, beamStrength);
         }
 
-        if (v3Int.y <= radius)
+        if (localVertPos.y <= radius)
         {
-            manager.UpdateChunk(managerIndex + new Vector3Int(0, -1, 0));
+            manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, -1, 0), radius, beamStrength);
 
-            if (v3Int.z <= radius)
-                manager.UpdateChunk(managerIndex + new Vector3Int(0, -1, -1));
+            if (localVertPos.z <= radius)
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, -1, -1), radius, beamStrength);
 
-            if (v3Int.z >= depth - radius)
-                manager.UpdateChunk(managerIndex + new Vector3Int(0, -1, 1));
+            if (localVertPos.z >= depth - radius)
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, -1, 1), radius, beamStrength);
 
-            if (v3Int.x <= radius)
+            if (localVertPos.x <= radius)
             {
-                manager.UpdateChunk(managerIndex + new Vector3Int(-1, -1, 0));
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, -1, 0), radius, beamStrength);
 
-                if (v3Int.z <= radius)
-                    manager.UpdateChunk(managerIndex + new Vector3Int(-1, -1, -1));
+                if (localVertPos.z <= radius)
+                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, -1, -1), radius, beamStrength);
 
-                if (v3Int.z >= depth - radius)
-                    manager.UpdateChunk(managerIndex + new Vector3Int(-1, -1, 1));
+                if (localVertPos.z >= depth - radius)
+                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, -1, 1), radius, beamStrength);
 
             }
-            if (v3Int.x >= width - radius)
+            if (localVertPos.x >= width - radius)
             {
-                manager.UpdateChunk(managerIndex + new Vector3Int(1, -1, 0));
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, -1, 0), radius, beamStrength);
 
-                if (v3Int.z <= radius)
-                    manager.UpdateChunk(managerIndex + new Vector3Int(1, -1, -1));
+                if (localVertPos.z <= radius)
+                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, -1, -1), radius, beamStrength);
 
-                if (v3Int.z >= depth - radius)
-                    manager.UpdateChunk(managerIndex + new Vector3Int(1, -1, 1));
+                if (localVertPos.z >= depth - radius)
+                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, -1, 1), radius, beamStrength);
             }
 
         }
-        if (v3Int.y >= height - radius)
+        if (localVertPos.y >= height - radius)
         {
-            manager.UpdateChunk(managerIndex + new Vector3Int(0, 1, 0));
+            manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, 1, 0), radius, beamStrength);
 
-            if (v3Int.z <= radius)
-                manager.UpdateChunk(managerIndex + new Vector3Int(0, 1, -1));
+            if (localVertPos.z <= radius)
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, 1, -1), radius, beamStrength);
 
-            if (v3Int.z >= depth - radius)
-                manager.UpdateChunk(managerIndex + new Vector3Int(0, 1, 1));
+            if (localVertPos.z >= depth - radius)
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, 1, 1), radius, beamStrength);
 
-            if (v3Int.x <= radius)
+            if (localVertPos.x <= radius)
             {
-                manager.UpdateChunk(managerIndex + new Vector3Int(-1, 1, 0));
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, 1, 0), radius, beamStrength);
 
-                if (v3Int.z <= radius)
-                    manager.UpdateChunk(managerIndex + new Vector3Int(-1, 1, -1));
+                if (localVertPos.z <= radius)
+                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, 1, -1), radius, beamStrength);
 
-                if (v3Int.z >= depth - radius)
-                    manager.UpdateChunk(managerIndex + new Vector3Int(-1, 1, 1));
+                if (localVertPos.z >= depth - radius)
+                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, 1, 1), radius, beamStrength);
 
             }
-            if (v3Int.x >= width - radius)
+            if (localVertPos.x >= width - radius)
             {
-                manager.UpdateChunk(managerIndex + new Vector3Int(1, 1, 0));
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, 1, 0), radius, beamStrength);
 
-                if (v3Int.z <= radius)
-                    manager.UpdateChunk(managerIndex + new Vector3Int(1, 1, -1));
+                if (localVertPos.z <= radius)
+                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, 1, -1), radius, beamStrength);
 
-                if (v3Int.z >= depth - radius)
-                    manager.UpdateChunk(managerIndex + new Vector3Int(1, 1, 1));
+                if (localVertPos.z >= depth - radius)
+                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, 1, 1), radius, beamStrength);
             }
         }
     }

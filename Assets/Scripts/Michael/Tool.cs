@@ -113,6 +113,7 @@ public class Tool : MonoBehaviour
                                     // set the fuel be equal to the capacity
                                     toolFuel = capacity;
                                 }
+                                hit.transform.GetComponent<EditableTerrain>().manager.dirtyChunks.Clear();
                             }
                         }
                         // if the tool is able to freeze ice, the mouse was right clicked and the collision point was beyond the minimum creation distance
@@ -135,6 +136,7 @@ public class Tool : MonoBehaviour
                                 freezePoint = hit.point;
                                 chunk = hit.transform.GetComponent<EditableTerrain>();
                                 // get the editable terrain's terrain manager (get componenent from parent)
+                                hit.transform.GetComponent<EditableTerrain>().manager.dirtyChunks.Clear();
                             }
                         }
                     }
