@@ -9,7 +9,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+using UnityEngine.UI;
+/// </summary>
 public class Tool : MonoBehaviour
 {
     [Header("Tool Use")]
@@ -47,7 +49,10 @@ public class Tool : MonoBehaviour
     Vector3 freezePoint = Vector3.zero;
     EditableTerrain chunk = null;
     Vector3 mouseDelta = Vector3.zero;
-    public float freezeOffset = 2.0f;
+    public float freezeNewSpawnDistance = 2.0f;
+
+    public Text TEMP;
+    Vector3 lastRotation;
 
     private void Start()
     {
@@ -117,10 +122,10 @@ public class Tool : MonoBehaviour
                             }
                         }
                         // if the tool is able to freeze ice, the mouse was right clicked and the collision point was beyond the minimum creation distance
-                        else if (hit.distance >= minimumFreezeDistance)
+                        if (Input.GetMouseButtonDown(1) && hit.distance >= minimumFreezeDistance)
                         {
                             // freeze the ice at the point of the collision. If this succeeds
-                            if (hit.transform.GetComponent<EditableTerrain>().EditTerrain(true, hit.point, effectRadius, toolStrength))
+                            if (hit.transform.tag == "Ice" && hit.transform.GetComponent<EditableTerrain>().EditTerrain(true, hit.point, effectRadius, toolStrength))
                             {
                                 // decrease the the fuel by the fuel loss rate per second. Multiply the result by the tool strength
                                 toolFuel -= Time.deltaTime * FuelLossRate * toolStrength;
@@ -135,7 +140,9 @@ public class Tool : MonoBehaviour
                                 freezeDistance = hit.distance;
                                 freezePoint = hit.point;
                                 chunk = hit.transform.GetComponent<EditableTerrain>();
-                                // get the editable terrain's terrain manager (get componenent from parent)
+                                /// get the editable terrain's terrain manager (get componenent from parent)
+                                
+                                // clear the manager's dirty chunks list
                                 hit.transform.GetComponent<EditableTerrain>().manager.dirtyChunks.Clear();
                             }
                         }
@@ -150,19 +157,21 @@ public class Tool : MonoBehaviour
                 }
                 else if (canFreeze && Input.GetMouseButton(1))
                 {
-                    // check nothing is between player and next ice spawnpoint
-                    // determine whether to place ice along or away from the initial collision point
-                    //  - get mouse delta, dot product is with normal
-                    // spawn ice
-                    // store point at which ice was spawned
+                    /// check nothing is between player and next ice spawnpoint
+                    /// determine whether to place ice along or away from the initial collision point
+                    ///  - get mouse delta, dot product is with normal
+                    /// spawn ice
+                    /// store point at which ice was spawned
 
                     Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 1.0f));
                     if (true)//!Physics.Raycast(ray, freezeDistance))
                     {
+                        //mouseDelta = playerCamera.transform.localRotation.eulerAngles - lastRotation;
                         mouseDelta.Set(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"), 0.0f);
                         mouseDelta = mouseDelta.normalized;
-                        freezePoint = freezePoint + Vector3.Dot(mouseDelta, freezeDirection) * freezeDirection * freezeOffset;
+                        freezePoint = freezePoint + Vector3.Dot(mouseDelta, freezeDirection) * freezeDirection * freezeNewSpawnDistance;
                         chunk.EditTerrain(true, freezePoint, effectRadius, toolStrength);
+                        TEMP.text = (Vector3.Dot(mouseDelta, freezeDirection)).ToString();
                     }
                 }
                 else
@@ -173,5 +182,6 @@ public class Tool : MonoBehaviour
                 }
             }
         }
+        //lastRotation = playerCamera.transform.localRotation.eulerAngles;
     }
 }
