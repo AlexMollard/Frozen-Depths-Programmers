@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Adds first person movement to the player
     Creation Date: 20/07/2020
-    Last Modified: 21/09/2020
+    Last Modified: 22/09/2020
 */
 
 using System;
@@ -23,6 +23,7 @@ public class PlayerMovement : MonoBehaviour
     [Tooltip("The layer for all objects you can walk on.")]
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private float groundCheckRadius = 0.6f;
+    [SerializeField] private float deathTimer = 1;
 
     [Header("Camera")]
     [SerializeField] private GameObject playerCamera;
@@ -33,6 +34,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float ccHeight = 3;
     [SerializeField] private float ccCrouchHeight = 2;
     [SerializeField] private float deathVelocity = -20;
+    [SerializeField] private GameObject deathUI;
 
     [Space(10)]
     [Tooltip("Enables flying through scene, and turns off player collider.")]
@@ -51,8 +53,12 @@ public class PlayerMovement : MonoBehaviour
     // used to store the distance between controller.center and the halfway point on the collider
     private float standCenterHeight = 0f;
 
+    private float currentDeathTimer = 0;
+    private bool canMove = true;
+
     private void Start()
     {
+        currentDeathTimer = deathTimer;
         originalPos = transform.position;
         controller = GetComponent<CharacterController>();
         standCenterHeight = (ccHeight - ccCrouchHeight) * 0.5f;
@@ -71,13 +77,18 @@ public class PlayerMovement : MonoBehaviour
     {
         if (willDie)
         {
-            GoToLastCheckpoint();
-            willDie = false;
+            currentDeathTimer -= Time.deltaTime;
+            if (currentDeathTimer < 0)
+            {
+                Respawn();
+            }
         }
     }
 
     private void NormalMovement()
     {
+        if (!canMove) return;
+
         // Set player to Default layer
         gameObject.layer = 0;
 
@@ -87,7 +98,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (isGrounded && velocity.y < deathVelocity)
         {
-            willDie = true;
+            Die();
         }
 
         if (isGrounded && velocity.y < 0)
@@ -206,5 +217,24 @@ public class PlayerMovement : MonoBehaviour
         {
             transform.position = originalPos;
         }
+    }
+
+    public void Die()
+    {
+        willDie = true;
+        deathUI.SetActive(true);
+        canMove = false;
+        playerCamera.GetComponent<MouseLook>().enabled = false;
+    }
+
+    private void Respawn()
+    {
+        velocity = Vector3.zero;
+        GoToLastCheckpoint();
+        deathUI.SetActive(false);
+        willDie = false;
+        currentDeathTimer = deathTimer;
+        canMove = true;
+        playerCamera.GetComponent<MouseLook>().enabled = true;
     }
 }
