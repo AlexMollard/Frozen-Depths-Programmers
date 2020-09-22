@@ -3,7 +3,7 @@
     Author: Michael Sweetman
     Summary: Determines a point on the ice mesh the player wants burnt/frozen. Manages a fuel to limit the use of ice creation.
     Creation Date: 21/07/2020
-    Last Modified: 21/09/2020
+    Last Modified: 22/09/2020
 */
 
 using System.Collections;
@@ -44,18 +44,14 @@ public class Tool : MonoBehaviour
     MeshRenderer laserRenderer;
     float laserLengthScalar;
 
-    Vector3 freezeDirection = Vector3.zero;
-    float freezeDistance = 0.0f;
-    Vector3 freezePoint = Vector3.zero;
-    EditableTerrain chunk = null;
-    Vector3 mouseDelta = Vector3.zero;
-    public float freezeNewSpawnDistance = 2.0f;
-
-    public Text TEMP;
-    Vector3 lastRotation;
+    [SerializeField] GameObject iceCreator;
+    [SerializeField] IceCreator iceCreatorScript;
 
     private void Start()
     {
+        iceCreator.transform.localScale = new Vector3(effectRadius * 0.5f, effectRadius * 0.5f, effectRadius * 0.5f);
+        iceCreator.SetActive(false);
+
         // get the mesh renderer for the laser
         laserRenderer = laser.GetComponent<MeshRenderer>();
 
@@ -95,6 +91,8 @@ public class Tool : MonoBehaviour
 
                 if (Input.GetMouseButton(0) || (canFreeze && Input.GetMouseButtonDown(1)))
                 {
+                    iceCreator.SetActive(false);
+
                     // cast a spherecast forward from the center of the player camera viewport
                     Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 1.0f));
                     RaycastHit hit;
@@ -122,7 +120,7 @@ public class Tool : MonoBehaviour
                             }
                         }
                         // if the tool is able to freeze ice, the mouse was right clicked and the collision point was beyond the minimum creation distance
-                        if (Input.GetMouseButtonDown(1) && hit.distance >= minimumFreezeDistance)
+                        if (canFreeze && Input.GetMouseButtonDown(1) && hit.distance >= minimumFreezeDistance && toolFuel > 0.0f)
                         {
                             // freeze the ice at the point of the collision. If this succeeds
                             if (hit.transform.tag == "Ice" && hit.transform.GetComponent<EditableTerrain>().EditTerrain(true, hit.point, effectRadius, toolStrength))
@@ -135,13 +133,10 @@ public class Tool : MonoBehaviour
                                     // set the fuel to be 0
                                     toolFuel = 0.0f;
                                 }
-
-                                freezeDirection = hit.normal;
-                                freezeDistance = hit.distance;
-                                freezePoint = hit.point;
-                                chunk = hit.transform.GetComponent<EditableTerrain>();
-                                /// get the editable terrain's terrain manager (get componenent from parent)
                                 
+                                iceCreator.SetActive(true);
+                                iceCreator.transform.position = hit.point;
+
                                 // clear the manager's dirty chunks list
                                 hit.transform.GetComponent<EditableTerrain>().manager.dirtyChunks.Clear();
                             }
@@ -155,33 +150,32 @@ public class Tool : MonoBehaviour
                         laser.transform.localScale = new Vector3(laser.transform.localScale.x, maxRange * laserLengthScalar, laser.transform.localScale.z);
                     }
                 }
-                else if (canFreeze && Input.GetMouseButton(1))
+                else if (canFreeze && Input.GetMouseButton(1) && toolFuel > 0.0f)
                 {
-                    /// check nothing is between player and next ice spawnpoint
-                    /// determine whether to place ice along or away from the initial collision point
-                    ///  - get mouse delta, dot product is with normal
-                    /// spawn ice
-                    /// store point at which ice was spawned
-
-                    Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 1.0f));
-                    if (true)//!Physics.Raycast(ray, freezeDistance))
+                    if (iceCreatorScript.ready)
                     {
-                        //mouseDelta = playerCamera.transform.localRotation.eulerAngles - lastRotation;
-                        mouseDelta.Set(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"), 0.0f);
-                        mouseDelta = mouseDelta.normalized;
-                        freezePoint = freezePoint + Vector3.Dot(mouseDelta, freezeDirection) * freezeDirection * freezeNewSpawnDistance;
-                        chunk.EditTerrain(true, freezePoint, effectRadius, toolStrength);
-                        TEMP.text = (Vector3.Dot(mouseDelta, freezeDirection)).ToString();
+                        iceCreatorScript.iceTerrain.EditTerrain(true, iceCreator.transform.position, effectRadius, toolStrength);
+                        iceCreatorScript.ready = false;
+
+                        // decrease the the fuel by the fuel loss rate per second. Multiply the result by the tool strength
+                        toolFuel -= Time.deltaTime * FuelLossRate * toolStrength;
+                        // if there is less than 0 fuel
+                        if (toolFuel < 0.0f)
+                        {
+                            // set the fuel to be 0
+                            toolFuel = 0.0f;
+                        }
                     }
-                }
-                else
-                {
-                    freezeDirection = Vector3.zero;
-                    freezeDistance = 0.0f;
-                    chunk = null;
+                    else
+                    {
+                        iceCreator.SetActive(false);
+                    }
                 }
             }
         }
-        //lastRotation = playerCamera.transform.localRotation.eulerAngles;
+        else
+        {
+            iceCreator.SetActive(false);
+        }
     }
 }
