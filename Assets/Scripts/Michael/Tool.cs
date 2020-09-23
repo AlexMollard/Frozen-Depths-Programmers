@@ -3,23 +3,26 @@
     Author: Michael Sweetman
     Summary: Determines a point on the ice mesh the player wants burnt/frozen. Manages a fuel to limit the use of ice creation.
     Creation Date: 21/07/2020
-    Last Modified: 21/09/2020
+    Last Modified: 23/09/2020
 */
 
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class Tool : MonoBehaviour
 {
     [Header("Tool Use")]
-    public bool canFreeze = false;
     [SerializeField] float minimumFreezeDistance = 2.0f;
     [SerializeField] float maxRange = 10.0f;
     [SerializeField] float beamRadius = 0.5f;
     [SerializeField] float effectRadius = 10.0f;
     [SerializeField] float tickRate = 0.0f;
     float tickTimer = 0.0f;
+
+    [Header("Ice Creation")]
+    public bool canFreeze = false;
+    [SerializeField] GameObject iceCreator;
+    [SerializeField] IceCreator iceCreatorScript;
 
     [Header("Fuel Economy")]
     [SerializeField] float FuelGainRate = 100.0f;
@@ -44,6 +47,11 @@ public class Tool : MonoBehaviour
 
     private void Start()
     {
+        // set the scale of the ice creator based on the effect radius
+        iceCreator.transform.localScale = new Vector3(effectRadius * 0.5f, effectRadius * 0.5f, effectRadius * 0.5f);
+        // set the ice creator to be inactive
+        iceCreator.SetActive(false);
+
         // get the mesh renderer for the laser
         laserRenderer = laser.GetComponent<MeshRenderer>();
 
@@ -81,24 +89,27 @@ public class Tool : MonoBehaviour
                 // reset the tick timer
                 tickTimer = 0.0f;
 
-                // cast a spherecast forward from the center of the player camera viewport
-                Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 1.0f));
-                RaycastHit hit;
-                // if the spherecast hit a game object
-                if (Physics.SphereCast(ray, beamRadius, out hit, maxRange))
+                // if the left click is down this frame or if the gun can freeze and right click was pressed this frame
+                if (Input.GetMouseButton(0) || (canFreeze && Input.GetMouseButtonDown(1)))
                 {
-                    // position and scale the laser so it fires from the laser start point with a length based on the hit distance and a radius based on the beam radius
-                    laser.transform.position = laserStartPoint.position + laserStartPoint.forward * hit.distance * laserLengthScalar;
-                    laser.transform.localScale = new Vector3(laser.transform.localScale.x, hit.distance * laserLengthScalar, laser.transform.localScale.z);
+                    // set the ice creator to be inactive
+                    iceCreator.SetActive(false);
 
-                    // if the hit gameobject has the tag "Ice"
-                    if (hit.transform.tag == "Ice")
+                    // cast a spherecast forward from the center of the player camera viewport
+                    Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 1.0f));
+                    RaycastHit hit;
+                    // if the spherecast hit a game object
+                    if (Physics.SphereCast(ray, beamRadius, out hit, maxRange))
                     {
-                        // if the mouse was left clicked
+                        // position and scale the laser so it fires from the laser start point with a length based on the hit distance and a radius based on the beam radius
+                        laser.transform.position = laserStartPoint.position + laserStartPoint.forward * hit.distance * laserLengthScalar;
+                        laser.transform.localScale = new Vector3(laser.transform.localScale.x, hit.distance * laserLengthScalar, laser.transform.localScale.z);
+
+                        // if left click is down this frame
                         if (Input.GetMouseButton(0))
                         {
-                            // burn the ice at the point of the collision. If this succeeds and the tool is able to freeze ice
-                            if (hit.transform.GetComponent<EditableTerrain>().EditTerrain(false, hit.point, effectRadius, toolStrength) && canFreeze)
+                            // if the hit gameobject has the tag "Ice", burn the ice at the point of the collision. If this succeeds and the tool is able to freeze ice
+                            if (hit.transform.tag == "Ice" && hit.transform.GetComponent<EditableTerrain>().EditTerrain(false, hit.point, effectRadius, toolStrength) && canFreeze)
                             {
                                 // increase the fuel by the fuel gain rate per second. Multiply the result by the tool strength
                                 toolFuel += Time.deltaTime * FuelGainRate * toolStrength;
@@ -108,14 +119,15 @@ public class Tool : MonoBehaviour
                                     // set the fuel be equal to the capacity
                                     toolFuel = capacity;
                                 }
+                                // clear the dirty chunks list in the terrain manager
                                 hit.transform.GetComponent<EditableTerrain>().manager.dirtyChunks.Clear();
                             }
                         }
-                        // if the tool is able to freeze ice, the mouse was right clicked and the collision point was beyond the minimum creation distance
-                        else if (canFreeze && hit.distance >= minimumFreezeDistance)
+                        // if the tool is able to freeze ice, the mouse was right clicked this frame, the collision point was beyond the minimum creation distance and the tool has fuel
+                        if (canFreeze && Input.GetMouseButtonDown(1) && hit.distance >= minimumFreezeDistance && toolFuel > 0.0f)
                         {
                             // freeze the ice at the point of the collision. If this succeeds
-                            if (hit.transform.GetComponent<EditableTerrain>().EditTerrain(true, hit.point, effectRadius, toolStrength))
+                            if (hit.transform.tag == "Ice" && hit.transform.GetComponent<EditableTerrain>().EditTerrain(true, hit.point, effectRadius, toolStrength))
                             {
                                 // decrease the the fuel by the fuel loss rate per second. Multiply the result by the tool strength
                                 toolFuel -= Time.deltaTime * FuelLossRate * toolStrength;
@@ -125,19 +137,55 @@ public class Tool : MonoBehaviour
                                     // set the fuel to be 0
                                     toolFuel = 0.0f;
                                 }
+                                
+                                // set the ice creator to be active
+                                iceCreator.SetActive(true);
+                                // set the ice creator's position to be at the point of collision
+                                iceCreator.transform.position = hit.point;
+
+                                // clear the manager's dirty chunks list
                                 hit.transform.GetComponent<EditableTerrain>().manager.dirtyChunks.Clear();
                             }
                         }
                     }
+                    // if the spherecast did not hit a game object 
+                    else
+                    {
+                        // position and scale the laser so it fires from the laser start point with a length based on the max range and a radius based on the beam radius
+                        laser.transform.position = laserStartPoint.position + laserStartPoint.forward * maxRange * laserLengthScalar;
+                        laser.transform.localScale = new Vector3(laser.transform.localScale.x, maxRange * laserLengthScalar, laser.transform.localScale.z);
+                    }
                 }
-                // if the spherecast did not hit a game object 
-                else
+                // else if the tool can freeze, right click is down this frame and the tool has fuel
+                else if (canFreeze && Input.GetMouseButton(1) && toolFuel > 0.0f)
                 {
-                    // position and scale the laser so it fires from the laser start point with a length based on the max range and a radius based on the beam radius
-                    laser.transform.position = laserStartPoint.position + laserStartPoint.forward * maxRange * laserLengthScalar;
-                    laser.transform.localScale = new Vector3(laser.transform.localScale.x, maxRange * laserLengthScalar, laser.transform.localScale.z);
+                    // if the ice creator is colliding with ice and not the player
+                    if (iceCreatorScript.ready)
+                    {
+                        // create ice at the ice creator
+                        iceCreatorScript.iceTerrain.EditTerrain(true, iceCreator.transform.position, effectRadius, toolStrength);
+                        // clear the dirty chunks from the terrain manager
+                        iceCreatorScript.iceTerrain.manager.dirtyChunks.Clear();
+                        // set the ice creator to not be ready so a collision check must occur again for ice to be validly generated
+                        iceCreatorScript.ready = false;
+
+                        // decrease the the fuel by the fuel loss rate per second. Multiply the result by the tool strength
+                        toolFuel -= Time.deltaTime * FuelLossRate * toolStrength;
+                        // if there is less than 0 fuel
+                        if (toolFuel < 0.0f)
+                        {
+                            // set the fuel to be 0
+                            toolFuel = 0.0f;
+                        }
+                    }
                 }
             }
+        }
+        // if the mouse was not left clicked, or right clicked with fuel
+        else
+        {
+            // set the ice creator to be inactive
+            iceCreator.SetActive(false);
         }
     }
 }
