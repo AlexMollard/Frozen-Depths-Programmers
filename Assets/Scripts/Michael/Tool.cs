@@ -3,25 +3,26 @@
     Author: Michael Sweetman
     Summary: Determines a point on the ice mesh the player wants burnt/frozen. Manages a fuel to limit the use of ice creation.
     Creation Date: 21/07/2020
-    Last Modified: 22/09/2020
+    Last Modified: 23/09/2020
 */
 
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-/// <summary>
-using UnityEngine.UI;
-/// </summary>
 public class Tool : MonoBehaviour
 {
     [Header("Tool Use")]
-    public bool canFreeze = false;
     [SerializeField] float minimumFreezeDistance = 2.0f;
     [SerializeField] float maxRange = 10.0f;
     [SerializeField] float beamRadius = 0.5f;
     [SerializeField] float effectRadius = 10.0f;
     [SerializeField] float tickRate = 0.0f;
     float tickTimer = 0.0f;
+
+    [Header("Ice Creation")]
+    public bool canFreeze = false;
+    [SerializeField] GameObject iceCreator;
+    [SerializeField] IceCreator iceCreatorScript;
 
     [Header("Fuel Economy")]
     [SerializeField] float FuelGainRate = 100.0f;
@@ -44,12 +45,11 @@ public class Tool : MonoBehaviour
     MeshRenderer laserRenderer;
     float laserLengthScalar;
 
-    [SerializeField] GameObject iceCreator;
-    [SerializeField] IceCreator iceCreatorScript;
-
     private void Start()
     {
+        // set the scale of the ice creator based on the effect radius
         iceCreator.transform.localScale = new Vector3(effectRadius * 0.5f, effectRadius * 0.5f, effectRadius * 0.5f);
+        // set the ice creator to be inactive
         iceCreator.SetActive(false);
 
         // get the mesh renderer for the laser
@@ -89,8 +89,10 @@ public class Tool : MonoBehaviour
                 // reset the tick timer
                 tickTimer = 0.0f;
 
+                // if the left click is down this frame or if the gun can freeze and right click was pressed this frame
                 if (Input.GetMouseButton(0) || (canFreeze && Input.GetMouseButtonDown(1)))
                 {
+                    // set the ice creator to be inactive
                     iceCreator.SetActive(false);
 
                     // cast a spherecast forward from the center of the player camera viewport
@@ -103,6 +105,7 @@ public class Tool : MonoBehaviour
                         laser.transform.position = laserStartPoint.position + laserStartPoint.forward * hit.distance * laserLengthScalar;
                         laser.transform.localScale = new Vector3(laser.transform.localScale.x, hit.distance * laserLengthScalar, laser.transform.localScale.z);
 
+                        // if left click is down this frame
                         if (Input.GetMouseButton(0))
                         {
                             // if the hit gameobject has the tag "Ice", burn the ice at the point of the collision. If this succeeds and the tool is able to freeze ice
@@ -116,10 +119,11 @@ public class Tool : MonoBehaviour
                                     // set the fuel be equal to the capacity
                                     toolFuel = capacity;
                                 }
+                                // clear the dirty chunks list in the terrain manager
                                 hit.transform.GetComponent<EditableTerrain>().manager.dirtyChunks.Clear();
                             }
                         }
-                        // if the tool is able to freeze ice, the mouse was right clicked and the collision point was beyond the minimum creation distance
+                        // if the tool is able to freeze ice, the mouse was right clicked this frame, the collision point was beyond the minimum creation distance and the tool has fuel
                         if (canFreeze && Input.GetMouseButtonDown(1) && hit.distance >= minimumFreezeDistance && toolFuel > 0.0f)
                         {
                             // freeze the ice at the point of the collision. If this succeeds
@@ -134,7 +138,9 @@ public class Tool : MonoBehaviour
                                     toolFuel = 0.0f;
                                 }
                                 
+                                // set the ice creator to be active
                                 iceCreator.SetActive(true);
+                                // set the ice creator's position to be at the point of collision
                                 iceCreator.transform.position = hit.point;
 
                                 // clear the manager's dirty chunks list
@@ -150,11 +156,17 @@ public class Tool : MonoBehaviour
                         laser.transform.localScale = new Vector3(laser.transform.localScale.x, maxRange * laserLengthScalar, laser.transform.localScale.z);
                     }
                 }
+                // else if the tool can freeze, right click is down this frame and the tool has fuel
                 else if (canFreeze && Input.GetMouseButton(1) && toolFuel > 0.0f)
                 {
+                    // if the ice creator is colliding with ice and not the player
                     if (iceCreatorScript.ready)
                     {
+                        // create ice at the ice creator
                         iceCreatorScript.iceTerrain.EditTerrain(true, iceCreator.transform.position, effectRadius, toolStrength);
+                        // clear the dirty chunks from the terrain manager
+                        iceCreatorScript.iceTerrain.manager.dirtyChunks.Clear();
+                        // set the ice creator to not be ready so a collision check must occur again for ice to be validly generated
                         iceCreatorScript.ready = false;
 
                         // decrease the the fuel by the fuel loss rate per second. Multiply the result by the tool strength
@@ -166,15 +178,13 @@ public class Tool : MonoBehaviour
                             toolFuel = 0.0f;
                         }
                     }
-                    else
-                    {
-                        iceCreator.SetActive(false);
-                    }
                 }
             }
         }
+        // if the mouse was not left clicked, or right clicked with fuel
         else
         {
+            // set the ice creator to be inactive
             iceCreator.SetActive(false);
         }
     }
