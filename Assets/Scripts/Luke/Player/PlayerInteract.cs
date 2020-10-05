@@ -1,9 +1,9 @@
-﻿/*
+/*
     File name: PlayerInteract.cs
     Author:    Luke Lazzaro
     Summary: Enables interaction and opens artifact viewer
     Creation Date: 21/07/2020
-    Last Modified: 15/09/2020
+    Last Modified: 5/10/2020
 */
 
 using System;
@@ -47,6 +47,7 @@ public class PlayerInteract : MonoBehaviour
                 Interactable interactable = hit.collider.GetComponent<Interactable>();
                 Key key = hit.collider.GetComponent<Key>();
                 Keyhole keyhole = hit.collider.GetComponent<Keyhole>();
+                Antidote antidote = hit.collider.GetComponent<Antidote>();
 
                 if (interactable != null)
                 {
@@ -60,6 +61,10 @@ public class PlayerInteract : MonoBehaviour
                 {
                     keyhole.Open();
                 }
+                else if (antidote != null)
+                {
+                    antidote.Collect();
+                }    
                 else if (hit.collider.CompareTag("Tool Component"))
                 {
                     toolScript.canFreeze = true;
