@@ -3,7 +3,7 @@
     Author: Michael Sweetman
     Summary: Manages events triggered by clicking UI buttons such as switching between UIs and exiting the game.
     Creation Date: 29/07/2020
-    Last Modified: 15/09/2020
+    Last Modified: 6/10/2020
 */
 
 using System.Collections;
@@ -25,7 +25,6 @@ public class MenuManager : MonoBehaviour
 
     [Header("Player")]
     [SerializeField] GameObject player;
-    [SerializeField] MouseLook mouseLook;
 
     [Header("Settings")]
     [SerializeField] Slider masterVolumeSlider;
@@ -42,9 +41,15 @@ public class MenuManager : MonoBehaviour
     [SerializeField] Text fieldOfViewValueText;
     [SerializeField] Toggle fullScreenToggle;
 
+    [Header("Audio Sources")]
+    [SerializeField] List<AudioSource> musicPlayers;
+    [SerializeField] List<AudioSource> dialoguePlayers;
+    [SerializeField] List<AudioSource> soundEffectPlayers;
+
     [Header("Start State")]
     [SerializeField] bool startInMainMenu = true;
 
+    MouseLook mouseLook;
     PlayerMovement playerMovement;
     Tool tool;
 
@@ -53,17 +58,19 @@ public class MenuManager : MonoBehaviour
     GameObject[] UIs;
     bool willGoBackToCheckpoint = false;
 
-    [HideInInspector] public float masterVolume = 10.0f;
-    [HideInInspector] public float musicVolume = 10.0f;
-    [HideInInspector] public float dialogueVolume = 10.0f;
-    [HideInInspector] public float soundEffectVolume = 10.0f;
+    float masterVolume = 10.0f;
+    float musicVolume = 10.0f;
+    float dialogueVolume = 10.0f;
+    float soundEffectVolume = 10.0f;
 
     void Start()
     {
         // get the Player Movement and Tool script from the player
         playerMovement = player.GetComponent<PlayerMovement>();
         tool = player.GetComponent<Tool>();
-        
+        // get the Mouse Look script from the player camera
+        mouseLook = playerCamera.GetComponent<MouseLook>();
+
         // activate the camera needed for the start UI, deactivate the other
         mainMenuCamera.SetActive(startInMainMenu);
         playerCamera.SetActive(!startInMainMenu);
@@ -225,8 +232,10 @@ public class MenuManager : MonoBehaviour
     {
         // update the master volume value text to display the new master volume value
         masterVolumeValueText.text = masterVolumeSlider.value.ToString();
-        // store the new master volume value
-        masterVolume = masterVolumeSlider.value;
+        // store the new master volume value within the range of 0 to 1
+        masterVolume = masterVolumeSlider.value * 0.1f;
+
+        AudioListener.volume = masterVolume;
     }
 
     // triggers when the value of the music volume slider changes
@@ -234,8 +243,14 @@ public class MenuManager : MonoBehaviour
     {
         // update the music volume value text to display the new music volume value
         musicVolumeValueText.text = musicVolumeSlider.value.ToString();
-        // store the new music volume value
-        musicVolume = musicVolumeSlider.value;
+        // store the new music volume value within the range of 0 to 1
+        musicVolume = musicVolumeSlider.value * 0.1f;
+
+        // set the volume of the music players to the music volume
+        foreach (AudioSource musicPlayer in musicPlayers)
+        {
+            musicPlayer.volume = musicVolume;
+        }
     }
 
     // triggers when the value of the dialogue volume slider changes
@@ -243,8 +258,14 @@ public class MenuManager : MonoBehaviour
     {
         // update the dialogue volume value text to display the new dialogue volume value
         dialogueVolumeValueText.text = dialogueVolumeSlider.value.ToString();
-        // store the new dialogue volume value
-        dialogueVolume = dialogueVolumeSlider.value;
+        // store the new dialogue volume value within the range of 0 to 1
+        dialogueVolume = dialogueVolumeSlider.value * 0.1f;
+
+        // set the volume of the dialogue players to the dialogue volume
+        foreach (AudioSource dialoguePlayer in dialoguePlayers)
+        {
+            dialoguePlayer.volume = dialogueVolume;
+        }
     }
 
     // triggers when the value of the sound effect volume slider changes
@@ -252,8 +273,14 @@ public class MenuManager : MonoBehaviour
     {
         // update the sound effect volume value text to display the new sound effect volume value
         soundEffectVolumeValueText.text = soundEffectVolumeSlider.value.ToString();
-        // store the new sound effect volume value
-        soundEffectVolume = soundEffectVolumeSlider.value;
+        // store the new sound effect volume value within the range of 0 to 1
+        soundEffectVolume = soundEffectVolumeSlider.value * 0.1f;
+
+        // set the volume of the sound effect players to the sound effect volume
+        foreach (AudioSource soundEffectPlayer in soundEffectPlayers)
+        {
+            soundEffectPlayer.volume = soundEffectVolume;
+        }
     }
 
     // triggers when the value of the sensitivity slider changes
