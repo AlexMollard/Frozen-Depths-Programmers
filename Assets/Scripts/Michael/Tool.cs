@@ -125,8 +125,6 @@ public class Tool : MonoBehaviour
                                     // set the fuel be equal to the capacity
                                     toolFuel = capacity;
                                 }
-                                // clear the dirty chunks list in the terrain manager
-                                hit.transform.GetComponent<EditableTerrain>().manager.dirtyChunks.Clear();
                             }
                         }
                         // if the tool is able to freeze ice, the mouse was right clicked this frame, the collision point was beyond the minimum creation distance and the tool has fuel
@@ -148,9 +146,6 @@ public class Tool : MonoBehaviour
                                 iceCreator.SetActive(true);
                                 // set the ice creator's position to be at the point of collision
                                 iceCreator.transform.position = hit.point;
-
-                                // clear the manager's dirty chunks list
-                                hit.transform.GetComponent<EditableTerrain>().manager.dirtyChunks.Clear();
                             }
                         }
                     }
@@ -170,8 +165,6 @@ public class Tool : MonoBehaviour
                     {
                         // create ice at the ice creator
                         iceCreatorScript.iceTerrain.EditTerrain(true, iceCreator.transform.position, effectRadius, toolStrength);
-                        // clear the dirty chunks from the terrain manager
-                        iceCreatorScript.iceTerrain.manager.dirtyChunks.Clear();
                         // set the ice creator to not be ready so a collision check must occur again for ice to be validly generated
                         iceCreatorScript.ready = false;
 

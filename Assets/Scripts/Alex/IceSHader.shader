@@ -16,7 +16,7 @@
        LOD 300
 
         CGPROGRAM
-        #pragma surface surf Standard fullforwardshadows alpha
+        #pragma surface surf Standard fullforwardshadows alpha noinstancing
         #pragma target 3.0
 
         struct Input {
