@@ -3,7 +3,7 @@
     Author: Michael Sweetman
     Summary: Changes the player's gravity when it collides with this game object
     Creation Date: 10/08/2020
-    Last Modified: 18/08/2020
+    Last Modified: 12/10/2020
 */
 
 using System.Collections;
@@ -12,7 +12,7 @@ using UnityEngine;
 
 public class ChangePlayerGravity : MonoBehaviour
 {
-	public float newGravity = -9.81f;
+	[SerializeField] float newGravity = -9.81f;
 
 	private void OnTriggerEnter(Collider other)
 	{

@@ -12,7 +12,7 @@ using UnityEngine;
 
 public class AntidoteMenuHider : MonoBehaviour
 {
-    public GameObject antidoteMenu;
+    [SerializeField] GameObject antidoteMenu;
 
     void Update()
     {

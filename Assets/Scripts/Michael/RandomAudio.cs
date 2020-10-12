@@ -3,7 +3,7 @@
     Author: Michael Sweetman
     Summary: intermittently plays a random sound effect from a set list
     Creation Date: 05/10/2020
-    Last Modified: 05/10/2020
+    Last Modified: 12/10/2020
 */
 
 using System.Collections;
@@ -22,12 +22,8 @@ public class RandomAudio : MonoBehaviour
 
     private void Start()
     {
-        // if the audio should play repetitively
-        if (loop)
-        {
-            // determine a random amount of time before the sound effect plays
-            timer = Random.Range(minTime, maxTime);
-        }
+        // determine a random amount of time before the sound effect plays (to be used if the sound effect is set to loop)
+        timer = Random.Range(minTime, maxTime);
     }
 
     private void Update()

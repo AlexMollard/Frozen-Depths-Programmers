@@ -3,7 +3,7 @@
     Author: Michael Sweetman
     Summary: Manages the Fuel Bar display on the tool canvas
     Creation Date: 25/08/2020
-    Last Modified: 14/09/2020
+    Last Modified: 12/10/2020
 */
 
 using System.Collections;
@@ -13,9 +13,9 @@ using UnityEngine.UI;
 
 public class FuelBar : MonoBehaviour
 {
-    public Tool tool;
-    public float fuelBarMaxHeight = 300.0f;
-    public float fuelBarMinHeight = 0.0f; 
+    [SerializeField] Tool tool;
+    [SerializeField] float fuelBarMaxHeight = 300.0f;
+    [SerializeField] float fuelBarMinHeight = 0.0f; 
 
     RectTransform bar;
 

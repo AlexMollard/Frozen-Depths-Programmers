@@ -3,7 +3,7 @@
     Author: Michael Sweetman
     Summary: Ensures that enqueued audio clips play on the first beat of a measure
     Creation Date: 05/10/2020
-    Last Modified: 05/10/2020
+    Last Modified: 12/10/2020
 */
 using System.Collections;
 using System.Collections.Generic;
@@ -11,9 +11,9 @@ using UnityEngine;
 
 public class AmbientSoundManager : MonoBehaviour
 {
-    public float beatsPerSecond = 0.5f;
-    public int beatsPerMeasure = 4;
-    public AudioSource musicPlayer;
+    [SerializeField] float beatsPerSecond = 0.5f;
+    [SerializeField] int beatsPerMeasure = 4;
+    [SerializeField] AudioSource musicPlayer;
 
     Queue<AudioSource> soundQueue = new Queue<AudioSource>();
     bool onBeat;
@@ -23,7 +23,7 @@ public class AmbientSoundManager : MonoBehaviour
     // adds a sound to the sound queue
     public void AddToQueue(AudioSource player)
     {
-        // create a new sound from the sound effect and player arguments and add it to the sound queue
+        // add the audio player to the sound queue
         soundQueue.Enqueue(player);
     }
 
@@ -46,7 +46,7 @@ public class AmbientSoundManager : MonoBehaviour
             // store the new beat number
             beatNumber++;
 
-            // if this is the first beat, then new sound effects should play
+            // if this is the first beat of the measure, then new sound effects should play
             onBeat = (beatNumber % beatsPerMeasure == 0);
             
             // if the bpm is in sync for a new sound effect to play and the player is not currently playing a sound
