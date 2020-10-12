@@ -16,6 +16,7 @@ public class AntidoteMenuHider : MonoBehaviour
 
     void Update()
     {
+        // set the antidote menu to be active if the tab key is down, inactive otherwise
         antidoteMenu.SetActive(Input.GetKey(KeyCode.Tab));
     }
 }
