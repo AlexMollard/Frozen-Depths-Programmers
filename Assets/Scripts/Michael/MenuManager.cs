@@ -3,7 +3,7 @@
     Author: Michael Sweetman
     Summary: Manages events triggered by clicking UI buttons such as switching between UIs and exiting the game.
     Creation Date: 29/07/2020
-    Last Modified: 6/10/2020
+    Last Modified: 12/10/2020
 */
 
 using System.Collections;
@@ -49,6 +49,8 @@ public class MenuManager : MonoBehaviour
     [Header("Start State")]
     [SerializeField] bool startInMainMenu = true;
 
+    Camera playerCam;
+
     MouseLook mouseLook;
     PlayerMovement playerMovement;
     Tool tool;
@@ -70,6 +72,9 @@ public class MenuManager : MonoBehaviour
         tool = player.GetComponent<Tool>();
         // get the Mouse Look script from the player camera
         mouseLook = playerCamera.GetComponent<MouseLook>();
+
+        // get the camera scripts from the player camera
+        playerCam = playerCamera.GetComponent<Camera>();
 
         // activate the camera needed for the start UI, deactivate the other
         mainMenuCamera.SetActive(startInMainMenu);
@@ -96,7 +101,15 @@ public class MenuManager : MonoBehaviour
         MusicVolume();
         DialogueVolume();
         SoundEffectVolume();
+
+        // get inital sensitivity value from mouseLook script
+        sensitivitySlider.value = mouseLook.mouseSensitivity;
+        // initialise sensitivity slider
         Sensitivity();
+
+        // get initial field of view value from player cam
+        fieldOfViewSlider.value = playerCam.fieldOfView;
+        // initialise field of view slider
         FieldOfView();
     }
 
@@ -140,6 +153,8 @@ public class MenuManager : MonoBehaviour
     {
         // change the cursor lockstate
         Cursor.lockState = (enablePlayerControls) ? CursorLockMode.Locked : CursorLockMode.None;
+        // change cursor visibility
+        Cursor.visible = !enablePlayerControls;
 
         // toggle player controls
         mouseLook.enabled = enablePlayerControls;
@@ -298,7 +313,7 @@ public class MenuManager : MonoBehaviour
         // update the field of view value text to display the new field of view value
         fieldOfViewValueText.text = fieldOfViewSlider.value.ToString();
         // set the player camera field of view to the value of the slider
-        playerCamera.GetComponent<Camera>().fieldOfView = fieldOfViewSlider.value;
+        playerCam.fieldOfView = fieldOfViewSlider.value;
     }
 
     // triggers when the fullscreen toggle is clicked
