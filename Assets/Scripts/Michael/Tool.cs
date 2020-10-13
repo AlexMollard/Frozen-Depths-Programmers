@@ -22,6 +22,7 @@ public class Tool : MonoBehaviour
     [Header("Ice Creation")]
     public bool canFreeze = false;
     [SerializeField] GameObject iceCreator;
+    [SerializeField] float iceCreatorRelativeSize = 1.0f;
      IceCreator iceCreatorScript;
 
     [Header("Fuel Economy")]
@@ -57,8 +58,8 @@ public class Tool : MonoBehaviour
         // point the tool towards the ice creator
         tool.LookAt(iceCreator.transform);
 
-        // set the scale of the ice creator based on the effect radius
-        iceCreator.transform.localScale = new Vector3(effectRadius * 0.5f, effectRadius * 0.5f, effectRadius * 0.5f);
+        // set the scale of the ice creator using iceCreatorRelativeSize, relative to the effect radius
+        iceCreator.transform.localScale = new Vector3(effectRadius * 0.5f * iceCreatorRelativeSize, effectRadius * 0.5f * iceCreatorRelativeSize, effectRadius * 0.5f * iceCreatorRelativeSize);
         // set the ice creator to be inactive
         iceCreator.SetActive(false);
 

@@ -3876,7 +3876,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eff777e8449102d4faadcb5181984fc1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 1391696933}
+  minimumSquareDistanceMoved: 0.1
+  player: {fileID: 0}
   ready: 0
   iceTerrain: {fileID: 0}
 --- !u!54 &829419040
@@ -5354,12 +5355,12 @@ PrefabInstance:
     - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
       propertyPath: FuelGainRate
-      value: 100
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
       propertyPath: FuelLossRate
-      value: 100
+      value: 6.7
       objectReference: {fileID: 0}
     - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
@@ -5394,7 +5395,7 @@ PrefabInstance:
     - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
       propertyPath: toolStrength
-      value: 15
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
@@ -5449,7 +5450,7 @@ PrefabInstance:
     - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
       propertyPath: toolStrengthChangeRate
-      value: 100
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
@@ -5505,6 +5506,21 @@ PrefabInstance:
         type: 3}
       propertyPath: asm
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
+        type: 3}
+      propertyPath: minToolStrength
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
+        type: 3}
+      propertyPath: maxToolStrength
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
+        type: 3}
+      propertyPath: iceCreatorRelativeSize
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6641315126594596370, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
@@ -8977,7 +8993,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!20 &1981294480
 Camera:
   m_ObjectHideFlags: 0
@@ -9883,17 +9899,17 @@ PrefabInstance:
     - target: {fileID: 1006591071520275106, guid: 52c6018349d5ac0478910d7c91fc67f6,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.58
+      value: 1.05
       objectReference: {fileID: 0}
     - target: {fileID: 1006591071520275106, guid: 52c6018349d5ac0478910d7c91fc67f6,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.56
+      value: -0.4
       objectReference: {fileID: 0}
     - target: {fileID: 1006591071520275106, guid: 52c6018349d5ac0478910d7c91fc67f6,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.5
+      value: 1.91
       objectReference: {fileID: 0}
     - target: {fileID: 1006591071520275106, guid: 52c6018349d5ac0478910d7c91fc67f6,
         type: 3}
