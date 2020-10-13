@@ -3,7 +3,7 @@
     Author: Michael Sweetman
     Summary: Determines a point on the ice mesh the player wants burnt/frozen. Manages a fuel to limit the use of ice creation.
     Creation Date: 21/07/2020
-    Last Modified: 23/09/2020
+    Last Modified: 13/10/2020
 */
 
 using System.Collections;
@@ -22,7 +22,7 @@ public class Tool : MonoBehaviour
     [Header("Ice Creation")]
     public bool canFreeze = false;
     [SerializeField] GameObject iceCreator;
-    [SerializeField] IceCreator iceCreatorScript;
+     IceCreator iceCreatorScript;
 
     [Header("Fuel Economy")]
     [SerializeField] float FuelGainRate = 100.0f;
@@ -44,10 +44,14 @@ public class Tool : MonoBehaviour
     [SerializeField] Material burnLaserMaterial;
     [SerializeField] Material freezeLaserMaterial;
     MeshRenderer laserRenderer;
+    Vector3 laserScale = Vector3.zero;
     float laserLengthScalar;
 
     private void Start()
     {
+        // get the ice creator script from the ice creator
+        iceCreatorScript = iceCreator.GetComponent<IceCreator>();
+
         // set the ice creator to be at the furthest point the tool can hit
         iceCreator.transform.position = playerCamera.transform.position + playerCamera.transform.forward * maxRange;
         // point the tool towards the ice creator
@@ -60,9 +64,10 @@ public class Tool : MonoBehaviour
 
         // get the mesh renderer for the laser
         laserRenderer = laser.GetComponent<MeshRenderer>();
-
         // get the relative length the display beam needs to be relative to the actual spherecast distance. Half this value as as scale 1 cylinder is 2 units long
         laserLengthScalar = (new Vector3(playerCamera.transform.position.x, playerCamera.transform.position.y, playerCamera.transform.position.z + maxRange) - laserStartPoint.position).magnitude / maxRange * 0.5f;
+        // set the laser scale
+        laserScale = new Vector3(laser.transform.localScale.x, maxRange * laserLengthScalar, laser.transform.localScale.z);
     }
 
     void Update()
@@ -92,8 +97,8 @@ public class Tool : MonoBehaviour
             // if enough time has passed since the last terrain edit
             if (tickTimer > tickRate)
             {
-                // reset the tick timer
-                tickTimer = 0.0f;
+                // reset the tick timer, saving excess time for next cycle
+                tickTimer -= tickRate;
 
                 // if the left click is down this frame or if the gun can freeze and right click was pressed this frame
                 if (Input.GetMouseButton(0) || (canFreeze && Input.GetMouseButtonDown(1)))
@@ -109,7 +114,8 @@ public class Tool : MonoBehaviour
                     {
                         // position and scale the laser so it fires from the laser start point with a length based on the hit distance and a radius based on the beam radius
                         laser.transform.position = laserStartPoint.position + laserStartPoint.forward * hit.distance * laserLengthScalar;
-                        laser.transform.localScale = new Vector3(laser.transform.localScale.x, hit.distance * laserLengthScalar, laser.transform.localScale.z);
+                        laserScale.y = hit.distance * laserLengthScalar;
+                        laser.transform.localScale = laserScale;
 
                         // if left click is down this frame
                         if (Input.GetMouseButton(0))
@@ -122,7 +128,7 @@ public class Tool : MonoBehaviour
                                 // if there is a capacity and the tool fuel is above that capacity
                                 if (capacity > 0.0f && toolFuel > capacity)
                                 {
-                                    // set the fuel be equal to the capacity
+                                    // set the fuel to be equal to the capacity
                                     toolFuel = capacity;
                                 }
                             }
@@ -133,7 +139,7 @@ public class Tool : MonoBehaviour
                             // freeze the ice at the point of the collision. If this succeeds
                             if (hit.transform.tag == "Ice" && hit.transform.GetComponent<EditableTerrain>().EditTerrain(true, hit.point, effectRadius, toolStrength))
                             {
-                                // decrease the the fuel by the fuel loss rate per second. Multiply the result by the tool strength
+                                // decrease the fuel by the fuel loss rate per second. Multiply the result by the tool strength
                                 toolFuel -= Time.deltaTime * FuelLossRate * toolStrength;
                                 // if there is less than 0 fuel
                                 if (toolFuel < 0.0f)
@@ -154,7 +160,8 @@ public class Tool : MonoBehaviour
                     {
                         // position and scale the laser so it fires from the laser start point with a length based on the max range and a radius based on the beam radius
                         laser.transform.position = laserStartPoint.position + laserStartPoint.forward * maxRange * laserLengthScalar;
-                        laser.transform.localScale = new Vector3(laser.transform.localScale.x, maxRange * laserLengthScalar, laser.transform.localScale.z);
+                        laserScale.y = maxRange * laserLengthScalar;
+                        laser.transform.localScale = laserScale;
                     }
                 }
                 // else if the tool can freeze, right click is down this frame and the tool has fuel
@@ -168,7 +175,7 @@ public class Tool : MonoBehaviour
                         // set the ice creator to not be ready so a collision check must occur again for ice to be validly generated
                         iceCreatorScript.ready = false;
 
-                        // decrease the the fuel by the fuel loss rate per second. Multiply the result by the tool strength
+                        // decrease the fuel by the fuel loss rate per second. Multiply the result by the tool strength
                         toolFuel -= Time.deltaTime * FuelLossRate * toolStrength;
                         // if there is less than 0 fuel
                         if (toolFuel < 0.0f)

@@ -40,19 +40,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 4718783068257040541}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72df89a598846d34f95eeec2e34b4eff, type: 3}
+  m_Script: {fileID: 11500000, guid: 1bf1e09e344ee6642acc994335f5cb8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   terrainPrefab: {fileID: 5050879582006432440, guid: aa2ad7d72ad697049be2cbeef785346c,
     type: 3}
-  player: {fileID: 0}
   maxDistanceFromMesh: 100
-  terrainTotalX: 20
+  terrainTotalX: 10
   terrainTotalY: 10
-  terrainTotalZ: 20
-  terrainWidth: 10
-  terrainHeight: 20
-  terrainDepth: 10
-  smoothTerrain: 1
-  flatShaded: 1
-  chunkPrefab: 0
+  terrainTotalZ: 10
