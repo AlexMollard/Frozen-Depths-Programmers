@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Adds first person movement to the player
     Creation Date: 20/07/2020
-    Last Modified: 22/09/2020
+    Last Modified: 19/10/2020
 */
 
 using System;
@@ -22,7 +22,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform groundCheck;
     [Tooltip("The layer for all objects you can walk on.")]
     [SerializeField] private LayerMask groundMask;
-    [SerializeField] private float groundCheckRadius = 0.6f;
+    [SerializeField] private float groundCheckRadius = 0.5f;
     [SerializeField] private float deathTimer = 1;
 
     [Header("Camera")]
@@ -33,7 +33,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Char. Controller")]
     [SerializeField] private float ccHeight = 3;
     [SerializeField] private float ccCrouchHeight = 2;
-    [SerializeField] private float deathVelocity = -20;
+    //[SerializeField] private float deathVelocity = -20;
     [SerializeField] private GameObject deathUI;
 
     [Space(10)]
@@ -71,6 +71,8 @@ public class PlayerMovement : MonoBehaviour
             GodModeMovement();
         else
             NormalMovement();
+
+        isGrounded = false;
     }
 
     private void LateUpdate()
@@ -89,17 +91,26 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!canMove) return;
 
+        Debug.Log(isGrounded);
+
         // Set player to Default layer
         gameObject.layer = 0;
 
-        Vector3 temp = new Vector3(controller.center.x, controller.height - controller.center.y, controller.center.z);
+        //Vector3 temp = new Vector3(controller.center.x, controller.height - controller.center.y, controller.center.z);
 
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundMask);
-
-        if (isGrounded && velocity.y < deathVelocity)
+        Collider[] objectsHit = Physics.OverlapSphere(groundCheck.position, groundCheckRadius);
+        foreach (Collider c in objectsHit)
         {
-            Die();
+            if (c.transform.root != transform)
+            {
+                isGrounded = true;
+            }
         }
+
+        //if (isGrounded && velocity.y < deathVelocity)
+        //{
+        //    Die();
+        //}
 
         if (isGrounded && velocity.y < 0)
         {
@@ -236,5 +247,11 @@ public class PlayerMovement : MonoBehaviour
         currentDeathTimer = deathTimer;
         canMove = true;
         playerCamera.GetComponent<MouseLook>().enabled = true;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(groundCheck.position, groundCheckRadius);
     }
 }
