@@ -10,9 +10,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class floatMyGuy
+public class FloatMyGuy
 {
-    public floatMyGuy(float val)
+    public FloatMyGuy(float val)
     {
         value = val;
     }
@@ -44,7 +44,7 @@ public class EditableTerrain : MonoBehaviour
     private int width = 8;
     private int depth = 8;
 
-    public floatMyGuy[,,] terrainMap;
+    public FloatMyGuy[,,] terrainMap;
 
     private void Awake()
     {
@@ -61,14 +61,14 @@ public class EditableTerrain : MonoBehaviour
         SetHeight(meshSize.y);
         SetDepth(meshSize.z);
 
-        terrainMap = new floatMyGuy[width + 1, height + 1, depth + 1];
+        terrainMap = new FloatMyGuy[width + 1, height + 1, depth + 1];
         for (int x = 0; x < width + 1; x++)
         {
             for (int y = 0; y < height + 1; y++)
             {
                 for (int z = 0; z < depth + 1; z++)
                 {
-                    terrainMap[x, y, z] = new floatMyGuy(1.0f);
+                    terrainMap[x, y, z] = new FloatMyGuy(1.0f);
                 }
             }
         }
@@ -106,7 +106,7 @@ public class EditableTerrain : MonoBehaviour
                 for (int z = 0; z < depth + 1; z++)
                 {
                     if (terrainMap[x, y, z] == null)
-                        terrainMap[x, y, z] = new floatMyGuy(0.0f);
+                        terrainMap[x, y, z] = new FloatMyGuy(0.0f);
                     else
                         terrainMap[x, y, z].value = 0.0f;
 
@@ -116,7 +116,7 @@ public class EditableTerrain : MonoBehaviour
                     {
                         if (cube.checkCollision(vertPos + managerPosInt))
                         {
-                            terrainMap[x, y, z].value = -10f;
+                            terrainMap[x, y, z].value = -1f;
                             break;
                         }
                         else
@@ -136,11 +136,48 @@ public class EditableTerrain : MonoBehaviour
             {
                 for (int z = 0; z < depth; z++)
                 {
+                    // Check for small bois here and delete them
+                    if (terrainMap[x, y, z].value < 0.95f)
+                    {
+                        if (RemoveSmallBoi(x, y, z) >= 4)
+                            terrainMap[x, y, z].value = 1.0f;
+                    }
+
                     MarchCube(new Vector3Int(x, y, z));
                 }
             }
         }
         BuildMesh();
+    }
+
+    private int RemoveSmallBoi(int x, int y, int z)
+    {
+        int dirtyBoi = 0;
+
+        if (x < width)
+            if (terrainMap[x + 1, y, z].value > 0.95f)
+            dirtyBoi++;
+        if (x > 0)
+            if (terrainMap[x - 1, y, z].value > 0.95f)
+            dirtyBoi++;
+
+        if (y < height)
+        if (terrainMap[x, y + 1, z].value > 0.95f)
+            dirtyBoi++;
+        
+        if (y > 0)
+        if (terrainMap[x, y - 1, z].value > 0.95f)
+            dirtyBoi++;
+
+        if (z < depth)
+        if (terrainMap[x, y, z + 1].value > 0.95f)
+            dirtyBoi++;
+
+        if(z > 0)
+        if (terrainMap[x, y, z - 1].value > 0.95f)
+            dirtyBoi++;
+
+        return dirtyBoi;
     }
 
     public int GetWidth()
@@ -173,9 +210,11 @@ public class EditableTerrain : MonoBehaviour
         height = newHeight;
     }
 
-    public bool EditTerrain(bool freeze, Vector3 pos, float radius, float strength)
+    public bool EditTerrain(bool freeze, Vector3 pos, float radius, float FreezeStrength, float MeltStrength)
     {
-        //manager.dirtyChunks.Add(managerIndex);
+        bool editedTerrain = false;
+        float first = 0.0f;
+
         Vector3Int publicVertPos = new Vector3Int(Mathf.CeilToInt(pos.x), Mathf.CeilToInt(pos.y), Mathf.CeilToInt(pos.z));
         Vector3Int localVertPos = publicVertPos - Vector3Int.RoundToInt(transform.position);
         //Debug.Log("Before: " + terrainMap[localVertPos.x, localVertPos.y, localVertPos.z].value);
@@ -194,27 +233,32 @@ public class EditableTerrain : MonoBehaviour
                     if (offsetVec.magnitude < radius)
                     {
                         Vector3 newPoint = localVertPos + offsetVec;
-                        //float newStrength = strength - Vector3.Distance(newPoint, localVertPos);
+                        float newFreezeStrength = FreezeStrength - Vector3.Distance(newPoint, localVertPos);
+                        float newMeltStrength = MeltStrength - Vector3.Distance(newPoint, localVertPos);
                         if (newPoint.x < 0 || newPoint.y < 0 || newPoint.z < 0 || newPoint.x > width || newPoint.y > height || newPoint.z > depth)
                         {
                             continue;
                         }
 
-                        if (freeze)
-                            terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value -= strength;
-                        else
-                            terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value += strength;
+                        first = terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value;
 
-                        terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value = Mathf.Clamp(terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value, -10, 1);
+                        if (freeze)
+                            terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value -= newFreezeStrength;
+                        else
+                            terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value += newMeltStrength;
+
+                        terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value = Mathf.Clamp(terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value, -1, 1);
+
+                        if (first != terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value)
+                            editedTerrain = true;
                     }
                 }
             }
         }
 
-        //Debug.Log("After: " + terrainMap[localVertPos.x, localVertPos.y, localVertPos.z].value);
         CreateMeshData();
-        UpdateNeighbours(freeze, publicVertPos, localVertPos, radius, strength);
-        return true;
+        UpdateNeighbours(freeze, publicVertPos, localVertPos, radius, FreezeStrength);
+        return editedTerrain;
     }
 
     private void UpdateNeighbours(bool isFreeze, Vector3Int publicVertPos, Vector3Int localVertPos, float radius, float beamStrength)

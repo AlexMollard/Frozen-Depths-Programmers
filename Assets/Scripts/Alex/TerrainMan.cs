@@ -315,7 +315,7 @@ public class TerrainMan : MonoBehaviour
                             {
                                 for (int zIN = 0; zIN < chunkSize; zIN++)
                                 {
-                                    terrains[x][y][z].terrainMap[xIN, yIN, zIN] = new floatMyGuy(0.0f);
+                                    terrains[x][y][z].terrainMap[xIN, yIN, zIN] = new FloatMyGuy(0.0f);
                                     count = oFileStream.Read(buffer, sum, length - sum);
                                     sum += count;
                                 }
