@@ -30,7 +30,7 @@ public class Tool : MonoBehaviour
     [SerializeField] float FuelLossRate = 100.0f;
     public float capacity = 1000.0f;
     [SerializeField] float toolStrength = 0.1f;
-    [SerializeField] float toolStrengthChangeRate = 100.0f;
+    [SerializeField] float toolStrengthChangeInterval = 0.2f;
     [SerializeField] float maxToolStrength = 50.0f;
     [SerializeField] float minToolStrength = 6.0f;
     [HideInInspector] public float toolFuel = 0.0f;
@@ -74,7 +74,7 @@ public class Tool : MonoBehaviour
     void Update()
     {
         // if the mouse wheel was scrolled, adjust the tool strength 
-        toolStrength += Input.mouseScrollDelta.y * Time.deltaTime * toolStrengthChangeRate;
+        toolStrength += Input.mouseScrollDelta.y * toolStrengthChangeInterval;
         // clamp the tool strength so it is within the min and max value
         toolStrength = Mathf.Clamp(toolStrength, minToolStrength, maxToolStrength);
 
