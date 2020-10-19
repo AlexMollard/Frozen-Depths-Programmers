@@ -6,19 +6,14 @@
     Last Modified: 12/10/2020
 */
 
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
 using TMPro;
-using UnityEngine.Assertions.Must;
-using System.Runtime.InteropServices;
-using System;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class ManagerOfTheTerrainManagers : MonoBehaviour
 {
     public GameObject player = null;
-
 
     [Header("Managers")]
     [Tooltip("All terrain managers")]
@@ -27,26 +22,26 @@ public class ManagerOfTheTerrainManagers : MonoBehaviour
     [Header("Ui Variables")]
     [Tooltip("Visual input on how many managers are loaded and or being cached")]
     public GameObject loadingScreen = null;
+
     public Slider loadingBar = null;
     public TextMeshProUGUI cachingText = null;
     public TextMeshProUGUI missingAABBCacheText = null;
     public TextMeshProUGUI missingMeshCacheText = null;
     public TextMeshProUGUI changedAABBCacheText = null;
 
-
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         StartCoroutine(DoLoad());
     }
 
-    IEnumerator DoLoad()
+    private IEnumerator DoLoad()
     {
         for (int i = 0; i < terrainMans.Length; i++)
         {
             if (terrainMans[i].StartCreation())
             {
-                if(cachingText)
+                if (cachingText)
                     cachingText.text = "Caching current terrain (" + i + "/" + terrainMans.Length + ")...";
             }
             else
@@ -59,7 +54,7 @@ public class ManagerOfTheTerrainManagers : MonoBehaviour
 
             if (missingMeshCacheText)
                 missingMeshCacheText.gameObject.SetActive(terrainMans[i].missingCache);
-            
+
             if (changedAABBCacheText)
                 changedAABBCacheText.gameObject.SetActive(terrainMans[i].changedAABB);
 
@@ -77,8 +72,8 @@ public class ManagerOfTheTerrainManagers : MonoBehaviour
         // Disable mesh when far away from player
         for (int i = 0; i < terrainMans.Length; i++)
         {
-            if(Vector3.Distance(player.transform.position, terrainMans[i].centerOfMeshes) > terrainMans[i].maxDistanceFromMesh)
-            {     
+            if (Vector3.Distance(player.transform.position, terrainMans[i].centerOfMeshes) > terrainMans[i].maxDistanceFromMesh)
+            {
                 if (terrainMans[i].gameObject.activeSelf)
                     terrainMans[i].gameObject.SetActive(false);
             }
@@ -89,5 +84,4 @@ public class ManagerOfTheTerrainManagers : MonoBehaviour
             }
         }
     }
-
 }

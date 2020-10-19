@@ -6,10 +6,9 @@
     Last Modified: 14/09/2020
 */
 
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
-
 
 public class aabb
 {
@@ -24,7 +23,7 @@ public class aabb
     public bool checkCollision(Vector3Int point)
     {
         return ((posOne.x > point.x && posOne.y > point.y && posOne.z > point.z)
-            && (posTwo.x < point.x && posTwo.y < point.y && posTwo.z < point.z) );
+            && (posTwo.x < point.x && posTwo.y < point.y && posTwo.z < point.z));
     }
 
     public bool checkCollision(Vector3 secondCenterPos, Vector3 secondScale)
@@ -53,16 +52,16 @@ public class aabb
     public Vector3 scale;
 }
 
-
 public class TerrainMan : MonoBehaviour
 {
     // Stores chunks
-    List<List<List<EditableTerrain>>> terrains = new List<List<List<EditableTerrain>>>();
-    List<List<List<GameObject>>> terrainsOBJS = new List<List<List<GameObject>>>();
+    private List<List<List<EditableTerrain>>> terrains = new List<List<List<EditableTerrain>>>();
+
+    private List<List<List<GameObject>>> terrainsOBJS = new List<List<List<GameObject>>>();
 
     [Header("Prefabs")]
     [Tooltip("Prefabs required to use terrain manager")]
-    [SerializeField] GameObject terrainPrefab;
+    [SerializeField] private GameObject terrainPrefab;
 
     // This will most likely be changed as it is not optimal and can be very messy
     [Header("Optimizations")]
@@ -72,37 +71,41 @@ public class TerrainMan : MonoBehaviour
     [Header("Total Chunks")]
     [Tooltip("This will determine how many chunks will be spawned in each axis")]
     [Range(1, 24)] public int terrainTotalX = 10;
+
     [Range(1, 24)] public int terrainTotalY = 10;
     [Range(1, 24)] public int terrainTotalZ = 10;
 
     [Header("Single Chunk Size")]
     [Tooltip("Terrain Width: X, TerrainHeight: Y, TerrainDepth: Z")]
-    int chunkSize = 8;
+    private int chunkSize = 8;
 
     [Header("Chunk Spawn Settings")]
     [Tooltip("Changing these values will change how each chunk will be populated")]
     public List<aabb> fillSpots = new List<aabb>();
 
     //Chunk varialbles
-    MeshRenderer[] chunkRenderers;
+    private MeshRenderer[] chunkRenderers;
+
     [NonSerialized] public Vector3 centerOfMeshes;
 
     // Misc variables
-    int chunkRendererCount = 0;
-    Vector3 currentManPos;
-    int fillSpotsMatched = 0;
+    private int chunkRendererCount = 0;
+
+    private Vector3 currentManPos;
+    private int fillSpotsMatched = 0;
+
     [NonSerialized]
     public bool readFromFile = false, updateReadFile = false, missingAABB = false, missingCache = false, changedAABB = false;
 
     // Draw the yellow gizmo to know how large the managers are.
-    void OnDrawGizmosSelected()
+    private void OnDrawGizmosSelected()
     {
         float halfChunkSize = chunkSize - 1;
 
         Vector3 currentManPos = transform.position;
         Vector3 scale = new Vector3((halfChunkSize) * (terrainTotalX), (halfChunkSize) * (terrainTotalY), (halfChunkSize) * (terrainTotalZ));
         Vector3 centerOfMeshes = new Vector3(scale.x * 0.5f, scale.y * 0.5f, scale.z * 0.5f) + currentManPos;
-        
+
         Gizmos.color = new Color(1, 1, 0, 0.55f);
         Gizmos.DrawCube(centerOfMeshes, scale);
     }
@@ -153,7 +156,7 @@ public class TerrainMan : MonoBehaviour
         }
     }
 
-    bool CheckIfCacheExists()
+    private bool CheckIfCacheExists()
     {
         if (System.IO.File.Exists(Application.dataPath + "\\TerrainSaves\\" + gameObject.name + ".dat"))
         {
@@ -165,9 +168,9 @@ public class TerrainMan : MonoBehaviour
         return false;
     }
 
-    bool CheckIfAABBCacheExists()
+    private bool CheckIfAABBCacheExists()
     {
-        if(System.IO.File.Exists(Application.dataPath + "\\TerrainSaves\\" + gameObject.name + "AABB" + ".dat"))
+        if (System.IO.File.Exists(Application.dataPath + "\\TerrainSaves\\" + gameObject.name + "AABB" + ".dat"))
         {
             missingAABB = false;
             return true;
@@ -177,7 +180,7 @@ public class TerrainMan : MonoBehaviour
         return false;
     }
 
-    void CreateManager()
+    private void CreateManager()
     {
         if (updateReadFile)
             SaveMesh(true);
@@ -202,7 +205,7 @@ public class TerrainMan : MonoBehaviour
         }
     }
 
-    void GenerateSomeChunks()
+    private void GenerateSomeChunks()
     {
         for (int x = 0; x < terrainTotalX; x++)
         {
@@ -250,7 +253,6 @@ public class TerrainMan : MonoBehaviour
                             {
                                 for (int zIN = 0; zIN < chunkSize; zIN++)
                                 {
-
                                     oFileStream.Write(BitConverter.GetBytes(terrains[x][y][z].terrainMap[xIN, yIN, zIN].value), 0, BitConverter.GetBytes(terrains[x][y][z].terrainMap[xIN, yIN, zIN].value).Length);
                                 }
                             }
@@ -262,12 +264,10 @@ public class TerrainMan : MonoBehaviour
         else
         {
             oFileStream = new System.IO.FileStream(Application.dataPath + "\\TerrainSaves\\" + gameObject.name + "AABB" + ".dat", System.IO.FileMode.Create);
-            
+
             oFileStream.Write(BitConverter.GetBytes(transform.position.x), 0, BitConverter.GetBytes(transform.position.x).Length);
             oFileStream.Write(BitConverter.GetBytes(transform.position.y), 0, BitConverter.GetBytes(transform.position.y).Length);
             oFileStream.Write(BitConverter.GetBytes(transform.position.z), 0, BitConverter.GetBytes(transform.position.z).Length);
-
-
 
             foreach (aabb cube in fillSpots)
             {
@@ -282,10 +282,10 @@ public class TerrainMan : MonoBehaviour
                 oFileStream.Write(BitConverter.GetBytes(cube.scale.z), 0, BitConverter.GetBytes(cube.scale.z).Length);
             }
         }
-        
+
         oFileStream.Close();
     }
-    
+
     public bool LoadMesh(bool meshData)
     {
         if (meshData)
@@ -298,12 +298,10 @@ public class TerrainMan : MonoBehaviour
             System.IO.FileStream oFileStream = null;
             oFileStream = new System.IO.FileStream(Application.dataPath + "\\TerrainSaves\\" + gameObject.name + ".dat", System.IO.FileMode.Open);
 
-
             int length = (int)oFileStream.Length;  // get file length
             byte[] buffer = new byte[length];      // create buffer
             int count;                            // actual number of bytes read
             int sum = 0;                          // total number of bytes read
-
 
             for (int x = 0; x < terrainTotalX; x++)
             {
@@ -385,8 +383,6 @@ public class TerrainMan : MonoBehaviour
                 fillSpotsMatched++;
             offset += 4;
 
-
-
             foreach (aabb cube in fillSpots)
             {
                 if (BitConverter.ToSingle(buffer, offset) == cube.centerPos.x)
@@ -400,7 +396,6 @@ public class TerrainMan : MonoBehaviour
                 if (BitConverter.ToSingle(buffer, offset) == cube.centerPos.z)
                     fillSpotsMatched++;
                 offset += 4;
-
 
                 if (BitConverter.ToSingle(buffer, offset) == cube.scale.x)
                     fillSpotsMatched++;
@@ -416,10 +411,9 @@ public class TerrainMan : MonoBehaviour
             }
             oFileStream.Close();
         }
-        
+
         return true;
     }
-
 
     public bool PopulateAllChunks()
     {
@@ -463,7 +457,7 @@ public class TerrainMan : MonoBehaviour
         }
     }
 
-   void AssignEdgeValues()
+    private void AssignEdgeValues()
     {
         for (int tX = 0; tX < terrainTotalX; tX++)
         {
@@ -488,7 +482,6 @@ public class TerrainMan : MonoBehaviour
                         }
                     }
 
-
                     //Right
                     if (tX + 1 < terrainTotalX)
                     {
@@ -501,7 +494,7 @@ public class TerrainMan : MonoBehaviour
                             }
                         }
                     }
-                    
+
                     //Front
                     if (tZ + 1 < terrainTotalZ)
                     {
@@ -514,7 +507,6 @@ public class TerrainMan : MonoBehaviour
                             }
                         }
                     }
-
 
                     //Left
                     if (tX - 1 >= 0)
@@ -554,10 +546,8 @@ public class TerrainMan : MonoBehaviour
                             }
                         }
                     }
-                   
                 }
             }
         }
     }
-
 }
