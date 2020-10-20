@@ -9,6 +9,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 public class Tool : MonoBehaviour
 {
     [Header("Tool Use")]
@@ -18,6 +19,8 @@ public class Tool : MonoBehaviour
     [SerializeField] float effectRadius = 10.0f;
     [SerializeField] float tickRate = 0.0f;
     float tickTimer = 0.0f;
+    Ray ray;
+    RaycastHit hit;
 
     [Header("Ice Creation")]
     public bool canFreeze = false;
@@ -48,6 +51,11 @@ public class Tool : MonoBehaviour
     Vector3 laserScale = Vector3.zero;
     float laserLengthScalar;
 
+    [Header("Crosshair")]
+    [SerializeField] Image crosshair;
+    [SerializeField] Sprite outOfRangeImage;
+    [SerializeField] Sprite withinRangeImage;
+
     private void Start()
     {
         // get the ice creator script from the ice creator
@@ -69,6 +77,9 @@ public class Tool : MonoBehaviour
         laserLengthScalar = (new Vector3(playerCamera.transform.position.x, playerCamera.transform.position.y, playerCamera.transform.position.z + maxRange) - laserStartPoint.position).magnitude / maxRange * 0.5f;
         // set the laser scale
         laserScale = new Vector3(laser.transform.localScale.x, maxRange * laserLengthScalar, laser.transform.localScale.z);
+
+        // set the crosshair to use the out of range image
+        crosshair.sprite = outOfRangeImage;
     }
 
     void Update()
@@ -77,6 +88,15 @@ public class Tool : MonoBehaviour
         laser.SetActive(false);
         // increase the timer by the amount of time passed since last frame
         tickTimer += Time.deltaTime;
+
+        // if the ice creator is inactive
+        if (!iceCreator.activeSelf)
+        {
+            // cast a spherecast forward from the center of the player camera viewport
+            ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 1.0f));
+            // if the spherecast hit a gameobject with the tag ice set the crosshair to use the within range image. Use the out of range image otherwise.
+            crosshair.sprite = (Physics.SphereCast(ray, beamRadius, out hit, maxRange) && hit.transform.tag == "Ice") ? withinRangeImage : outOfRangeImage;
+        }
 
         // if the mouse is left clicked, or right clicked with fuel
         if ((Input.GetMouseButton(0)|| (Input.GetMouseButton(1) && toolFuel > 0.0f)))
@@ -102,9 +122,6 @@ public class Tool : MonoBehaviour
                     // set the ice creator to be inactive
                     iceCreator.SetActive(false);
 
-                    // cast a spherecast forward from the center of the player camera viewport
-                    Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 1.0f));
-                    RaycastHit hit;
                     // if the spherecast hit a game object
                     if (Physics.SphereCast(ray, beamRadius, out hit, maxRange))
                     {
@@ -163,7 +180,7 @@ public class Tool : MonoBehaviour
                 // else if the tool can freeze, right click is down this frame and the tool has fuel
                 else if (canFreeze && Input.GetMouseButton(1) && toolFuel > 0.0f)
                 {
-                    // if the ice creator is not to close
+                    //if the ice creator is not to close
                     if (Vector3.SqrMagnitude(iceCreator.transform.position - playerCamera.transform.position) > minimumFreezeDistance * minimumFreezeDistance)
                     {
                         // get the mouse movement this frame
@@ -173,7 +190,7 @@ public class Tool : MonoBehaviour
                         if (mouseX > -iceCreatorMinimumMovement && mouseX < iceCreatorMinimumMovement && mouseY > -iceCreatorMinimumMovement && mouseY < iceCreatorMinimumMovement)
                         {
                             // move the ice creator closer to the player camera
-                            iceCreator.transform.position -= (iceCreator.transform.position - playerCamera.transform.position) * iceCreatorMoveSpeed * Time.deltaTime;
+                            iceCreator.transform.position -= playerCamera.transform.forward * iceCreatorMoveSpeed * Time.deltaTime;
                         }
                     }
 
@@ -181,7 +198,7 @@ public class Tool : MonoBehaviour
                     if (iceCreatorScript.ready)
                     {
                         // create ice at the ice creator
-                        iceCreatorScript.iceTerrain.EditTerrain(true, iceCreator.transform.position, effectRadius, freezeStrength, meltStrength);
+                        iceCreatorScript.iceTerrain.EditTerrain(true, iceCreatorScript.collisionPoint, effectRadius, freezeStrength, meltStrength);
                         // set the ice creator to not be ready so a collision check must occur again for ice to be validly generated
                         iceCreatorScript.ready = false;
 

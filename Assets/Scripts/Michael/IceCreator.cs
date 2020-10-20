@@ -3,7 +3,7 @@
     Author: Michael Sweetman
     Summary: determines whether ice creation is valid
     Creation Date: 22/09/2020
-    Last Modified: 23/09/2020
+    Last Modified: 20/10/2020
 */
 
 using System.Collections;
@@ -15,6 +15,7 @@ public class IceCreator : MonoBehaviour
     [SerializeField] GameObject player;
     [HideInInspector] public bool ready;
     [HideInInspector] public EditableTerrain iceTerrain;
+    [HideInInspector] public Vector3 collisionPoint;
 
     // triggers if a collider enters this object
     private void OnTriggerStay(Collider other)
@@ -24,6 +25,8 @@ public class IceCreator : MonoBehaviour
         {
             // store the other game object's editable terrain component
             iceTerrain = other.GetComponent<EditableTerrain>();
+            // store the point on the collider to the centre of the ice creator as the collision point
+            collisionPoint = other.ClosestPoint(transform.position);
             // store that the ice creator is ready to store ice
             ready = true;
         }

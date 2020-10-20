@@ -3790,7 +3790,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &829419035
 Transform:
   m_ObjectHideFlags: 0
@@ -3825,7 +3825,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 829419034}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -3879,6 +3879,7 @@ MonoBehaviour:
   player: {fileID: 0}
   ready: 0
   iceTerrain: {fileID: 0}
+  collisionPoint: {x: 0, y: 0, z: 0}
 --- !u!54 &829419040
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5359,7 +5360,7 @@ PrefabInstance:
     - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
       propertyPath: FuelLossRate
-      value: 100
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
@@ -5531,6 +5532,48 @@ PrefabInstance:
       propertyPath: capacity
       value: 100
       objectReference: {fileID: 0}
+    - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
+        type: 3}
+      propertyPath: meltStrength
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
+        type: 3}
+      propertyPath: maxMeltStrength
+      value: 0.13
+      objectReference: {fileID: 0}
+    - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
+        type: 3}
+      propertyPath: minMeltStrength
+      value: 0.07
+      objectReference: {fileID: 0}
+    - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
+        type: 3}
+      propertyPath: freezeStrength
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
+        type: 3}
+      propertyPath: iceCreatorMoveSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
+        type: 3}
+      propertyPath: crosshair
+      value: 
+      objectReference: {fileID: 66386506}
+    - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
+        type: 3}
+      propertyPath: withinRangeImage
+      value: 
+      objectReference: {fileID: 21300000, guid: 50e5a031f3ff47b49ab54771c27d4fc0,
+        type: 3}
+    - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
+        type: 3}
+      propertyPath: outOfRangeImage
+      value: 
+      objectReference: {fileID: 21300000, guid: 75a5d6c6b6ef42349b8e822b084d35e5,
+        type: 3}
     - target: {fileID: 6641315126594596370, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
       propertyPath: field of view
@@ -5574,7 +5617,7 @@ PrefabInstance:
     - target: {fileID: 6641315128160775799, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.21
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6641315128160775799, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
