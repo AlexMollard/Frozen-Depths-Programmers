@@ -5509,7 +5509,7 @@ PrefabInstance:
     - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
       propertyPath: minToolStrength
-      value: 0.7
+      value: 0.001
       objectReference: {fileID: 0}
     - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
@@ -5524,7 +5524,7 @@ PrefabInstance:
     - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
       propertyPath: toolStrengthChangeInterval
-      value: 0.1
+      value: 0.01
       objectReference: {fileID: 0}
     - target: {fileID: 6641315126594596370, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}

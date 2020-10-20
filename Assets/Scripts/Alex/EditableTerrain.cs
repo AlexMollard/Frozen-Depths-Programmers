@@ -139,7 +139,7 @@ public class EditableTerrain : MonoBehaviour
                     // Check for small bois here and delete them
                     if (terrainMap[x, y, z].value < 0.95f)
                     {
-                        if (RemoveSmallBoi(x, y, z) >= 4)
+                        if (RemoveSmallBoi(x, y, z) >= 5)
                             terrainMap[x, y, z].value = 1.0f;
                     }
 
@@ -233,8 +233,8 @@ public class EditableTerrain : MonoBehaviour
                     if (offsetVec.magnitude < radius)
                     {
                         Vector3 newPoint = localVertPos + offsetVec;
-                        float newFreezeStrength = FreezeStrength - Vector3.Distance(newPoint, localVertPos);
-                        float newMeltStrength = MeltStrength - Vector3.Distance(newPoint, localVertPos);
+                        float newFreezeStrength = FreezeStrength / Vector3.Distance(newPoint, localVertPos);
+                        float newMeltStrength = MeltStrength / Vector3.Distance(newPoint, localVertPos);
                         if (newPoint.x < 0 || newPoint.y < 0 || newPoint.z < 0 || newPoint.x > width || newPoint.y > height || newPoint.z > depth)
                         {
                             continue;
