@@ -3,7 +3,7 @@
     Author: Michael Sweetman
     Summary: Determines a point on the ice mesh the player wants burnt/frozen. Manages a fuel to limit the use of ice creation.
     Creation Date: 21/07/2020
-    Last Modified: 13/10/2020
+    Last Modified: 20/10/2020
 */
 
 using System.Collections;
@@ -23,16 +23,16 @@ public class Tool : MonoBehaviour
     public bool canFreeze = false;
     [SerializeField] GameObject iceCreator;
     [SerializeField] float iceCreatorRelativeSize = 1.0f;
-     IceCreator iceCreatorScript;
+    [SerializeField] float iceCreatorMoveSpeed = 0.1f;
+    float iceCreatorMinimumMovement = 0.01f;
+    IceCreator iceCreatorScript;
 
     [Header("Fuel Economy")]
     [SerializeField] float FuelGainRate = 100.0f;
     [SerializeField] float FuelLossRate = 100.0f;
     public float capacity = 1000.0f;
-    [SerializeField] float toolStrength = 0.1f;
-    [SerializeField] float toolStrengthChangeInterval = 0.2f;
-    [SerializeField] float maxToolStrength = 50.0f;
-    [SerializeField] float minToolStrength = 6.0f;
+    [SerializeField] float freezeStrength = 0.1f;
+    [SerializeField] float meltStrength = 0.1f;
     [HideInInspector] public float toolFuel = 0.0f;
 
     [Header("Camera")]
@@ -73,11 +73,6 @@ public class Tool : MonoBehaviour
 
     void Update()
     {
-        // if the mouse wheel was scrolled, adjust the tool strength 
-        toolStrength += Input.mouseScrollDelta.y * toolStrengthChangeInterval;
-        // clamp the tool strength so it is within the min and max value
-        toolStrength = Mathf.Clamp(toolStrength, minToolStrength, maxToolStrength);
-
         // set the laser to be inactive
         laser.SetActive(false);
         // increase the timer by the amount of time passed since last frame
@@ -122,10 +117,10 @@ public class Tool : MonoBehaviour
                         if (Input.GetMouseButton(0))
                         {
                             // if the hit gameobject has the tag "Ice", burn the ice at the point of the collision. If this succeeds and the tool is able to freeze ice
-                            if (hit.transform.tag == "Ice" && hit.transform.GetComponent<EditableTerrain>().EditTerrain(false, hit.point, effectRadius, toolStrength) && canFreeze)
+                            if (hit.transform.tag == "Ice" && hit.transform.GetComponent<EditableTerrain>().EditTerrain(false, hit.point, effectRadius, freezeStrength, meltStrength) && canFreeze)
                             {
-                                // increase the fuel by the fuel gain rate per second. Multiply the result by the tool strength
-                                toolFuel += Time.deltaTime * FuelGainRate * toolStrength;
+                                // increase the fuel by the fuel gain rate per second. Multiply the result by the melt strength
+                                toolFuel += Time.deltaTime * FuelGainRate * meltStrength;
                                 // if there is a capacity and the tool fuel is above that capacity
                                 if (capacity > 0.0f && toolFuel > capacity)
                                 {
@@ -138,10 +133,10 @@ public class Tool : MonoBehaviour
                         if (canFreeze && Input.GetMouseButtonDown(1) && hit.distance >= minimumFreezeDistance && toolFuel > 0.0f)
                         {
                             // freeze the ice at the point of the collision. If this succeeds
-                            if (hit.transform.tag == "Ice" && hit.transform.GetComponent<EditableTerrain>().EditTerrain(true, hit.point, effectRadius, toolStrength))
+                            if (hit.transform.tag == "Ice" && hit.transform.GetComponent<EditableTerrain>().EditTerrain(true, hit.point, effectRadius, freezeStrength, meltStrength))
                             {
-                                // decrease the fuel by the fuel loss rate per second. Multiply the result by the tool strength
-                                toolFuel -= Time.deltaTime * FuelLossRate * toolStrength;
+                                // decrease the fuel by the fuel loss rate per second. Multiply the result by the freeze strength
+                                toolFuel -= Time.deltaTime * FuelLossRate * freezeStrength;
                                 // if there is less than 0 fuel
                                 if (toolFuel < 0.0f)
                                 {
@@ -168,16 +163,30 @@ public class Tool : MonoBehaviour
                 // else if the tool can freeze, right click is down this frame and the tool has fuel
                 else if (canFreeze && Input.GetMouseButton(1) && toolFuel > 0.0f)
                 {
+                    // if the ice creator is not to close
+                    if (Vector3.SqrMagnitude(iceCreator.transform.position - playerCamera.transform.position) > minimumFreezeDistance * minimumFreezeDistance)
+                    {
+                        // get the mouse movement this frame
+                        float mouseX = Input.GetAxis("Mouse X");
+                        float mouseY = Input.GetAxis("Mouse Y");
+                        // if the mouse did not move too much
+                        if (mouseX > -iceCreatorMinimumMovement && mouseX < iceCreatorMinimumMovement && mouseY > -iceCreatorMinimumMovement && mouseY < iceCreatorMinimumMovement)
+                        {
+                            // move the ice creator closer to the player camera
+                            iceCreator.transform.position -= (iceCreator.transform.position - playerCamera.transform.position) * iceCreatorMoveSpeed * Time.deltaTime;
+                        }
+                    }
+
                     // if the ice creator is colliding with ice and not the player
                     if (iceCreatorScript.ready)
                     {
                         // create ice at the ice creator
-                        iceCreatorScript.iceTerrain.EditTerrain(true, iceCreator.transform.position, effectRadius, toolStrength);
+                        iceCreatorScript.iceTerrain.EditTerrain(true, iceCreator.transform.position, effectRadius, freezeStrength, meltStrength);
                         // set the ice creator to not be ready so a collision check must occur again for ice to be validly generated
                         iceCreatorScript.ready = false;
 
-                        // decrease the fuel by the fuel loss rate per second. Multiply the result by the tool strength
-                        toolFuel -= Time.deltaTime * FuelLossRate * toolStrength;
+                        // decrease the fuel by the fuel loss rate per second. Multiply the result by the freeze strength
+                        toolFuel -= Time.deltaTime * FuelLossRate * freezeStrength;
                         // if there is less than 0 fuel
                         if (toolFuel < 0.0f)
                         {
