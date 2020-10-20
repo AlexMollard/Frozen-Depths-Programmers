@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Adds first person movement to the player
     Creation Date: 20/07/2020
-    Last Modified: 19/10/2020
+    Last Modified: 20/10/2020
 */
 
 using System;
@@ -47,7 +47,7 @@ public class PlayerMovement : MonoBehaviour
     
     private Vector3 velocity;
     private bool isGrounded;
-    private bool isCrouching = true;
+    private bool isCrouching = false;
     private Vector3 originalPos;
 
     // used to store the distance between controller.center and the halfway point on the collider
@@ -62,7 +62,8 @@ public class PlayerMovement : MonoBehaviour
         originalPos = transform.position;
         controller = GetComponent<CharacterController>();
         standCenterHeight = (ccHeight - ccCrouchHeight) * 0.5f;
-        Crouch();
+
+        SyncControllerProperties();
     }
 
     private void Update()
@@ -90,8 +91,6 @@ public class PlayerMovement : MonoBehaviour
     private void NormalMovement()
     {
         if (!canMove) return;
-
-        Debug.Log(isGrounded);
 
         // Set player to Default layer
         gameObject.layer = 0;
@@ -186,35 +185,11 @@ public class PlayerMovement : MonoBehaviour
                 return;
         }
 
-        isCrouching = !isCrouching;        
+        isCrouching = !isCrouching;
 
-        if (isCrouching)
-        {
-            controller.height = ccCrouchHeight;
-            Vector3 newCenter = new Vector3(controller.center.x, (controller.center.y - (ccHeight - ccCrouchHeight) * 0.5f), controller.center.z);
-            controller.center = newCenter;
+        SyncControllerProperties();
 
-            float camX = playerCamera.transform.localPosition.x;
-            float camZ = playerCamera.transform.localPosition.z;
-            Vector3 newCamPos = new Vector3(camX, camCrouchHeight, camZ);
-            playerCamera.transform.localPosition = newCamPos;
-        }
-        else
-        {
-            controller.height = ccHeight;
-            Vector3 newCenter = new Vector3(controller.center.x, (ccHeight - ccCrouchHeight) * 0.5f, controller.center.z);
-            controller.center = newCenter;
-
-            float camX = playerCamera.transform.localPosition.x;
-            float camZ = playerCamera.transform.localPosition.z;
-            Vector3 newCamPos = new Vector3(camX, camHeight, camZ);
-            playerCamera.transform.localPosition = newCamPos;
-        }
-
-        float gcX = groundCheck.localPosition.x;
-        float gcZ = groundCheck.localPosition.z;
-        Vector3 newPos = new Vector3(gcX, controller.center.y - controller.height * 0.5f, gcZ);
-        groundCheck.localPosition = newPos;
+        Debug.Log("isGrounded: " + isGrounded);
     }
 
     // Call this in LateUpdate, otherwise the position will be overwritten by player movement.
@@ -247,6 +222,38 @@ public class PlayerMovement : MonoBehaviour
         currentDeathTimer = deathTimer;
         canMove = true;
         playerCamera.GetComponent<MouseLook>().enabled = true;
+    }
+
+    // Overrides any properties currently set on the character controller with the properties set on this script
+    private void SyncControllerProperties()
+    {
+        if (isCrouching)
+        {
+            controller.height = ccCrouchHeight;
+            Vector3 newCenter = new Vector3(controller.center.x, (controller.center.y - (ccHeight - ccCrouchHeight) * 0.5f), controller.center.z);
+            controller.center = newCenter;
+
+            float camX = playerCamera.transform.localPosition.x;
+            float camZ = playerCamera.transform.localPosition.z;
+            Vector3 newCamPos = new Vector3(camX, camCrouchHeight, camZ);
+            playerCamera.transform.localPosition = newCamPos;
+        }
+        else
+        {
+            controller.height = ccHeight;
+            Vector3 newCenter = new Vector3(controller.center.x, (ccHeight - ccCrouchHeight) * 0.5f, controller.center.z);
+            controller.center = newCenter;
+
+            float camX = playerCamera.transform.localPosition.x;
+            float camZ = playerCamera.transform.localPosition.z;
+            Vector3 newCamPos = new Vector3(camX, camHeight, camZ);
+            playerCamera.transform.localPosition = newCamPos;
+        }
+
+        float gcX = groundCheck.localPosition.x;
+        float gcZ = groundCheck.localPosition.z;
+        Vector3 newPos = new Vector3(gcX, controller.center.y - controller.height * 0.5f, gcZ);
+        groundCheck.localPosition = newPos;
     }
 
     private void OnDrawGizmos()
