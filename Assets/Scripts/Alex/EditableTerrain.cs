@@ -45,12 +45,20 @@ public class EditableTerrain : MonoBehaviour
     private int depth = 8;
 
     public FloatMyGuy[,,] terrainMap;
+    LineRenderer lineRenderer;
 
     private void Awake()
     {
         meshFilter = GetComponent<MeshFilter>();
         meshCollider = GetComponent<MeshCollider>();
+        lineRenderer = GetComponent<LineRenderer>();
         transform.tag = "Ice";
+
+
+        for (int i = 0; i < lineRenderer.positionCount; i++)
+        {
+            lineRenderer.SetPosition(i,lineRenderer.GetPosition(i) + transform.position);
+        }
     }
 
     public void CreateMesh(TerrainMan newManager, Vector3Int index, Vector3Int meshSize)
