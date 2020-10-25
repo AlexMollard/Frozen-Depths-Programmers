@@ -444,16 +444,15 @@ public class TerrainMan : MonoBehaviour
         }
     }
 
-    public void UpdateChunk(bool isFreeze, Vector3Int publicVertHitPoint, Vector3Int chunkIndex, float beamRadius, float beamStrength)
+    public void UpdateChunk(bool isFreeze, Vector3Int publicVertHitPoint, Vector3Int chunkIndex, float beamRadius, float beamStrength, float meltStrength)
     {
         if (chunkIndex.x >= 0 && chunkIndex.x < terrainTotalX && chunkIndex.y >= 0 && chunkIndex.y < terrainTotalY && chunkIndex.z >= 0 && chunkIndex.z < terrainTotalZ)
         {
-            //if (!dirtyChunks.Contains(chunkIndex))
-            //{
-            //    terrains[chunkIndex.x][chunkIndex.y][chunkIndex.z].EditTerrain(isFreeze,publicVertHitPoint,beamRadius,beamStrength);
-            //}
 
-            terrains[chunkIndex.x][chunkIndex.y][chunkIndex.z].CreateMeshData();
+            terrains[chunkIndex.x][chunkIndex.y][chunkIndex.z].EditTerrain(isFreeze, publicVertHitPoint, beamRadius, beamStrength, meltStrength, false);
+
+
+            //terrains[chunkIndex.x][chunkIndex.y][chunkIndex.z].CreateMeshData();
         }
     }
 

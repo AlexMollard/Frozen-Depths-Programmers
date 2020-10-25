@@ -147,7 +147,7 @@ public class EditableTerrain : MonoBehaviour
                     // Check for small bois here and delete them
                     if (terrainMap[x, y, z].value < 0.95f)
                     {
-                        if (RemoveSmallBoi(x, y, z) >= 5)
+                        if (RemoveSmallBoi(x, y, z) >= 24)
                             terrainMap[x, y, z].value = 1.0f;
                     }
 
@@ -160,31 +160,129 @@ public class EditableTerrain : MonoBehaviour
 
     private int RemoveSmallBoi(int x, int y, int z)
     {
+        float minValue = 0.2f;
         int dirtyBoi = 0;
 
         if (x < width)
-            if (terrainMap[x + 1, y, z].value > 0.95f)
-            dirtyBoi++;
-        if (x > 0)
-            if (terrainMap[x - 1, y, z].value > 0.95f)
-            dirtyBoi++;
+        {
+            if (terrainMap[x + 1, y, z].value > minValue)
+                dirtyBoi++;
 
-        if (y < height)
-        if (terrainMap[x, y + 1, z].value > 0.95f)
-            dirtyBoi++;
-        
-        if (y > 0)
-        if (terrainMap[x, y - 1, z].value > 0.95f)
-            dirtyBoi++;
+            if (y < height)
+            {
+                if (terrainMap[x + 1, y + 1, z].value > minValue)
+                    dirtyBoi++;
+
+                if (z < depth)
+                    if (terrainMap[x + 1, y + 1, z + 1].value > minValue)
+                        dirtyBoi++;
+
+                if (z > 0)
+                    if (terrainMap[x + 1, y + 1, z - 1].value > minValue)
+                        dirtyBoi++;
+            }
+
+            if (y > 0)
+            {
+                if (terrainMap[x + 1, y - 1, z].value > minValue)
+                    dirtyBoi++;
+
+                if (z < depth)
+                    if (terrainMap[x + 1, y - 1, z + 1].value > minValue)
+                        dirtyBoi++;
+
+                if (z > 0)
+                    if (terrainMap[x + 1, y - 1, z - 1].value > minValue)
+                        dirtyBoi++;
+
+            }
+
+            if (z < depth)
+                if (terrainMap[x + 1, y, z + 1].value > minValue)
+                    dirtyBoi++;
+
+            if (z > 0)
+                if (terrainMap[x + 1, y, z - 1].value > minValue)
+                    dirtyBoi++;
+
+        }
+
+        if (x > 0)
+        {
+            if (terrainMap[x - 1, y, z].value > minValue)
+                dirtyBoi++;
+
+            if (y < height)
+            {
+                if (terrainMap[x - 1, y + 1, z].value > minValue)
+                    dirtyBoi++;
+
+                if (z < depth)
+                    if (terrainMap[x - 1, y + 1, z + 1].value > minValue)
+                        dirtyBoi++;
+
+                if (z > 0)
+                    if (terrainMap[x - 1, y + 1, z - 1].value > minValue)
+                        dirtyBoi++;
+            }
+
+            if (y > 0)
+            {
+                if (terrainMap[x - 1, y - 1, z].value > minValue)
+                    dirtyBoi++;
+
+                if (z < depth)
+                    if (terrainMap[x - 1, y - 1, z + 1].value > minValue)
+                        dirtyBoi++;
+
+                if (z > 0)
+                    if (terrainMap[x - 1, y - 1, z - 1].value > minValue)
+                        dirtyBoi++;
+
+            }
+
+            if (z < depth)
+                if (terrainMap[x - 1, y, z + 1].value > minValue)
+                    dirtyBoi++;
+            if (z > 0)
+                if (terrainMap[x - 1, y, z - 1].value > minValue)
+                    dirtyBoi++;
+        }
+
 
         if (z < depth)
-        if (terrainMap[x, y, z + 1].value > 0.95f)
-            dirtyBoi++;
+        {
+            if (terrainMap[x, y, z + 1].value > minValue)
+                dirtyBoi++;
 
-        if(z > 0)
-        if (terrainMap[x, y, z - 1].value > 0.95f)
-            dirtyBoi++;
+            if (y < height)
+                if (terrainMap[x, y + 1, z + 1].value > minValue)
+                    dirtyBoi++;
+            if (y > 0)
+                if (terrainMap[x, y - 1, z + 1].value > minValue)
+                    dirtyBoi++;
 
+        }
+
+        if (z > 0)
+        {
+            if (terrainMap[x, y, z - 1].value > minValue)
+                dirtyBoi++;
+
+            if (y < height)
+                if (terrainMap[x, y + 1, z - 1].value > minValue)
+                    dirtyBoi++;
+            if (y > 0)
+                if (terrainMap[x, y - 1, z - 1].value > minValue)
+                    dirtyBoi++;
+        }
+
+        if (y < height)
+            if (terrainMap[x, y + 1, z].value > minValue)
+                dirtyBoi++;
+        if (y > 0)
+            if (terrainMap[x, y - 1, z].value > minValue)
+                dirtyBoi++;
         return dirtyBoi;
     }
 
@@ -218,7 +316,7 @@ public class EditableTerrain : MonoBehaviour
         height = newHeight;
     }
 
-    public bool EditTerrain(bool freeze, Vector3 pos, float radius, float FreezeStrength, float MeltStrength)
+    public bool EditTerrain(bool freeze, Vector3 pos, float radius, float FreezeStrength, float MeltStrength, bool updateSurroundingChunks = true)
     {
         bool editedTerrain = false;
         float first = 0.0f;
@@ -255,7 +353,7 @@ public class EditableTerrain : MonoBehaviour
                         else
                             terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value += newMeltStrength;
 
-                        terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value = Mathf.Clamp(terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value, -1, 1);
+                        terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value = Mathf.Clamp(terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value, -1, 1.1f);
 
                         if (first != terrainMap[(int)newPoint.x, (int)newPoint.y, (int)newPoint.z].value)
                             editedTerrain = true;
@@ -265,102 +363,106 @@ public class EditableTerrain : MonoBehaviour
         }
 
         CreateMeshData();
-        UpdateNeighbours(freeze, publicVertPos, localVertPos, radius, FreezeStrength);
+        
+        if(updateSurroundingChunks)
+            UpdateNeighbours(freeze, publicVertPos, localVertPos, radius, FreezeStrength, MeltStrength);
+        
         return editedTerrain;
     }
 
-    private void UpdateNeighbours(bool isFreeze, Vector3Int publicVertPos, Vector3Int localVertPos, float radius, float beamStrength)
+
+    private void UpdateNeighbours(bool isFreeze, Vector3Int publicVertPos, Vector3Int localVertPos, float radius, float beamStrength, float MeltStrength)
     {
         if (localVertPos.x <= radius)
         {
-            manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, 0, 0), radius, beamStrength);
+            manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, 0, 0), radius, beamStrength, MeltStrength);
 
             if (localVertPos.z <= radius)
-                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, 0, -1), radius, beamStrength);
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, 0, -1), radius, beamStrength, MeltStrength);
 
             if (localVertPos.z >= depth - radius)
-                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, 0, 1), radius, beamStrength);
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, 0, 1), radius, beamStrength, MeltStrength);
         }
         if (localVertPos.x >= width - radius)
         {
-            manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, 0, 0), radius, beamStrength);
+            manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, 0, 0), radius, beamStrength, MeltStrength);
 
             if (localVertPos.z <= radius)
-                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, 0, -1), radius, beamStrength);
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, 0, -1), radius, beamStrength, MeltStrength);
 
             if (localVertPos.z >= depth - radius)
-                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, 0, 1), radius, beamStrength);
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, 0, 1), radius, beamStrength, MeltStrength);
         }
 
         if (localVertPos.z <= radius)
         {
-            manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, 0, -1), radius, beamStrength);
+            manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, 0, -1), radius, beamStrength, MeltStrength);
         }
         if (localVertPos.z >= depth - radius)
         {
-            manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, 0, 1), radius, beamStrength);
+            manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, 0, 1), radius, beamStrength, MeltStrength);
         }
 
         if (localVertPos.y <= radius)
         {
-            manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, -1, 0), radius, beamStrength);
+            manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, -1, 0), radius, beamStrength, MeltStrength);
 
             if (localVertPos.z <= radius)
-                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, -1, -1), radius, beamStrength);
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, -1, -1), radius, beamStrength, MeltStrength);
 
             if (localVertPos.z >= depth - radius)
-                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, -1, 1), radius, beamStrength);
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, -1, 1), radius, beamStrength, MeltStrength);
 
             if (localVertPos.x <= radius)
             {
-                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, -1, 0), radius, beamStrength);
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, -1, 0), radius, beamStrength, MeltStrength);
 
                 if (localVertPos.z <= radius)
-                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, -1, -1), radius, beamStrength);
+                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, -1, -1), radius, beamStrength, MeltStrength);
 
                 if (localVertPos.z >= depth - radius)
-                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, -1, 1), radius, beamStrength);
+                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, -1, 1), radius, beamStrength, MeltStrength);
             }
             if (localVertPos.x >= width - radius)
             {
-                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, -1, 0), radius, beamStrength);
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, -1, 0), radius, beamStrength, MeltStrength);
 
                 if (localVertPos.z <= radius)
-                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, -1, -1), radius, beamStrength);
+                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, -1, -1), radius, beamStrength, MeltStrength);
 
                 if (localVertPos.z >= depth - radius)
-                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, -1, 1), radius, beamStrength);
+                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, -1, 1), radius, beamStrength, MeltStrength);
             }
         }
         if (localVertPos.y >= height - radius)
         {
-            manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, 1, 0), radius, beamStrength);
+            manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, 1, 0), radius, beamStrength, MeltStrength);
 
             if (localVertPos.z <= radius)
-                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, 1, -1), radius, beamStrength);
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, 1, -1), radius, beamStrength, MeltStrength);
 
             if (localVertPos.z >= depth - radius)
-                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, 1, 1), radius, beamStrength);
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(0, 1, 1), radius, beamStrength, MeltStrength);
 
             if (localVertPos.x <= radius)
             {
-                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, 1, 0), radius, beamStrength);
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, 1, 0), radius, beamStrength, MeltStrength);
 
                 if (localVertPos.z <= radius)
-                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, 1, -1), radius, beamStrength);
+                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, 1, -1), radius, beamStrength, MeltStrength);
 
                 if (localVertPos.z >= depth - radius)
-                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, 1, 1), radius, beamStrength);
+                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(-1, 1, 1), radius, beamStrength, MeltStrength);
             }
             if (localVertPos.x >= width - radius)
             {
-                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, 1, 0), radius, beamStrength);
+                manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, 1, 0), radius, beamStrength, MeltStrength);
 
                 if (localVertPos.z <= radius)
-                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, 1, -1), radius, beamStrength);
+                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, 1, -1), radius, beamStrength, MeltStrength);
 
                 if (localVertPos.z >= depth - radius)
-                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, 1, 1), radius, beamStrength);
+                    manager.UpdateChunk(isFreeze, publicVertPos, managerIndex + new Vector3Int(1, 1, 1), radius, beamStrength, MeltStrength);
             }
         }
     }
