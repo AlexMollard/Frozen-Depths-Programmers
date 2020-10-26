@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Allows rotation of the artifact viewer with the mouse
     Creation Date: 22/07/2020
-    Last Modified: 22/07/2020
+    Last Modified: 26/10/2020
 */
 
 using System;
@@ -13,7 +13,7 @@ using UnityEngine;
 
 public class ViewerRotate : MonoBehaviour
 {
-    [SerializeField] private float mouseSensitivity = 50;
+    public float mouseSensitivity = 50;
 
     void Update()
     {

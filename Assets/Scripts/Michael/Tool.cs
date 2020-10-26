@@ -3,12 +3,13 @@
     Author: Michael Sweetman
     Summary: Determines a point on the ice mesh the player wants burnt/frozen. Manages a fuel to limit the use of ice creation.
     Creation Date: 21/07/2020
-    Last Modified: 20/10/2020
+    Last Modified: 26/10/2020
 */
 
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Timeline;
 using UnityEngine.UI;
 public class Tool : MonoBehaviour
 {
@@ -29,6 +30,7 @@ public class Tool : MonoBehaviour
     [SerializeField] float iceCreatorMoveSpeed = 0.1f;
     float iceCreatorMinimumMovement = 0.01f;
     IceCreator iceCreatorScript;
+    float distanceFromPlayer = 0.0f;
 
     [Header("Fuel Economy")]
     [SerializeField] float FuelGainRate = 100.0f;
@@ -165,6 +167,8 @@ public class Tool : MonoBehaviour
                                 iceCreator.SetActive(true);
                                 // set the ice creator's position to be at the point of collision
                                 iceCreator.transform.position = hit.point;
+                                // store the ice Creator's distance from the player
+                                distanceFromPlayer = hit.distance;
                             }
                         }
                     }
@@ -181,7 +185,7 @@ public class Tool : MonoBehaviour
                 else if (canFreeze && Input.GetMouseButton(1) && toolFuel > 0.0f)
                 {
                     //if the ice creator is not to close
-                    if (Vector3.SqrMagnitude(iceCreator.transform.position - playerCamera.transform.position) > minimumFreezeDistance * minimumFreezeDistance)
+                    if (distanceFromPlayer > minimumFreezeDistance)
                     {
                         // get the mouse movement this frame
                         float mouseX = Input.GetAxis("Mouse X");
@@ -191,12 +195,20 @@ public class Tool : MonoBehaviour
                         {
                             // move the ice creator closer to the player camera
                             iceCreator.transform.position -= playerCamera.transform.forward * iceCreatorMoveSpeed * Time.deltaTime;
+                            // determine the new distance from the player
+                            distanceFromPlayer -= iceCreatorMoveSpeed * Time.deltaTime;
+                            // adjust the length of the laser
+                            laser.transform.position = laserStartPoint.position + laserStartPoint.forward * distanceFromPlayer * laserLengthScalar;
+                            laserScale.y = distanceFromPlayer * laserLengthScalar;
+                            laser.transform.localScale = laserScale;
                         }
                     }
 
                     // if the ice creator is colliding with ice and not the player
                     if (iceCreatorScript.ready)
                     {
+                        // set the crosshair to use the within range image
+                        crosshair.sprite = withinRangeImage;
                         // create ice at the ice creator
                         iceCreatorScript.iceTerrain.EditTerrain(true, iceCreatorScript.collisionPoint, effectRadius, freezeStrength, meltStrength);
                         // set the ice creator to not be ready so a collision check must occur again for ice to be validly generated
@@ -210,6 +222,11 @@ public class Tool : MonoBehaviour
                             // set the fuel to be 0
                             toolFuel = 0.0f;
                         }
+                    }
+                    // else if the ice creator is not ready
+                    else
+                    {
+                        crosshair.sprite = outOfRangeImage;
                     }
                 }
             }

@@ -3,7 +3,7 @@
     Author: Michael Sweetman
     Summary: Manages events triggered by clicking UI buttons such as switching between UIs and exiting the game.
     Creation Date: 29/07/2020
-    Last Modified: 13/10/2020
+    Last Modified: 26/10/2020
 */
 
 using System.Collections;
@@ -25,6 +25,7 @@ public class MenuManager : MonoBehaviour
 
     [Header("Player")]
     [SerializeField] GameObject player;
+    [SerializeField] ViewerRotate viewerRotate;
 
     [Header("Settings")]
     [SerializeField] Slider masterVolumeSlider;
@@ -305,6 +306,8 @@ public class MenuManager : MonoBehaviour
         sensitivityValueText.text = sensitivitySlider.value.ToString("F1");
         // set the mouse sensitivity to the value of the slider
         mouseLook.mouseSensitivity = sensitivitySlider.value;
+        // set the vieweer rotate sensitivity to the value of the slider
+        viewerRotate.mouseSensitivity = sensitivitySlider.value;
     }
 
     // triggers when the value of the field of view slider changes
