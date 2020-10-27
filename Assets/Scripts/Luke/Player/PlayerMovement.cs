@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Adds first person movement to the player
     Creation Date: 20/07/2020
-    Last Modified: 20/10/2020
+    Last Modified: 27/10/2020
 */
 
 using System;
@@ -46,7 +46,8 @@ public class PlayerMovement : MonoBehaviour
     private CharacterController controller;
     
     private Vector3 velocity;
-    private bool isGrounded;
+    private Vector3 move;
+    private bool isGrounded = false;
     private bool isCrouching = false;
     private Vector3 originalPos;
 
@@ -55,6 +56,9 @@ public class PlayerMovement : MonoBehaviour
 
     private float currentDeathTimer = 0;
     private bool canMove = true;
+
+    public Vector3 GetMoveVector() { return move; }
+    public bool GetGrounded() { return isGrounded; }
 
     private void Start()
     {
@@ -68,12 +72,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        isGrounded = false;
+
         if (godMode)
             GodModeMovement();
         else
             NormalMovement();
-
-        isGrounded = false;
     }
 
     private void LateUpdate()
@@ -119,7 +123,7 @@ public class PlayerMovement : MonoBehaviour
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
-        Vector3 move = transform.right * x + transform.forward * z;
+        move = transform.right * x + transform.forward * z;
 
         if (isCrouching)
             controller.Move(move * crouchSpeed * Time.deltaTime);
@@ -198,6 +202,7 @@ public class PlayerMovement : MonoBehaviour
         if (CheckpointManager.currentCheckpoint != null)
         {
             transform.position = CheckpointManager.currentCheckpoint.transform.position;
+            transform.rotation = CheckpointManager.currentCheckpoint.transform.rotation;
         }
         else
         {
