@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Adds first person movement to the player
     Creation Date: 20/07/2020
-    Last Modified: 27/10/2020
+    Last Modified: 28/10/2020
 */
 
 using System;
@@ -50,6 +50,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded = false;
     private bool isCrouching = false;
     private Vector3 originalPos;
+    private Quaternion originalRot;
 
     // used to store the distance between controller.center and the halfway point on the collider
     private float standCenterHeight = 0f;
@@ -63,7 +64,10 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         currentDeathTimer = deathTimer;
+
         originalPos = transform.position;
+        originalRot = transform.rotation;
+
         controller = GetComponent<CharacterController>();
         standCenterHeight = (ccHeight - ccCrouchHeight) * 0.5f;
 
@@ -98,8 +102,6 @@ public class PlayerMovement : MonoBehaviour
 
         // Set player to Default layer
         gameObject.layer = 0;
-
-        //Vector3 temp = new Vector3(controller.center.x, controller.height - controller.center.y, controller.center.z);
 
         Collider[] objectsHit = Physics.OverlapSphere(groundCheck.position, groundCheckRadius);
         foreach (Collider c in objectsHit)
@@ -207,6 +209,7 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             transform.position = originalPos;
+            transform.rotation = originalRot;
         }
     }
 
