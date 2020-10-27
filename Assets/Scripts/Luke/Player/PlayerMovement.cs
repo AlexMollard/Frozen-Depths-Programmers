@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Adds first person movement to the player
     Creation Date: 20/07/2020
-    Last Modified: 26/10/2020
+    Last Modified: 27/10/2020
 */
 
 using System;
@@ -47,7 +47,7 @@ public class PlayerMovement : MonoBehaviour
     
     private Vector3 velocity;
     private Vector3 move;
-    private bool isGrounded;
+    private bool isGrounded = false;
     private bool isCrouching = false;
     private Vector3 originalPos;
 
@@ -72,6 +72,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        isGrounded = false;
+
         if (godMode)
             GodModeMovement();
         else
@@ -88,8 +90,6 @@ public class PlayerMovement : MonoBehaviour
                 Respawn();
             }
         }
-
-        isGrounded = false;
     }
 
     private void NormalMovement()

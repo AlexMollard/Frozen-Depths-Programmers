@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Rotates a first person camera with the mouse
     Creation Date: 20/07/2020
-    Last Modified: 26/10/2020
+    Last Modified: 27/10/2020
 */
 
 using System.Collections;
@@ -33,7 +33,6 @@ public class MouseLook : MonoBehaviour
         PlayerMovement pm = playerBody.GetComponent<PlayerMovement>();
         Vector3 playerMove = pm.GetMoveVector();
 
-        // isGrounded is false for some reason. It's being reset every frame, but in LateUpdate.
         Debug.Log(pm.GetGrounded());
         if (Vector3.Magnitude(playerMove) > 0.1f && pm.GetGrounded())
         {
