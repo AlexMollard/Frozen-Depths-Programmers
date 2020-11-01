@@ -94,8 +94,9 @@ public class TerrainMan : MonoBehaviour
     private Vector3 currentManPos;
     private int fillSpotsMatched = 0;
 
-    [NonSerialized]
-    public bool readFromFile = false, updateReadFile = false, missingAABB = false, missingCache = false, changedAABB = false;
+    [NonSerialized] public bool readFromFile = false, updateReadFile = false, missingAABB = false, missingCache = false, changedAABB = false;
+
+    public int CheckPointID = -404;
 
     // Draw the yellow gizmo to know how large the managers are.
     private void OnDrawGizmosSelected()
@@ -156,8 +157,11 @@ public class TerrainMan : MonoBehaviour
         }
     }
 
-    public void RestartManager()
+    public void RestartManager(int id)
     {
+        if (id != CheckPointID)
+            return;
+
         for (int x = 0; x < terrainTotalX; x++)
         {
             for (int y = 0; y < terrainTotalY; y++)
@@ -169,6 +173,7 @@ public class TerrainMan : MonoBehaviour
             }
         }
     }
+
     private bool CheckIfCacheExists()
     {
         if (System.IO.File.Exists(Application.dataPath + "\\TerrainSaves\\" + gameObject.name + ".dat"))
@@ -461,9 +466,7 @@ public class TerrainMan : MonoBehaviour
     {
         if (chunkIndex.x >= 0 && chunkIndex.x < terrainTotalX && chunkIndex.y >= 0 && chunkIndex.y < terrainTotalY && chunkIndex.z >= 0 && chunkIndex.z < terrainTotalZ)
         {
-
             terrains[chunkIndex.x][chunkIndex.y][chunkIndex.z].EditTerrain(isFreeze, publicVertHitPoint, beamRadius, beamStrength, meltStrength, false);
-
 
             //terrains[chunkIndex.x][chunkIndex.y][chunkIndex.z].CreateMeshData();
         }
