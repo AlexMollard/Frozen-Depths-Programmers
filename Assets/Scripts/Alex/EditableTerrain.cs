@@ -81,6 +81,13 @@ public class EditableTerrain : MonoBehaviour
             }
         }
     }
+    
+    public void RecreateMesh()
+    {
+        PopulateTerrainMap();
+        CreateMeshData();
+    }
+
 
     // This needs to be optimized
     public void PopulateTerrainMap()

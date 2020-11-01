@@ -156,6 +156,19 @@ public class TerrainMan : MonoBehaviour
         }
     }
 
+    public void RestartManager()
+    {
+        for (int x = 0; x < terrainTotalX; x++)
+        {
+            for (int y = 0; y < terrainTotalY; y++)
+            {
+                for (int z = 0; z < terrainTotalZ; z++)
+                {
+                    terrains[x][y][z].RecreateMesh();
+                }
+            }
+        }
+    }
     private bool CheckIfCacheExists()
     {
         if (System.IO.File.Exists(Application.dataPath + "\\TerrainSaves\\" + gameObject.name + ".dat"))
