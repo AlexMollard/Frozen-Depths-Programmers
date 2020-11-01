@@ -157,11 +157,8 @@ public class TerrainMan : MonoBehaviour
         }
     }
 
-    public void RestartManager(int id)
+    public void RestartManager()
     {
-        if (id != CheckPointID)
-            return;
-
         for (int x = 0; x < terrainTotalX; x++)
         {
             for (int y = 0; y < terrainTotalY; y++)

@@ -14,6 +14,7 @@ public class Checkpoint : MonoBehaviour
 {
     // Should be able to disable checkpoints, and save which checkpoints have been disabled
     public int checkpointNumber = 0;
+    public TerrainMan[] terrains;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -23,5 +24,13 @@ public class Checkpoint : MonoBehaviour
 
         if (CheckpointManager.checkpointCounter > checkpointNumber)
             gameObject.SetActive(false);
+    }
+
+    public void ResetMeshes()
+    {
+        for (int i = 0; i < terrains.Length; i++)
+        {
+            terrains[i].RestartManager();
+        }
     }
 }

@@ -35,6 +35,33 @@ public class ManagerOfTheTerrainManagers : MonoBehaviour
         StartCoroutine(DoLoad());
     }
 
+    public TerrainMan[] GetManagers(int ID)
+    {
+        int size = 0;
+        for (int i = 0; i < terrainMans.Length; i++)
+        {
+            if (terrainMans[i].CheckPointID == ID)
+                size++;
+        }
+
+        if (size == 0)
+            return null;
+
+        int count = 0;
+        TerrainMan[] tempTerrains = new TerrainMan[size];
+        for (int i = 0; i < terrainMans.Length; i++)
+        {
+            if (terrainMans[i].CheckPointID != ID)
+                continue;
+
+            tempTerrains[count] = tempTerrains[i];
+            count++;
+        }
+
+        return tempTerrains;
+
+    }
+
     private IEnumerator DoLoad()
     {
         for (int i = 0; i < terrainMans.Length; i++)

@@ -19,6 +19,8 @@ public class CheckpointManager : MonoBehaviour
     public static int checkpointCounter = 0;
     public static GameObject currentCheckpoint;
 
+    public ManagerOfTheTerrainManagers terrainMan;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -33,6 +35,9 @@ public class CheckpointManager : MonoBehaviour
         {
             // Update checkpoints based on checkpoint counter
             Checkpoint current = child.gameObject.GetComponent<Checkpoint>();
+
+            // Set Managers
+            current.terrains = terrainMan.GetManagers(current.checkpointNumber);
 
             // Set the current checkpoint based on checkpointCounter
             if (current.checkpointNumber == checkpointCounter - 1)

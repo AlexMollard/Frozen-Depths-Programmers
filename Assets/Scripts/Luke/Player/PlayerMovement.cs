@@ -205,6 +205,7 @@ public class PlayerMovement : MonoBehaviour
         {
             transform.position = CheckpointManager.currentCheckpoint.transform.position;
             transform.rotation = CheckpointManager.currentCheckpoint.transform.rotation;
+            CheckpointManager.currentCheckpoint.GetComponent<Checkpoint>().ResetMeshes();
         }
         else
         {
