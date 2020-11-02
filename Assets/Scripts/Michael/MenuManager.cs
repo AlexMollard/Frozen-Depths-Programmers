@@ -3,7 +3,7 @@
     Author: Michael Sweetman
     Summary: Manages events triggered by clicking UI buttons such as switching between UIs and exiting the game.
     Creation Date: 29/07/2020
-    Last Modified: 26/10/2020
+    Last Modified: 02/11/2020
 */
 
 using System.Collections;
@@ -62,7 +62,7 @@ public class MenuManager : MonoBehaviour
     bool willGoBackToCheckpoint = false;
 
     float masterVolume = 1.0f;
-    float musicVolume = 1.0f;
+    [HideInInspector] public float musicVolume = 1.0f;
     float dialogueVolume = 1.0f;
     float soundEffectVolume = 1.0f;
 
