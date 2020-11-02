@@ -129,7 +129,7 @@ public class EditableTerrain : MonoBehaviour
                     {
                         if (cube.checkCollision(vertPos + managerPosInt))
                         {
-                            terrainMap[x, y, z].value = -1f;
+                            terrainMap[x, y, z].value = -1f + (UnityEngine.Random.value * 0.75f);
                             break;
                         }
                         else
