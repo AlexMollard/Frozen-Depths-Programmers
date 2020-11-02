@@ -3,15 +3,12 @@
     Author: Michael Sweetman
     Summary: Determines a point on the ice mesh the player wants burnt/frozen. Manages a fuel to limit the use of ice creation.
     Creation Date: 21/07/2020
-    Last Modified: 27/10/2020
+    Last Modified: 02/11/2020
 */
 
-using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Timeline;
-using UnityEngine.UI;
 public class Tool : MonoBehaviour
 {
     public class Laser
@@ -25,8 +22,10 @@ public class Tool : MonoBehaviour
 
             // get the relative length the display beam needs to be relative to the actual spherecast distance. Half this value as as scale 1 cylinder is 2 units long
             lengthScalar = (new Vector3(cameraPosition.x, cameraPosition.y, cameraPosition.z + maxRange) - startPoint.position).magnitude / maxRange * 0.5f;
-            // determine the laser scale
-            scale = new Vector3(laserGameObject.transform.localScale.x, maxRange * lengthScalar, laserGameObject.transform.localScale.z);
+            // get the starting laser scale
+            scale = laserGameObject.transform.localScale;
+            // set the length and position of the laser
+            SetLength(maxRange);
         }
 
         // positions and scales the laser so it fires from the laser start point with a length based on the argument length
@@ -35,7 +34,7 @@ public class Tool : MonoBehaviour
             // position the laser so when it is scaled, its end point are at the start point and the point the start point is facing 'length' units away
             gameObject.transform.position = startPoint.position + startPoint.forward * length * lengthScalar;
             // determine the scale of the laser using the length scalar and the argument length
-            scale.y = length * lengthScalar;
+            scale.y = length * lengthScalar * 0.5f;
             // apply the scale to the laser game object
             gameObject.transform.localScale = scale;
         }
