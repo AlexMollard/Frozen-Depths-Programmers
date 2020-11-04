@@ -3,7 +3,7 @@
     Author: Michael Sweetman
     Summary: Determines a point on the ice mesh the player wants burnt/frozen. Manages a fuel to limit the use of ice creation.
     Creation Date: 21/07/2020
-    Last Modified: 02/11/2020
+    Last Modified: 04/11/2020
 */
 
 using System.Collections;
@@ -98,6 +98,23 @@ public class Tool : MonoBehaviour
     ParticleSystem steamParticleSystem;
     ParticleSystem sleetParticleSystem;
     ParticleSystem mistParticleSystem;
+
+    [Header("Sound")]
+    [SerializeField] AudioSource audioPlayer;
+    [SerializeField] AudioClip meltLoop;
+    [SerializeField] AudioClip meltEnd;
+    [SerializeField] AudioClip freezeLoop;
+    [SerializeField] AudioClip freezeEnd;
+
+    // plays a desired sound
+    void PlaySound(AudioClip sound, bool loop)
+    {
+        // set whether the audio player loops based on the argument value
+        audioPlayer.loop = loop;
+        // set the audio player to play the desired sound
+        audioPlayer.clip = sound;
+        audioPlayer.Play();
+    }
 
     private void Start()
     {
@@ -199,6 +216,13 @@ public class Tool : MonoBehaviour
                                     toolFuel = capacity;
                                 }
                             }
+
+                            // if the mouse was left clicked this frame
+                            if (Input.GetMouseButtonDown(0))
+                            {
+                                // play the meltloop clip 
+                                PlaySound(meltLoop, true);
+                            }
                         }
                         // if the tool is able to freeze ice, the mouse was right clicked this frame, the collision point was beyond the minimum creation distance and the tool has fuel
                         if (canFreeze && Input.GetMouseButtonDown(1) && hit.distance >= minimumFreezeDistance && toolFuel > 0.0f)
@@ -225,6 +249,9 @@ public class Tool : MonoBehaviour
                                 // emit mist particles at the collision point
                                 mistParticleEmitter.position = hit.point;
                                 mistParticleSystem.Emit(mistParticleCount);
+
+                                // play the freeze loop clip
+                                PlaySound(freezeLoop, true);
                             }
                         }
                     }
@@ -290,6 +317,19 @@ public class Tool : MonoBehaviour
         // if the mouse was not left clicked, or right clicked with fuel
         else
         {
+            // if the audio player is currently playing the meltLoop clip
+            if (audioPlayer.isPlaying && audioPlayer.clip == meltLoop)
+            {
+                // play the meltEnd clip
+                PlaySound(meltEnd, false);
+            }
+            // if the audio player is currently playing the freezeLoop clip
+            else if (audioPlayer.isPlaying && audioPlayer.clip == freezeLoop)
+            {
+                // play the freezeEnd clip
+                PlaySound(freezeEnd, false);
+            }
+
             // set the ice creator to be inactive
             iceCreator.SetActive(false);
         }
