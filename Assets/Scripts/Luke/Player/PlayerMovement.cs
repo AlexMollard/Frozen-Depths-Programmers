@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Adds first person movement to the player
     Creation Date: 20/07/2020
-    Last Modified: 28/10/2020
+    Last Modified: 4/11/2020
 */
 
 using System;
@@ -206,7 +206,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // Call this in LateUpdate, otherwise the position will be overwritten by player movement.
-    private void GoToLastCheckpoint()
+    public void GoToLastCheckpoint()
     {
         if (CheckpointManager.currentCheckpoint != null)
         {

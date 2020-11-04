@@ -1,9 +1,9 @@
-﻿/*
+/*
     File name: MenuManager.cs
     Author: Michael Sweetman
     Summary: Manages events triggered by clicking UI buttons such as switching between UIs and exiting the game.
     Creation Date: 29/07/2020
-    Last Modified: 02/11/2020
+    Last Modified: 04/11/2020
 */
 
 using System.Collections;
@@ -332,7 +332,7 @@ public class MenuManager : MonoBehaviour
         if (willGoBackToCheckpoint)
         {
             // load the player's last checkpoint
-            SaveManager.LoadGame(player);
+            player.GetComponent<PlayerMovement>().GoToLastCheckpoint();
             // store that the player's last checkpoint no longer needs to be loaded
             willGoBackToCheckpoint = false;
             // switch to the in-game UI

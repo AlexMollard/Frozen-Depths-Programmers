@@ -1,9 +1,9 @@
-﻿/*
+/*
     File name: Checkpoint.cs
     Author:    Luke Lazzaro
     Summary: Saves game data on player collision
     Creation Date: 10/08/2020
-    Last Modified: 8/09/2020
+    Last Modified: 4/11/2020
 */
 
 using System.Collections;
@@ -20,7 +20,7 @@ public class Checkpoint : MonoBehaviour
     {
         CheckpointManager.checkpointCounter = checkpointNumber + 1;
         CheckpointManager.Instance.UpdateCheckpoints();
-        //SaveManager.SaveGame(other.gameObject);
+        SaveManager.SaveGame(other.gameObject);
 
         if (CheckpointManager.checkpointCounter > checkpointNumber)
             gameObject.SetActive(false);
