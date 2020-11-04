@@ -2,8 +2,8 @@
     File name: ArtifactDisplay.cs
     Author: Michael Sweetman
     Summary: Manages the Artifact Display in the in game menu
-    Creation Date: 8/09/2020
-    Last Modified: 8/09/2020
+    Creation Date: 08/09/2020
+    Last Modified: 04/11/2020
 */
 
 using System.Collections;
@@ -13,21 +13,21 @@ using UnityEngine.UI;
 
 public class ArtifactDisplay : MonoBehaviour
 {
-    [SerializeField] Sprite hidden;
-    [SerializeField] Sprite shown;
-    Image display;
-
-    void Start()
-    {
-        // get the image component
-        display = GetComponent<Image>();
-        // set the display for the artifact to hidden
-        display.sprite = hidden;
-    }
+    [SerializeField] GameObject movingImage;
+    public Sprite shown;
+    bool called = false;
 
     public void Show()
     {
-        // set the display for the artifact to shown
-        display.sprite = shown;
+        // this function hasn't been called before
+        if (!called)
+        {
+            // store that this is the moving image's artifact display
+            movingImage.GetComponent<MovingImage>().artifactDisplay = this;
+            // create a moving image at the center of the screen, with 0 rotation and the parent of this game object
+            Instantiate(movingImage, transform.parent.transform.parent.position, Quaternion.identity, transform.parent);
+            // store that this function has been called
+            called = true;
+        }
     }
 }
