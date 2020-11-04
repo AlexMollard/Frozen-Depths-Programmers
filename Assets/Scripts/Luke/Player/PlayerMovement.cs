@@ -24,6 +24,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private float groundCheckRadius = 0.5f;
     [SerializeField] private float deathTimer = 1;
+    [Tooltip("Should only be enabled for testing purposes.")]
+    [SerializeField] private bool enableSuicide = false;
 
     [Header("Camera")]
     [SerializeField] private GameObject playerCamera;
@@ -140,6 +142,11 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
             Crouch();
+        }
+
+        if (enableSuicide && Input.GetKeyDown(KeyCode.K))
+        {
+            Die();
         }
 
         velocity.y += gravity * Time.deltaTime;
