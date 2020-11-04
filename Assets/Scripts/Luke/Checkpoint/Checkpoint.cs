@@ -20,7 +20,7 @@ public class Checkpoint : MonoBehaviour
     {
         CheckpointManager.checkpointCounter = checkpointNumber + 1;
         CheckpointManager.Instance.UpdateCheckpoints();
-        SaveManager.SaveGame(other.gameObject);
+        //SaveManager.SaveGame(other.gameObject);
 
         if (CheckpointManager.checkpointCounter > checkpointNumber)
             gameObject.SetActive(false);

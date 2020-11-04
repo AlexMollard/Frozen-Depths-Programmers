@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028346, g: 0.22571373, b: 0.30692244, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2945,8 +2945,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   checkpointNumber: 1
-  terrains:
-  - {fileID: 15919341}
+  terrains: []
 --- !u!65 &636208883
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10123,7 +10122,7 @@ PrefabInstance:
     - target: {fileID: 4718783068257040540, guid: d6657c26fb022024eb71ba5974d378a7,
         type: 3}
       propertyPath: CheckPointID
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4718783068257040541, guid: d6657c26fb022024eb71ba5974d378a7,
         type: 3}

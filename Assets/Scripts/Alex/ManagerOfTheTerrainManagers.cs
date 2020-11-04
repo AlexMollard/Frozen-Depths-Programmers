@@ -6,6 +6,7 @@
     Last Modified: 12/10/2020
 */
 
+using Boo.Lang;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -29,6 +30,8 @@ public class ManagerOfTheTerrainManagers : MonoBehaviour
     public TextMeshProUGUI missingMeshCacheText = null;
     public TextMeshProUGUI changedAABBCacheText = null;
 
+    List<TerrainMan> tempTerrains = new List<TerrainMan>();
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -47,18 +50,16 @@ public class ManagerOfTheTerrainManagers : MonoBehaviour
         if (size == 0)
             return null;
 
-        int count = 0;
-        TerrainMan[] tempTerrains = new TerrainMan[size];
+        tempTerrains.Clear();
         for (int i = 0; i < terrainMans.Length; i++)
         {
             if (terrainMans[i].CheckPointID != ID)
                 continue;
 
-            tempTerrains[count] = tempTerrains[i];
-            count++;
+            tempTerrains.Add(terrainMans[i]);
         }
 
-        return tempTerrains;
+        return tempTerrains.ToArray();
 
     }
 
