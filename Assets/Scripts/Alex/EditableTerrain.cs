@@ -366,7 +366,8 @@ public class EditableTerrain : MonoBehaviour
         if (updateSurroundingChunks)
             UpdateNeighbours(freeze, publicVertPos, localVertPos, radius, FreezeStrength, MeltStrength);
 
-        CreateMeshData();
+        if (editedTerrain)
+            CreateMeshData();
 
 
         return editedTerrain;
