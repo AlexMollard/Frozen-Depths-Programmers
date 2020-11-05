@@ -84,7 +84,6 @@ public class EditableTerrain : MonoBehaviour
     public void RecreateMesh()
     {
         PopulateTerrainMap();
-        CreateMeshData();
     }
 
     // This needs to be optimized
@@ -362,10 +361,13 @@ public class EditableTerrain : MonoBehaviour
             }
         }
 
-        CreateMeshData();
 
+        //CreateMeshData();
         if (updateSurroundingChunks)
             UpdateNeighbours(freeze, publicVertPos, localVertPos, radius, FreezeStrength, MeltStrength);
+
+        CreateMeshData();
+
 
         return editedTerrain;
     }

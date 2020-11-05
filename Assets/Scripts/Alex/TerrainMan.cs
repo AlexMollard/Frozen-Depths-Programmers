@@ -110,6 +110,22 @@ public class TerrainMan : MonoBehaviour
         Gizmos.color = new Color(1, 1, 0, 0.55f);
         Gizmos.DrawCube(centerOfMeshes, scale);
     }
+    private void Update()
+    {
+        if (Input.GetKeyUp("p"))
+        {
+            for (int x = 0; x < terrainTotalX; x++)
+            {
+                for (int y = 0; y < terrainTotalY; y++)
+                {
+                    for (int z = 0; z < terrainTotalZ; z++)
+                    {
+                        terrains[x][y][z].CreateMeshData();
+                    }
+                }
+            }
+        }
+    }
 
     private void Awake()
     {
@@ -166,6 +182,17 @@ public class TerrainMan : MonoBehaviour
                 for (int z = 0; z < terrainTotalZ; z++)
                 {
                     terrains[x][y][z].RecreateMesh();
+                }
+            }
+        }
+
+        for (int x = 0; x < terrainTotalX; x++)
+        {
+            for (int y = 0; y < terrainTotalY; y++)
+            {
+                for (int z = 0; z < terrainTotalZ; z++)
+                {
+                    terrains[x][y][z].CreateMeshData();
                 }
             }
         }
