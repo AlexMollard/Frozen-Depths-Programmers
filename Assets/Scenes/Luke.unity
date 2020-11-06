@@ -269,6 +269,7 @@ MonoBehaviour:
   objectToOpen: {fileID: 1852627296}
   openBehaviour: 0
   placeForKeyMesh: {fileID: 1058045041}
+  keyholeSound: {fileID: 8300000, guid: 2f8356c7c79ca8e4db4c360c65919dbe, type: 3}
   targetPos: {x: 0, y: 10, z: 0}
   doorRisingSpeed: 10
 --- !u!136 &158803792
@@ -1207,6 +1208,11 @@ PrefabInstance:
       propertyPath: dosageAmount
       value: 20
       objectReference: {fileID: 0}
+    - target: {fileID: 2249341092596749010, guid: b6c9c6b858957ac4692c5a2b538d1ff9,
+        type: 3}
+      propertyPath: pickupSound
+      value: 
+      objectReference: {fileID: 8300000, guid: eacc92ba16af6dc49b15b10a150c4b0f, type: 3}
     - target: {fileID: 2516074764703200494, guid: b6c9c6b858957ac4692c5a2b538d1ff9,
         type: 3}
       propertyPath: m_Name
@@ -1408,6 +1414,10 @@ PrefabInstance:
       propertyPath: viewerDescription
       value: 
       objectReference: {fileID: 1025203438}
+    - target: {fileID: 1367854099, guid: cba56d5f368d6e54783161c488cfd8d3, type: 3}
+      propertyPath: antidotePickupSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 2f8356c7c79ca8e4db4c360c65919dbe, type: 3}
     - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
       propertyPath: playerCamera
@@ -1775,6 +1785,11 @@ PrefabInstance:
       propertyPath: dosageAmount
       value: 1000
       objectReference: {fileID: 0}
+    - target: {fileID: 2249341092596749010, guid: b6c9c6b858957ac4692c5a2b538d1ff9,
+        type: 3}
+      propertyPath: pickupSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 2f8356c7c79ca8e4db4c360c65919dbe, type: 3}
     - target: {fileID: 2516074764703200494, guid: b6c9c6b858957ac4692c5a2b538d1ff9,
         type: 3}
       propertyPath: m_Name
@@ -2924,6 +2939,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2249341092596749010, guid: b6c9c6b858957ac4692c5a2b538d1ff9,
+        type: 3}
+      propertyPath: pickupSound
+      value: 
+      objectReference: {fileID: 8300000, guid: e7d608ebc4080eb4c88b0137400b9535, type: 3}
     - target: {fileID: 2516074764703200494, guid: b6c9c6b858957ac4692c5a2b538d1ff9,
         type: 3}
       propertyPath: m_Name

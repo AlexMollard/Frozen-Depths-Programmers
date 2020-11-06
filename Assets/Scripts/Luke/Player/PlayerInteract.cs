@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Enables interaction and opens artifact viewer
     Creation Date: 21/07/2020
-    Last Modified: 5/10/2020
+    Last Modified: 6/11/2020
 */
 
 using System;
@@ -19,6 +19,7 @@ public class PlayerInteract : MonoBehaviour
     [SerializeField] private Transform playerCamera;
     [SerializeField] private MeshFilter artifactViewer;
     [SerializeField] private Text viewerDescription;
+    [SerializeField] private AudioClip antidotePickupSound;
 
     // Used for enabling and disabling player movement
     private PlayerMovement pmScript;
@@ -27,11 +28,14 @@ public class PlayerInteract : MonoBehaviour
     // Used for enabling tool freezing
     private Tool toolScript;
 
+    private AudioSource antidotePickupSource;
+
     private void Awake()
     {
         pmScript = GetComponent<PlayerMovement>();
         mlScript = playerCamera.gameObject.GetComponent<MouseLook>();
         toolScript = GetComponent<Tool>();
+        antidotePickupSource = gameObject.AddComponent<AudioSource>();
     }
 
     private void Update()
@@ -63,6 +67,9 @@ public class PlayerInteract : MonoBehaviour
                 }
                 else if (antidote != null)
                 {
+                    antidotePickupSource.clip = antidotePickupSound;
+                    antidotePickupSource.Play();
+
                     antidote.Collect();
                 }    
                 else if (hit.collider.CompareTag("Tool Component"))

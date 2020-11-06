@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Does something if the player has a required key
     Creation Date: 31/08/2020
-    Last Modified: 21/09/2020
+    Last Modified: 6/11/2020
 */
 
 using System.Collections;
@@ -21,6 +21,7 @@ public class Keyhole : MonoBehaviour
     [SerializeField] private GameObject objectToOpen;
     [SerializeField] private OpenBehaviour openBehaviour = OpenBehaviour.RisingDoor;
     [SerializeField] private GameObject placeForKeyMesh;
+    [SerializeField] private AudioClip keyholeSound;
 
     [Header("Rising Door")]
     [SerializeField] private Vector3 targetPos = new Vector3();
@@ -28,6 +29,12 @@ public class Keyhole : MonoBehaviour
 
     private Vector3 originalPos;
     private bool isRising = false;
+    private AudioSource keyholeSource;
+
+    private void Awake()
+    {
+        keyholeSource = gameObject.AddComponent<AudioSource>();
+    }
 
     private void Start()
     {
@@ -44,6 +51,9 @@ public class Keyhole : MonoBehaviour
             Debug.Log("No key matches this keyhole.");
             return;
         }
+
+        keyholeSource.clip = keyholeSound;
+        keyholeSource.Play();
 
         switch (openBehaviour)
         {
