@@ -173,6 +173,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   checkpointNumber: 4
+  terrains: []
 --- !u!65 &30045381
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -526,6 +527,23 @@ MonoBehaviour:
   closerSound: {fileID: 8300000, guid: 3d7328126db1bc94787f8e73666fa604, type: 3}
   distanceClosest: 10
   closestSound: {fileID: 8300000, guid: 0f5ef1dd9d2c2bc41a4b38391af19f21, type: 3}
+--- !u!114 &312026049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 312026040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d617f8259ac03f4cb1720bb7dd0069f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  footstepSounds:
+  - layerNumber: 0
+    audioClip: {fileID: 8300000, guid: e7d608ebc4080eb4c88b0137400b9535, type: 3}
+  - layerNumber: 8
+    audioClip: {fileID: 8300000, guid: eacc92ba16af6dc49b15b10a150c4b0f, type: 3}
 --- !u!4 &379565206 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6641315126594596381, guid: cba56d5f368d6e54783161c488cfd8d3,
@@ -1225,6 +1243,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8151faa1c4fb9345ab80ca7f8e767e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  terrainMan: {fileID: 0}
 --- !u!4 &992407243
 Transform:
   m_ObjectHideFlags: 0
@@ -1888,7 +1907,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fe5d139ec8e92147b1af227b7aef1df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hidden: {fileID: 21300000, guid: d506d9c443ce48042ad3cb0545268cbe, type: 3}
+  movingImage: {fileID: 0}
   shown: {fileID: 21300000, guid: c79d7ef520457c5438dc16812e9d9d5f, type: 3}
 --- !u!114 &1529523430
 MonoBehaviour:
@@ -1973,6 +1992,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   checkpointNumber: 3
+  terrains: []
 --- !u!65 &1570789095
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2155,6 +2175,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   checkpointNumber: 2
+  terrains: []
 --- !u!65 &1726364418
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2253,6 +2274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   checkpointNumber: 0
+  terrains: []
 --- !u!65 &1851261530
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2607,6 +2629,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   checkpointNumber: 1
+  terrains: []
 --- !u!65 &1901453537
 BoxCollider:
   m_ObjectHideFlags: 0

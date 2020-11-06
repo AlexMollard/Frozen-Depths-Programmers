@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Rotates a first person camera with the mouse
     Creation Date: 20/07/2020
-    Last Modified: 27/10/2020
+    Last Modified: 6/11/2020
 */
 
 using System.Collections;
@@ -16,8 +16,9 @@ public class MouseLook : MonoBehaviour
     [SerializeField] private Transform playerBody;
 
     [Header("Head Bob Settings")]
-    [SerializeField] private float amplitude = 1;
-    [SerializeField] private float frequency = 0.05f;
+    public float amplitude = 1;
+    public float frequency = 0.05f;
+    [HideInInspector] public float sinPosition = 0;
 
     private float xRotation = 0;
     private int sinCounter = 0;
@@ -33,11 +34,10 @@ public class MouseLook : MonoBehaviour
         PlayerMovement pm = playerBody.GetComponent<PlayerMovement>();
         Vector3 playerMove = pm.GetMoveVector();
 
-        Debug.Log(pm.GetGrounded());
         if (Vector3.Magnitude(playerMove) > 0.1f && pm.GetGrounded())
         {
-            Debug.Log("Sine wave running");
-            float newY = transform.position.y + Mathf.Sin(frequency * sinCounter) * amplitude;
+            sinPosition = Mathf.Sin(frequency * sinCounter) * amplitude;
+            float newY = transform.position.y + sinPosition;
             transform.position = new Vector3(transform.position.x, newY, transform.position.z);
             sinCounter++;
         }

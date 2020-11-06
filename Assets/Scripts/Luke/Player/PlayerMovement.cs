@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Adds first person movement to the player
     Creation Date: 20/07/2020
-    Last Modified: 4/11/2020
+    Last Modified: 6/11/2020
 */
 
 using System;
@@ -28,7 +28,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private bool enableSuicide = false;
 
     [Header("Camera")]
-    [SerializeField] private GameObject playerCamera;
+    public GameObject playerCamera;
     [SerializeField] private float camHeight = 2;
     [SerializeField] private float camCrouchHeight = 1;
 
@@ -50,7 +50,11 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 velocity;
     private Vector3 move;
     private bool isGrounded = false;
+    private bool wasGrounded = false;
     private bool isCrouching = false;
+    private bool isWalking = false;
+    private bool isLanding = false;
+    private int layerStandingOn = -1;
     private Vector3 originalPos;
     private Quaternion originalRot;
 
@@ -62,6 +66,11 @@ public class PlayerMovement : MonoBehaviour
 
     public Vector3 GetMoveVector() { return move; }
     public bool GetGrounded() { return isGrounded; }
+    public bool GetWalking() { return isWalking; }
+
+    // Returns -1 if the player is not standing on anything.
+    public int GetLayerStandingOn() { return layerStandingOn; }
+    public bool GetLanding() { return isLanding; }
 
     private void Start()
     {
@@ -78,8 +87,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        isGrounded = false;
-
         if (godMode)
             GodModeMovement();
         else
@@ -100,6 +107,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void NormalMovement()
     {
+        isGrounded = false;
+        isWalking = false;
+        isLanding = false;
+        layerStandingOn = -1;
+
         if (!canMove) return;
 
         // Set player to Default layer
@@ -111,8 +123,19 @@ public class PlayerMovement : MonoBehaviour
             if (c.transform.root != transform)
             {
                 isGrounded = true;
+                layerStandingOn = c.gameObject.layer;
+                break;
             }
         }
+
+        // Check if player has touched the ground this frame
+        if (isGrounded && !wasGrounded)
+        {
+            isLanding = true;
+            wasGrounded = isGrounded;
+        }
+        else if (!isGrounded && wasGrounded)
+            wasGrounded = isGrounded;
 
         //if (isGrounded && velocity.y < deathVelocity)
         //{
@@ -128,6 +151,7 @@ public class PlayerMovement : MonoBehaviour
         float z = Input.GetAxis("Vertical");
 
         move = transform.right * x + transform.forward * z;
+        if (Vector3.Magnitude(move) > 0.1f) isWalking = true;
 
         if (isCrouching)
             controller.Move(move * crouchSpeed * Time.deltaTime);
