@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Enables interaction and opens artifact viewer
     Creation Date: 21/07/2020
-    Last Modified: 6/11/2020
+    Last Modified: 7/11/2020
 */
 
 using System;
@@ -44,9 +44,13 @@ public class PlayerInteract : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E))
         {
             Vector3 camPos = playerCamera.position;
-
             RaycastHit hit;
-            if (Physics.Raycast(camPos, playerCamera.TransformDirection(Vector3.forward), out hit, interactReach, interactableMask))
+
+            if (!pmScript.enabled)
+            {
+                DisableArtifactViewer(true);
+            }
+            else if (Physics.Raycast(camPos, playerCamera.TransformDirection(Vector3.forward), out hit, interactReach, interactableMask))
             {
                 Interactable interactable = hit.collider.GetComponent<Interactable>();
                 Key key = hit.collider.GetComponent<Key>();
@@ -78,11 +82,6 @@ public class PlayerInteract : MonoBehaviour
                     hit.collider.gameObject.SetActive(false);
                 }
             }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space) && pmScript.enabled == false)
-        {
-            DisableArtifactViewer(true);
         }
     }
 
