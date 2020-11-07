@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Does something if the player has a required key
     Creation Date: 31/08/2020
-    Last Modified: 6/11/2020
+    Last Modified: 8/11/2020
 */
 
 using System.Collections;
@@ -17,10 +17,11 @@ enum OpenBehaviour
 
 public class Keyhole : MonoBehaviour
 {
-    [SerializeField] private string id = "";
+    [SerializeField] public string id = "";
     [SerializeField] private GameObject objectToOpen;
     [SerializeField] private OpenBehaviour openBehaviour = OpenBehaviour.RisingDoor;
     [SerializeField] private GameObject placeForKeyMesh;
+    [SerializeField] public Animator animatedModel;
     [SerializeField] private AudioClip keyholeSound;
 
     [Header("Rising Door")]
@@ -46,15 +47,6 @@ public class Keyhole : MonoBehaviour
 
     public void Open()
     {
-        if (!KeyManager.Instance.keys.Contains(id))
-        {
-            Debug.Log("No key matches this keyhole.");
-            return;
-        }
-
-        keyholeSource.clip = keyholeSound;
-        keyholeSource.Play();
-
         switch (openBehaviour)
         {
             case OpenBehaviour.RisingDoor:
@@ -73,8 +65,18 @@ public class Keyhole : MonoBehaviour
         PlaceKeyOnKeyhole();
     }
 
-    private void PlaceKeyOnKeyhole()
+    public void PlaceKeyOnKeyhole()
     {
+        if (!KeyManager.Instance.keys.Contains(id))
+        {
+            Debug.Log("No key matches this keyhole.");
+            return;
+        }
+
+        animatedModel.SetTrigger("Lock In");
+        keyholeSource.clip = keyholeSound;
+        keyholeSource.Play();
+
         foreach (KeyLookup item in KeyManager.Instance.keyLookup)
         {
             if (id == item.keyId)

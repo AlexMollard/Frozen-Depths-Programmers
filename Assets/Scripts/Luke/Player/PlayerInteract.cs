@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Enables interaction and opens artifact viewer
     Creation Date: 21/07/2020
-    Last Modified: 7/11/2020
+    Last Modified: 8/11/2020
 */
 
 using System;
@@ -19,7 +19,13 @@ public class PlayerInteract : MonoBehaviour
     [SerializeField] private Transform playerCamera;
     [SerializeField] private MeshFilter artifactViewer;
     [SerializeField] private Text viewerDescription;
+    [SerializeField] private GameObject gunObject;
+    [SerializeField] private GameObject freezerAttachment;
     [SerializeField] private AudioClip antidotePickupSound;
+
+    [Header("Tutorials")]
+    [SerializeField] private GameObject meltTutorial;
+    [SerializeField] private GameObject createTutorial;
 
     // Used for enabling and disabling player movement
     private PlayerMovement pmScript;
@@ -43,14 +49,14 @@ public class PlayerInteract : MonoBehaviour
         // Pressing E while standing in front of an interactable enables the artifact viewer for that object
         if (Input.GetKeyDown(KeyCode.E))
         {
-            Vector3 camPos = playerCamera.position;
-            RaycastHit hit;
+            // remove any active tutorials
+            meltTutorial.SetActive(false);
+            createTutorial.SetActive(false);
 
-            if (!pmScript.enabled)
-            {
-                DisableArtifactViewer(true);
-            }
-            else if (Physics.Raycast(camPos, playerCamera.TransformDirection(Vector3.forward), out hit, interactReach, interactableMask))
+            Vector3 camPos = playerCamera.position;
+
+            RaycastHit hit;
+            if (Physics.Raycast(camPos, playerCamera.TransformDirection(Vector3.forward), out hit, interactReach, interactableMask))
             {
                 Interactable interactable = hit.collider.GetComponent<Interactable>();
                 Key key = hit.collider.GetComponent<Key>();
@@ -67,7 +73,7 @@ public class PlayerInteract : MonoBehaviour
                 }
                 else if (keyhole != null)
                 {
-                    keyhole.Open();
+                    keyhole.PlaceKeyOnKeyhole();
                 }
                 else if (antidote != null)
                 {
@@ -75,13 +81,27 @@ public class PlayerInteract : MonoBehaviour
                     antidotePickupSource.Play();
 
                     antidote.Collect();
-                }    
+                }
+                else if (hit.collider.CompareTag("gun"))
+                {
+                    gunObject.SetActive(true);
+                    toolScript.enabled = true;
+                    meltTutorial.SetActive(true);
+                    Destroy(hit.collider.gameObject);
+                }
                 else if (hit.collider.CompareTag("Tool Component"))
                 {
                     toolScript.canFreeze = true;
                     hit.collider.gameObject.SetActive(false);
+                    createTutorial.SetActive(true);
+                    freezerAttachment.SetActive(false);
                 }
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space) && pmScript.enabled == false)
+        {
+            DisableArtifactViewer(true);
         }
     }
 
