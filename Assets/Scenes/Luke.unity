@@ -3449,6 +3449,11 @@ PrefabInstance:
       propertyPath: cpToDestroyAt
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5433839041803879855, guid: a052b058944f0ec4db52b4be4142fe4a,
+        type: 3}
+      propertyPath: voiceActing
+      value: 
+      objectReference: {fileID: 8300000, guid: 2f8356c7c79ca8e4db4c360c65919dbe, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a052b058944f0ec4db52b4be4142fe4a, type: 3}
 --- !u!1001 &8786571608933325903

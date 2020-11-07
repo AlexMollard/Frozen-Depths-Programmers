@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Controls how the subtitles appear and change
     Creation Date: 27/07/2020
-    Last Modified: 1/09/2020
+    Last Modified: 7/11/2020
 */
 
 using System.Collections;
@@ -17,6 +17,12 @@ public class Subtitles : MonoBehaviour
 
     private float timeLeft = 0;
     private Text text;
+    private AudioSource voiceSource;
+
+    private void Awake()
+    {
+        voiceSource = gameObject.AddComponent<AudioSource>();
+    }
 
     private void Start()
     {
@@ -38,5 +44,11 @@ public class Subtitles : MonoBehaviour
         text.enabled = true;
         text.text = newText;
         timeLeft = secondsUntilDisappear;
+    }
+
+    public void PlayVoiceActing(AudioClip voiceActing)
+    {
+        voiceSource.clip = voiceActing;
+        voiceSource.Play();
     }
 }
