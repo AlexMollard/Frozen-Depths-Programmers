@@ -269,6 +269,7 @@ MonoBehaviour:
   objectToOpen: {fileID: 1852627296}
   openBehaviour: 0
   placeForKeyMesh: {fileID: 1058045041}
+  animatedModel: {fileID: 0}
   keyholeSound: {fileID: 8300000, guid: 2f8356c7c79ca8e4db4c360c65919dbe, type: 3}
   targetPos: {x: 0, y: 10, z: 0}
   doorRisingSpeed: 10
@@ -1418,6 +1419,14 @@ PrefabInstance:
       propertyPath: antidotePickupSound
       value: 
       objectReference: {fileID: 8300000, guid: 2f8356c7c79ca8e4db4c360c65919dbe, type: 3}
+    - target: {fileID: 1367854099, guid: cba56d5f368d6e54783161c488cfd8d3, type: 3}
+      propertyPath: meltTutorial
+      value: 
+      objectReference: {fileID: 641576826}
+    - target: {fileID: 1367854099, guid: cba56d5f368d6e54783161c488cfd8d3, type: 3}
+      propertyPath: createTutorial
+      value: 
+      objectReference: {fileID: 641576826}
     - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
       propertyPath: playerCamera
@@ -3538,6 +3547,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1667617729611279656, guid: 915493b6d39399342ab40b96aafff0d9,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 760bdb57043bef444ac829e1a7bdb80c, type: 2}
     - target: {fileID: 1667617729611279658, guid: 915493b6d39399342ab40b96aafff0d9,
         type: 3}
       propertyPath: m_LocalPosition.x

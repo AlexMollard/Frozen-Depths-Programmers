@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Enables interaction and opens artifact viewer
     Creation Date: 21/07/2020
-    Last Modified: 8/11/2020
+    Last Modified: 9/11/2020
 */
 
 using System;
@@ -126,6 +126,7 @@ public class PlayerInteract : MonoBehaviour
         viewerDescription.gameObject.SetActive(true);
 
         artifactViewer.mesh = obj.GetComponent<MeshFilter>().mesh;
+        artifactViewer.gameObject.GetComponent<MeshRenderer>().material = obj.GetComponent<MeshRenderer>().material;
         artifactViewer.transform.localScale = obj.transform.localScale;
 
         try
