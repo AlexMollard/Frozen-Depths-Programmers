@@ -56,7 +56,12 @@ public class PlayerInteract : MonoBehaviour
             Vector3 camPos = playerCamera.position;
 
             RaycastHit hit;
-            if (Physics.Raycast(camPos, playerCamera.TransformDirection(Vector3.forward), out hit, interactReach, interactableMask))
+
+            if (!pmScript.enabled)
+            {
+                DisableArtifactViewer(true);
+            }
+            else if (Physics.Raycast(camPos, playerCamera.TransformDirection(Vector3.forward), out hit, interactReach, interactableMask))
             {
                 Interactable interactable = hit.collider.GetComponent<Interactable>();
                 Key key = hit.collider.GetComponent<Key>();
@@ -97,11 +102,6 @@ public class PlayerInteract : MonoBehaviour
                     freezerAttachment.SetActive(false);
                 }
             }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space) && pmScript.enabled == false)
-        {
-            DisableArtifactViewer(true);
         }
     }
 
