@@ -15,17 +15,13 @@ public class Subtitles : MonoBehaviour
 {
     [SerializeField] private float secondsUntilDisappear = 3;
 
-    [Range(0.0f, 1.0f)]
-    [SerializeField] private float voiceVolume = 0.5f;
-
     private float timeLeft = 0;
     private Text text;
     private AudioSource voiceSource;
 
     private void Awake()
     {
-        voiceSource = gameObject.AddComponent<AudioSource>();
-        voiceSource.playOnAwake = false;
+        voiceSource = gameObject.GetComponent<AudioSource>();
     }
 
     private void Start()
@@ -41,8 +37,6 @@ public class Subtitles : MonoBehaviour
             timeLeft -= Time.deltaTime;
         else
             text.enabled = false;
-
-        voiceSource.volume = voiceVolume;
     }
 
     public void UpdateSubtitles(string newText)
