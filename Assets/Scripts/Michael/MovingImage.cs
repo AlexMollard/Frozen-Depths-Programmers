@@ -3,7 +3,7 @@
     Author: Michael Sweetman
     Summary: A UI image that moves and scales to its artifact display before replacing the artifact display's image and deleting itself
     Creation Date: 04/11/2020
-    Last Modified: 04/11/2020
+    Last Modified: 09/11/2020
 */
 
 using System.Collections;
@@ -49,8 +49,12 @@ public class MovingImage : MonoBehaviour
         // if the timer has reached 1
         if (timer >= 1.0f)
         {
+            // get the image component of the artifact display
+            Image artifactDisplayImage = artifactDisplay.GetComponent<Image>();
             // set the artifact display's image to be its shown image
-            artifactDisplay.GetComponent<Image>().sprite = artifactDisplay.shown;
+            artifactDisplayImage.sprite = artifactDisplay.shown;
+            // set the artifact display's alpha to be its foundAlpha
+            artifactDisplayImage.color = new Color(artifactDisplayImage.color.r, artifactDisplayImage.color.g, artifactDisplayImage.color.b, artifactDisplay.foundAlpha);
             // destroy this game object
             Destroy(gameObject);
         }

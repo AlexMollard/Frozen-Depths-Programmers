@@ -3,7 +3,7 @@
     Author: Michael Sweetman
     Summary: Manages the Artifact Display in the in game menu
     Creation Date: 08/09/2020
-    Last Modified: 04/11/2020
+    Last Modified: 09/11/2020
 */
 
 using System.Collections;
@@ -15,6 +15,7 @@ public class ArtifactDisplay : MonoBehaviour
 {
     [SerializeField] GameObject movingImage;
     public Sprite shown;
+    public float foundAlpha = 1.0f;
     bool called = false;
 
     public void Show()
