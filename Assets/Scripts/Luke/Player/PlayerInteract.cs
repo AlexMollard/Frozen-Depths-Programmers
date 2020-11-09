@@ -22,6 +22,7 @@ public class PlayerInteract : MonoBehaviour
     [SerializeField] private GameObject gunObject;
     [SerializeField] private GameObject freezerAttachment;
     [SerializeField] private AudioClip antidotePickupSound;
+    [SerializeField] private MenuManager menuManager;
 
     [Header("Tutorials")]
     [SerializeField] private GameObject meltTutorial;
@@ -93,6 +94,7 @@ public class PlayerInteract : MonoBehaviour
                     gunObject.SetActive(true);
                     toolScript.enabled = true;
                     meltTutorial.SetActive(true);
+                    menuManager.playerHasTool = true;
                     hit.collider.gameObject.SetActive(false);
                 }
                 else if (hit.collider.CompareTag("Tool Component"))

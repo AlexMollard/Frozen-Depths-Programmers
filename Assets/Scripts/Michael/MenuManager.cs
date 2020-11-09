@@ -3,7 +3,7 @@
     Author: Michael Sweetman
     Summary: Manages events triggered by clicking UI buttons such as switching between UIs and exiting the game.
     Creation Date: 29/07/2020
-    Last Modified: 04/11/2020
+    Last Modified: 09/11/2020
 */
 
 using System.Collections;
@@ -55,6 +55,7 @@ public class MenuManager : MonoBehaviour
     MouseLook mouseLook;
     PlayerMovement playerMovement;
     Tool tool;
+    [HideInInspector] public bool playerHasTool = false;
 
     GameObject currentUI;
     GameObject lastUI;
@@ -160,7 +161,13 @@ public class MenuManager : MonoBehaviour
         // toggle player controls
         mouseLook.enabled = enablePlayerControls;
         playerMovement.enabled = enablePlayerControls;
-        tool.enabled = enablePlayerControls;
+
+        // if the player has the tool
+        if (playerHasTool)
+        {
+            // toggle the tool script
+            tool.enabled = enablePlayerControls;
+        }
     }
 
     // switches the canvas UI to the desired UI
