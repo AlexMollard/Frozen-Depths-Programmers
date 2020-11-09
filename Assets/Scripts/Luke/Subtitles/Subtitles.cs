@@ -25,6 +25,7 @@ public class Subtitles : MonoBehaviour
     private void Awake()
     {
         voiceSource = gameObject.AddComponent<AudioSource>();
+        voiceSource.playOnAwake = false;
     }
 
     private void Start()
