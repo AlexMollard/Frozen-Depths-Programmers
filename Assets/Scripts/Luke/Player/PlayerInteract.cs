@@ -158,7 +158,12 @@ public class PlayerInteract : MonoBehaviour
         {
             pmScript.enabled = true;
             mlScript.enabled = true;
-            toolScript.enabled = true;
+
+            if (menuManager.playerHasTool)
+            {
+                toolScript.enabled = true;
+            }
+
         }
 
         Cursor.lockState = CursorLockMode.Locked;
