@@ -71,6 +71,7 @@ public class PlayerInteract : MonoBehaviour
                 if (interactable != null)
                 {
                     InteractWithArtifact(hit.collider.gameObject);
+                    hit.collider.gameObject.SetActive(false);
                 }
                 else if (key != null)
                 {
@@ -92,7 +93,7 @@ public class PlayerInteract : MonoBehaviour
                     gunObject.SetActive(true);
                     toolScript.enabled = true;
                     meltTutorial.SetActive(true);
-                    Destroy(hit.collider.gameObject);
+                    hit.collider.gameObject.SetActive(false);
                 }
                 else if (hit.collider.CompareTag("Tool Component"))
                 {
@@ -123,6 +124,7 @@ public class PlayerInteract : MonoBehaviour
     public void EnableArtifactViewer(GameObject obj)
     {
         artifactViewer.gameObject.SetActive(true);
+        artifactViewer.gameObject.transform.LookAt(playerCamera);
         viewerDescription.gameObject.SetActive(true);
 
         artifactViewer.mesh = obj.GetComponent<MeshFilter>().mesh;
@@ -140,6 +142,7 @@ public class PlayerInteract : MonoBehaviour
 
         pmScript.enabled = false;
         mlScript.enabled = false;
+        toolScript.enabled = false;
 
         Cursor.lockState = CursorLockMode.None;
     }
@@ -153,6 +156,7 @@ public class PlayerInteract : MonoBehaviour
         {
             pmScript.enabled = true;
             mlScript.enabled = true;
+            toolScript.enabled = true;
         }
 
         Cursor.lockState = CursorLockMode.Locked;

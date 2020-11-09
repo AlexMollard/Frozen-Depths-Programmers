@@ -9083,7 +9083,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.14117648}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -9121,6 +9121,7 @@ MonoBehaviour:
   movingImage: {fileID: 420797049709777258, guid: e2f3d38b41c804242bbbda1cbdedcbad,
     type: 3}
   shown: {fileID: 21300000, guid: 75a5d6c6b6ef42349b8e822b084d35e5, type: 3}
+  foundAlpha: 1
 --- !u!1 &880992822
 GameObject:
   m_ObjectHideFlags: 0
@@ -10187,7 +10188,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.047058824}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -10225,6 +10226,7 @@ MonoBehaviour:
   movingImage: {fileID: 420797049709777258, guid: e2f3d38b41c804242bbbda1cbdedcbad,
     type: 3}
   shown: {fileID: 21300000, guid: c79d7ef520457c5438dc16812e9d9d5f, type: 3}
+  foundAlpha: 1
 --- !u!1001 &1000117379
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10644,6 +10646,26 @@ PrefabInstance:
       propertyPath: interactableMask.m_Bits
       value: 512
       objectReference: {fileID: 0}
+    - target: {fileID: 1367854099, guid: cba56d5f368d6e54783161c488cfd8d3, type: 3}
+      propertyPath: meltTutorial
+      value: 
+      objectReference: {fileID: 66386504}
+    - target: {fileID: 1367854099, guid: cba56d5f368d6e54783161c488cfd8d3, type: 3}
+      propertyPath: createTutorial
+      value: 
+      objectReference: {fileID: 66386504}
+    - target: {fileID: 1367854099, guid: cba56d5f368d6e54783161c488cfd8d3, type: 3}
+      propertyPath: gunObject
+      value: 
+      objectReference: {fileID: 1686106104}
+    - target: {fileID: 1367854099, guid: cba56d5f368d6e54783161c488cfd8d3, type: 3}
+      propertyPath: freezerAttachment
+      value: 
+      objectReference: {fileID: 1707951099}
+    - target: {fileID: 1367854099, guid: cba56d5f368d6e54783161c488cfd8d3, type: 3}
+      propertyPath: antidotePickupSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 20c8244dcc3d030478ad9f6f5f3e20ff, type: 3}
     - target: {fileID: 2638384329260923528, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
       propertyPath: blowtorchFuelLossRate
@@ -17194,7 +17216,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.23137255}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -17232,6 +17254,7 @@ MonoBehaviour:
   movingImage: {fileID: 420797049709777258, guid: e2f3d38b41c804242bbbda1cbdedcbad,
     type: 3}
   shown: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  foundAlpha: 1
 --- !u!1 &1504461420
 GameObject:
   m_ObjectHideFlags: 0
@@ -18338,7 +18361,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.09803922}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -18376,6 +18399,7 @@ MonoBehaviour:
   movingImage: {fileID: 420797049709777258, guid: e2f3d38b41c804242bbbda1cbdedcbad,
     type: 3}
   shown: {fileID: 21300000, guid: 50e5a031f3ff47b49ab54771c27d4fc0, type: 3}
+  foundAlpha: 1
 --- !u!1 &1686106104
 GameObject:
   m_ObjectHideFlags: 0
@@ -18454,6 +18478,12 @@ Transform:
   m_Father: {fileID: 1556640894}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1707951099 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -5082449753973674794, guid: 8eb91e748a5bd944e83902fba2bf4bba,
+    type: 3}
+  m_PrefabInstance: {fileID: 1920896936}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1772113203
 GameObject:
   m_ObjectHideFlags: 0
@@ -24522,7 +24552,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 10
   m_WholeNumbers: 1
-  m_Value: 3
+  m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -25106,7 +25136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.20392157}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -25144,6 +25174,7 @@ MonoBehaviour:
   movingImage: {fileID: 420797049709777258, guid: e2f3d38b41c804242bbbda1cbdedcbad,
     type: 3}
   shown: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
+  foundAlpha: 1
 --- !u!1 &2060526246
 GameObject:
   m_ObjectHideFlags: 0
