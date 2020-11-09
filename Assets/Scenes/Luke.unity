@@ -1505,7 +1505,7 @@ PrefabInstance:
     - target: {fileID: 6641315128160775799, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.21
+      value: 10.07
       objectReference: {fileID: 0}
     - target: {fileID: 6641315128160775799, guid: cba56d5f368d6e54783161c488cfd8d3,
         type: 3}
@@ -1938,6 +1938,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movingImage: {fileID: 0}
   shown: {fileID: 21300000, guid: c79d7ef520457c5438dc16812e9d9d5f, type: 3}
+  foundAlpha: 1
 --- !u!114 &1529523430
 MonoBehaviour:
   m_ObjectHideFlags: 0

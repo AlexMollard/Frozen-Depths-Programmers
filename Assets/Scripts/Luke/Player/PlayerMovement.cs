@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Adds first person movement to the player
     Creation Date: 20/07/2020
-    Last Modified: 6/11/2020
+    Last Modified: 10/11/2020
 */
 
 using System;
@@ -24,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private LayerMask groundMask;
     [SerializeField] private float groundCheckRadius = 0.5f;
     [SerializeField] private float deathTimer = 1;
+    [SerializeField] private float deathPosition = -150;
     [Tooltip("Should only be enabled for testing purposes.")]
     [SerializeField] private bool enableSuicide = false;
 
@@ -137,10 +138,8 @@ public class PlayerMovement : MonoBehaviour
         else if (!isGrounded && wasGrounded)
             wasGrounded = isGrounded;
 
-        //if (isGrounded && velocity.y < deathVelocity)
-        //{
-        //    Die();
-        //}
+        // failsafe if the player misses the death triggers
+        if (transform.position.y < deathPosition) willDie = true;
 
         if (isGrounded && velocity.y < 0)
         {
