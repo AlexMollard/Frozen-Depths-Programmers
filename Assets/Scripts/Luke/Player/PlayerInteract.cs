@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Enables interaction and opens artifact viewer
     Creation Date: 21/07/2020
-    Last Modified: 9/11/2020
+    Last Modified: 10/11/2020
 */
 
 using System;
@@ -158,7 +158,12 @@ public class PlayerInteract : MonoBehaviour
         {
             pmScript.enabled = true;
             mlScript.enabled = true;
-            toolScript.enabled = true;
+
+            if (menuManager.playerHasTool)
+            {
+                toolScript.enabled = true;
+            }
+
         }
 
         Cursor.lockState = CursorLockMode.Locked;
