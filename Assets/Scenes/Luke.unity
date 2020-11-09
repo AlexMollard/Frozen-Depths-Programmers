@@ -3638,6 +3638,11 @@ PrefabInstance:
       propertyPath: id
       value: cube
       objectReference: {fileID: 0}
+    - target: {fileID: 2044898414933797289, guid: 915493b6d39399342ab40b96aafff0d9,
+        type: 3}
+      propertyPath: playerCanMove
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2303974742870017606, guid: 915493b6d39399342ab40b96aafff0d9,
         type: 3}
       propertyPath: shown

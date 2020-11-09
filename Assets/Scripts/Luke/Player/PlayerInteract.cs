@@ -142,7 +142,7 @@ public class PlayerInteract : MonoBehaviour
             Debug.LogError("Interactable objects must have the Interactable.cs script attached to work properly.");
         }
 
-        pmScript.enabled = false;
+        pmScript.enabled = obj.GetComponent<Interactable>().playerCanMove;
         mlScript.enabled = false;
         toolScript.enabled = false;
 
