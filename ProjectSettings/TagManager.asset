@@ -8,6 +8,7 @@ TagManager:
   - Ice
   - Entrance
   - Tool Component
+  - gun
   layers:
   - Default
   - TransparentFX

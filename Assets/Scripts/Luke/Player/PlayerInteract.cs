@@ -23,6 +23,7 @@ public class PlayerInteract : MonoBehaviour
     [SerializeField] private GameObject freezerAttachment;
     [SerializeField] private AudioClip antidotePickupSound;
     [SerializeField] private MenuManager menuManager;
+    [SerializeField] private GameObject fuelBar;
 
     [Header("Tutorials")]
     [SerializeField] private GameObject meltTutorial;
@@ -103,6 +104,7 @@ public class PlayerInteract : MonoBehaviour
                     hit.collider.gameObject.SetActive(false);
                     createTutorial.SetActive(true);
                     freezerAttachment.SetActive(false);
+                    fuelBar.SetActive(true);
                 }
             }
         }
