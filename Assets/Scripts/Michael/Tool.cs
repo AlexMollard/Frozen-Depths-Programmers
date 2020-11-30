@@ -208,9 +208,6 @@ public class Tool : MonoBehaviour
                                 // emit steam particles at the collision point
                                 steamParticleEmitter.position = hit.point;
                                 steamParticleSystem.Emit(steamParticleCount);
-                                // emit sleet particles at the collision point
-                                sleetParticleEmitter.position = hit.point;
-                                sleetParticleSystem.Emit(sleetParticleCount);
 
                                 // if the tool can freeze
                                 if (canFreeze)
@@ -305,6 +302,9 @@ public class Tool : MonoBehaviour
                         // emit mist particles at the ice creator's collision point
                         mistParticleEmitter.position = iceCreatorScript.collisionPoint;
                         mistParticleSystem.Emit(mistParticleCount);
+                        // emit sleet particles at the collision point
+                        sleetParticleEmitter.position = hit.point;
+                        sleetParticleSystem.Emit(sleetParticleCount);
 
                         // decrease the fuel by the fuel loss rate per second. Multiply the result by the freeze strength
                         toolFuel -= Time.deltaTime * FuelLossRate * freezeStrength;
