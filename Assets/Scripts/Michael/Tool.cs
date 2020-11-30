@@ -3,7 +3,7 @@
     Author: Michael Sweetman
     Summary: Determines a point on the ice mesh the player wants burnt/frozen. Manages a fuel to limit the use of ice creation.
     Creation Date: 21/07/2020
-    Last Modified: 04/11/2020
+    Last Modified: 30/11/2020
 */
 
 using System.Collections;
@@ -92,9 +92,11 @@ public class Tool : MonoBehaviour
     [SerializeField] Transform steamParticleEmitter;
     [SerializeField] Transform sleetParticleEmitter;
     [SerializeField] Transform mistParticleEmitter;
+    [SerializeField] ParticleSystem barrelLightParticleEmitter;
     [SerializeField] int steamParticleCount = 4;
     [SerializeField] int sleetParticleCount = 4;
     [SerializeField] int mistParticleCount = 4;
+    [SerializeField] int barrelLightParticleCount = 4;
     ParticleSystem steamParticleSystem;
     ParticleSystem sleetParticleSystem;
     ParticleSystem mistParticleSystem;
@@ -168,6 +170,9 @@ public class Tool : MonoBehaviour
         // if the mouse is left clicked, or right clicked with fuel
         if ((Input.GetMouseButton(0)|| (Input.GetMouseButton(1) && toolFuel > 0.0f)))
         {
+            // emit the light from the tool barrel
+            barrelLightParticleEmitter.Emit(barrelLightParticleCount);
+
             // if the tool can freeze, or if the mouse was left clicked
             if (canFreeze || Input.GetMouseButton(0))
             {
@@ -197,8 +202,8 @@ public class Tool : MonoBehaviour
                         // if left click is down this frame
                         if (Input.GetMouseButton(0))
                         {
-                            // if the hit gameobject has the tag "Ice", burn the ice at the point of the collision. If this succeeds and the tool is able to freeze ice
-                            if (hit.transform.tag == "Ice" && hit.transform.GetComponent<EditableTerrain>().EditTerrain(false, hit.point, effectRadius, freezeStrength, meltStrength) && canFreeze)
+                            // if the hit gameobject has the tag "Ice", burn the ice at the point of the collision. If this succeeds
+                            if (hit.transform.tag == "Ice" && hit.transform.GetComponent<EditableTerrain>().EditTerrain(false, hit.point, effectRadius, freezeStrength, meltStrength))
                             {
                                 // emit steam particles at the collision point
                                 steamParticleEmitter.position = hit.point;
@@ -207,13 +212,17 @@ public class Tool : MonoBehaviour
                                 sleetParticleEmitter.position = hit.point;
                                 sleetParticleSystem.Emit(sleetParticleCount);
 
-                                // increase the fuel by the fuel gain rate per second. Multiply the result by the melt strength
-                                toolFuel += Time.deltaTime * FuelGainRate * meltStrength;
-                                // if there is a capacity and the tool fuel is above that capacity
-                                if (capacity > 0.0f && toolFuel > capacity)
+                                // if the tool can freeze
+                                if (canFreeze)
                                 {
-                                    // set the fuel to be equal to the capacity
-                                    toolFuel = capacity;
+                                    // increase the fuel by the fuel gain rate per second. Multiply the result by the melt strength
+                                    toolFuel += Time.deltaTime * FuelGainRate * meltStrength;
+                                    // if there is a capacity and the tool fuel is above that capacity
+                                    if (capacity > 0.0f && toolFuel > capacity)
+                                    {
+                                        // set the fuel to be equal to the capacity
+                                        toolFuel = capacity;
+                                    }
                                 }
                             }
 
