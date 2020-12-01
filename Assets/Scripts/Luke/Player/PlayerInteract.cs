@@ -3,7 +3,7 @@
     Author:    Luke Lazzaro
     Summary: Enables interaction and opens artifact viewer
     Creation Date: 21/07/2020
-    Last Modified: 10/11/2020
+    Last Modified: 01/12/2020
 */
 
 using System;
@@ -21,6 +21,7 @@ public class PlayerInteract : MonoBehaviour
     [SerializeField] private Text viewerDescription;
     [SerializeField] private GameObject gunObject;
     [SerializeField] private GameObject freezerAttachment;
+    [Range(0, 1)] [SerializeField] private float startingFuelPercent = 0.5f;
     [SerializeField] private AudioClip antidotePickupSound;
     [SerializeField] private MenuManager menuManager;
     [SerializeField] private GameObject fuelBar;
@@ -105,6 +106,7 @@ public class PlayerInteract : MonoBehaviour
                     createTutorial.SetActive(true);
                     freezerAttachment.SetActive(false);
                     fuelBar.SetActive(true);
+                    toolScript.toolFuel = startingFuelPercent * toolScript.capacity;
                 }
             }
         }
